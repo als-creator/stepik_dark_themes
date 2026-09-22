@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.6
+// @version      2.9.8
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1356,6 +1356,28 @@ ${SK} .notifications__filter,
 ${SK} .notifications__filter .select-box__toggle-btn {
   color: var(--sk-fg-2) !important;
 }
+/* Ники и ссылки внутри уведомлений: сток хардкодит --link-color:#222
+   (.notification__title-subject a, .notification__body a:not(.link-primary),
+   .notification__context-content a) — на тёмном фоне почти чёрные */
+${SK} .notification__title-subject a,
+${SK} .notification__body a:not(.link-primary),
+${SK} .notification__context-content a {
+  --link-color: var(--sk-fg) !important;
+  --link-line-color: rgba(238, 238, 240, 0.3) !important;
+  --link-hover-color: var(--sk-accent) !important;
+  --link-hover-line-color: var(--sk-accent) !important;
+  --link-active-color: var(--sk-accent) !important;
+  --link-active-line-color: var(--sk-accent) !important;
+  --link-disabled-color: var(--sk-fg-muted) !important;
+  --external-link-icon-color: var(--sk-fg-2) !important;
+}
+/* Тёмный текст цитат в теле уведомления (сток #535366) */
+${SK} .notification__body blockquote {
+  color: var(--sk-fg-2) !important;
+}
+${SK} .notification__body blockquote::before {
+  background-color: var(--sk-border-2) !important;
+}
 
 /* ================= ВКЛАДКИ / ТАБЫ =================
    Стоковые табы — светлая плашка и тёмный текст (.st-tabs: #666/#000,
@@ -1546,6 +1568,15 @@ ${SK} .step-pin-icon__icon {
 }
 ${SK} .m-step-pin:hover .step-pin-icon__icon {
   color: var(--sk-accent) !important;
+}
+/* Пройденные шаги: пин заливается зелёным (акцент), светлая иконка
+   (fg-2) на нём «светится» и теряется. Как в ночной теме Stepik —
+   значок на цветной плашке тёмный (fg-oncolorbg = on-surface). */
+${SK} .m-step-pin[data-is-passed] .step-pin-icon__icon {
+  color: var(--sk-on-surface) !important;
+}
+${SK} .m-step-pin[data-is-passed]:hover .step-pin-icon__icon {
+  color: var(--sk-on-surface) !important;
 }
 /* замочки недоступных уроков в сайдбаре (сток #5e5e5e) */
 ${SK} .lesson-sidebar__lock-icon {
@@ -1895,7 +1926,34 @@ ${SK} .link-secondary {
 ${SK} .st-table, ${SK} .st-table__row, ${SK} .st-table__header,
 ${SK} .st-table__cell { border-color: var(--sk-border) !important; color: var(--sk-fg) !important; }
 ${SK} .st-table__header { background-color: var(--sk-panel) !important; }
-${SK} .st-table__row:nth-child(odd) { background-color: var(--sk-bg-alt) !important; }
+/* Прочие таблицы: сток глобально красит тег table фоном #fff
+   (table{background:#fff}), а покрыты у нас только .st-table,
+   .rich-text-viewer table и пара частных — таблицы в тексте урока вне
+   этих контейнеров и quiz «таблица» (.table-quiz) оставались белыми. */
+${SK} table {
+  background-color: var(--sk-panel) !important;
+  color: var(--sk-fg) !important;
+  border-color: var(--sk-border) !important;
+}
+/* Ячейки фоном не красим: сток красит белым только сам тег table,
+   а зебра задаётся на TR — сплошная заливка td/th её перекрывала бы. */
+${SK} table th, ${SK} table td {
+  color: var(--sk-fg) !important;
+  border-color: var(--sk-border) !important;
+}
+/* Чётные строки ЛЮБОЙ таблицы: сток глобально красит их #f9f9f9
+   (table tr.alt, table tr.even, table tr:nth-of-type(even)) — без этого
+   правила у любых таблиц половина строк оставалась светлой. */
+${SK} table tr.alt, ${SK} table tr.even, ${SK} table tr:nth-of-type(even) {
+  background-color: var(--sk-bg-alt) !important;
+}
+/* quiz «таблица»: скроллбар держит собственные белые переменные */
+${SK} .table-quiz {
+  --custom-scrollbar-background: var(--sk-bg) !important;
+  --custom-scrollbar-thumb-color: var(--sk-border) !important;
+  --custom-scrollbar-thumb-hover-color: var(--sk-border-2) !important;
+  --custom-scrollbar-thumb-active-color: var(--sk-fg-muted) !important;
+}
 
 /* ================= РЕДАКТОР КОДА (CodeMirror) =================
    У CodeMirror нет собственной тёмной темы в Stepik — красим сами. */
@@ -1949,11 +2007,50 @@ ${SK} .select-box__toggle-btn .sort_icon {
   color: var(--sk-fg-2) !important;
 }
 
-/* ================= ТОСТЫ ================= */
-${SK} .toast-panel[data-theme="success"] { background-color: var(--sk-success) !important; color: var(--sk-on-surface) !important; }
-${SK} .toast-panel[data-theme="danger"] { background-color: var(--sk-danger) !important; color: var(--sk-on-surface) !important; }
-${SK} .toast-panel[data-theme="info-normal"] { background-color: var(--sk-blue) !important; color: var(--sk-on-surface) !important; }
-${SK} .toast-panel[data-theme="info-accent"] { background-color: var(--sk-danger) !important; color: var(--sk-on-surface) !important; }
+/* ================= ТОСТЫ =================
+   Сток: пастельные заливки (#feebe8, #e9f9e9) и тёмные иконки/текст.
+   Бывшие сплошные яркие замены красили info-accent и danger в --sk-danger
+   (#FF7A65) с почти чёрным текстом — «тестируется…» над редактором кода
+   светился вырвиглазным красным. Теперь — полупрозрачные тинты (как
+   ночные note-фоны Stepik) + светлый текст и светлые иконки. */
+${SK} .toast-panel[data-theme="success"],
+${SK} .toast-panel[data-theme="info"] {
+  background-color: rgba(131, 214, 131, 0.16) !important;
+  color: var(--sk-fg) !important;
+}
+${SK} .toast-panel[data-theme="danger"] {
+  background-color: rgba(255, 122, 101, 0.16) !important;
+  color: var(--sk-fg) !important;
+}
+${SK} .toast-panel[data-theme="danger-transparent"] {
+  background-color: transparent !important;
+  color: var(--sk-fg) !important;
+}
+${SK} .toast-panel[data-theme="info-normal"],
+${SK} .toast-panel[data-theme="info-secondary"] {
+  background-color: rgba(255, 212, 129, 0.16) !important;
+  color: var(--sk-fg) !important;
+}
+${SK} .toast-panel[data-theme="info-accent"] {
+  background-color: rgba(152, 160, 232, 0.16) !important;
+  color: var(--sk-fg) !important;
+}
+${SK} .toast-panel .toast-panel__text {
+  color: var(--sk-fg) !important;
+}
+${SK} .toast-panel[data-theme="success"] .toast-panel__icon,
+${SK} .toast-panel[data-theme="info"] .toast-panel__icon { color: var(--sk-success) !important; }
+${SK} .toast-panel[data-theme="danger"] .toast-panel__icon,
+${SK} .toast-panel[data-theme="danger-transparent"] .toast-panel__icon { color: var(--sk-danger) !important; }
+${SK} .toast-panel[data-theme="info-normal"] .toast-panel__icon,
+${SK} .toast-panel[data-theme="info-secondary"] .toast-panel__icon { color: var(--sk-warning) !important; }
+${SK} .toast-panel[data-theme="info-accent"] .toast-panel__icon { color: var(--sk-accent-2) !important; }
+/* Тост-подсказка консольного ввода в квизе (класс .toast-pane, отдельная
+   ветка от .toast-panel): фон полупрозрачный, стоковый текст чёрный */
+${SK} .attempt-wrapper .toast-pane,
+${SK} .attempt-wrapper-lang-select__limits.toast-pane {
+  color: var(--sk-fg) !important;
+}
 
 /* ================= reCAPTCHA («защита от спама») =================
    Значок в левом/правом нижнем углу — белая плашка Google внутри
