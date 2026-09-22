@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.2
+// @version      2.9.3
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1527,6 +1527,18 @@ ${SK} .quiz-layout, ${SK} .quiz-layout-head {
   background-color: var(--sk-bg) !important;
   color: var(--sk-fg) !important;
   border-color: var(--sk-border) !important;
+}
+/* пины «закреплённых шагов» в верхней панели плеера: значки типов шагов
+   сток рисует rgba(0,0,0,.5) — на тёмном топбаре почти не видны */
+${SK} .step-pin-icon__icon {
+  color: var(--sk-fg-2) !important;
+}
+${SK} .m-step-pin:hover .step-pin-icon__icon {
+  color: var(--sk-accent) !important;
+}
+/* замочки недоступных уроков в сайдбаре (сток #5e5e5e) */
+${SK} .lesson-sidebar__lock-icon {
+  color: var(--sk-fg-2) !important;
 }
 /* Блок решения после проверки ответа: сток заливает .submission-show
    белым (#fff) и заголовок решения пишет тёмным #222; на тёмной странице
