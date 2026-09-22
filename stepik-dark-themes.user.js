@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.8.4
+// @version      2.8.5
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2045,6 +2045,12 @@ ${SK} .activity-graph .activity-graph__info,
 ${SK} .cert-widget .cert-widget__details {
   color: var(--sk-fg-3) !important;
 }
+/* «Присоединился …» и подпись соцсети (.profile__text/.profile__link):
+   чуть светлее основного блока подписей, чтобы не сливались с канвасом */
+${SK} .profile__text,
+${SK} .profile__link {
+  color: var(--sk-fg-2) !important;
+}
 /* ссылки-соцсети в профиле (.profile__link, «О себе»): сток навешивает
    filter:grayscale(1) на ЦВЕТНЫЕ брендовые иконки (github и т.п.) —
    выглядят бесцветными; снимаем фильтр, ссылку подсвечиваем акцентом */
@@ -2053,6 +2059,15 @@ ${SK} .profile__link {
 }
 ${SK} .profile__link:hover {
   color: var(--sk-accent) !important;
+}
+/* иконка у соц-ссылки профиля: многие бренды (github и т.п.) — тёмный/
+   чёрный логотип, на тёмном фоне не контрастный; тот же контраст-фильтр,
+   что и у соцсетей в подвале */
+${SK} .profile__link img {
+  filter: grayscale(1) invert(1) brightness(1.5) !important;
+}
+${SK} .profile__link:hover img {
+  filter: grayscale(1) invert(1) brightness(1) !important;
 }
 ${SK} .profile__counters li > b {
   color: var(--sk-fg) !important;
