@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.3
+// @version      2.9.4
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1913,6 +1913,30 @@ ${SK} .cm-attribute { color: var(--sk-code-type) !important; }
 ${SK} .cm-meta { color: var(--sk-code-comment) !important; }
 ${SK} .code-editor-tabs__tab { background-color: var(--sk-code-gutter) !important; color: var(--sk-fg-2) !important; border-color: var(--sk-border) !important; }
 ${SK} .code-editor-tabs__tab.active { background-color: var(--sk-code-bg) !important; color: var(--sk-fg) !important; }
+/* Иконки в шапке редактора: кнопка копирования (.copy-code-btn) и кнопки
+   в .code-editor-header__button сток красит чёрным (--theme-color-fg-tertiary
+   в тёмной коже) — на тёмной панели значки сливаются. */
+${SK} .code-editor-header .copy-code-btn svg,
+${SK} .code-editor-header .copy-code-btn .svg-icon {
+  color: var(--sk-fg-2) !important;
+}
+${SK} .code-editor-header .copy-code-btn:hover svg,
+${SK} .code-editor-header .copy-code-btn:hover .svg-icon {
+  color: var(--sk-fg) !important;
+}
+${SK} .code-editor-header__button,
+${SK} .code-editor-header__button .svg-icon {
+  color: var(--sk-fg-2) !important;
+}
+${SK} .code-editor-header__button:hover,
+${SK} .code-editor-header__button:hover .svg-icon {
+  color: var(--sk-fg) !important;
+}
+/* Шеврон выпадашек (сортировка и т.п.): сток #5e5e5e — едва виден
+   на тёмных панелях. */
+${SK} .select-box__toggle-btn .sort_icon {
+  color: var(--sk-fg-2) !important;
+}
 
 /* ================= ТОСТЫ ================= */
 ${SK} .toast-panel[data-theme="success"] { background-color: var(--sk-success) !important; color: var(--sk-on-surface) !important; }
