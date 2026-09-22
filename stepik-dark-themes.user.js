@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.8.7
+// @version      2.8.8
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2044,12 +2044,29 @@ ${SK} .user-edit__social-base-url {
 ${SK} .profile-social-icon {
   filter: grayscale(1) invert(1) brightness(1.5) !important;
 }
-/* disabled-кнопки «Загрузить»/«Убрать» у обложки профиля: сток — бледно-
-   синий rgba(68,133,237,.5), на тёмном фоне сливается; серым текста темы.
-   Селектор с контекстом и .btn-link, чтобы перебить общее правило кнопок
-   [disabled] (html[data-sk-theme] button:not(...)[disabled]) */
-${SK} .user-edit__image-field .user-edit__image-upload.btn-link:disabled {
-  color: var(--sk-fg-3) !important;
+/* кнопки «Загрузить»/«Убрать» (btn-link) в полях аватара/обложки: сток —
+   тонкие синие ссылки без фона, на тёмном сливаются; оформляем как основную
+   кнопку «Сохранить изменения» — заливка, рамка, скругление 4px, отступы.
+   Активные — заливка акцентом темы (как заглавная зелёная кнопка), disabled
+   (обложка у обычных пользователей) — панель-2 с рамкой и светлым текстом.
+   Селектор disabled с контекстом button.btn-link, чтобы перебить общее
+   правило кнопок [disabled] (html[data-sk-theme] button:not(...)[disabled]) */
+${SK} .user-edit__image-field .btn-link {
+  border: 1px solid transparent !important;
+  border-radius: 4px !important;
+  padding: 8px 16px !important;
+  background-color: var(--sk-accent) !important;
+  color: var(--sk-on-surface) !important;
+}
+${SK} .user-edit__image-field .btn-link:not(:disabled):hover,
+${SK} .user-edit__image-field .btn-link:not(:disabled):focus {
+  background-color: var(--sk-accent-dark) !important;
+  color: #fff !important;
+}
+${SK} .user-edit__image-field button.btn-link:disabled {
+  background-color: var(--sk-panel-2) !important;
+  color: var(--sk-fg-2) !important;
+  border-color: var(--sk-border) !important;
 }
 ${SK} .user-financial-details-form .the-form-field__char-counter {
   background: var(--sk-panel) !important;
