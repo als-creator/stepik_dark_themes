@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.8.2
+// @version      2.8.3
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1571,6 +1571,35 @@ ${SK} .s-radio .s-radio__input:checked + .s-radio__border .s-radio__circle {
 ${SK} .s-checkbox .s-checkbox__input:checked + .s-checkbox__border .s-checkbox__circle {
   border-top-color: var(--sk-accent) !important;
   border-left-color: var(--sk-accent) !important;
+}
+/* Задание «сопоставить» (matching): сток рисует карточки пунктов и целей
+   белыми (.dnd-quiz__item { background:#fff; border-color:#a5a5a5;
+   border-radius:3px }) — на тёмной странице это белые прямоугольники, на
+   которых светлый текст не читается. Карточки — в панель, рамка тёмная,
+   углы как у карточек; буквенные метки (A/B/C), «ручку» перетаскивания и
+   служебные кнопки окрашиваем серым текста темы (сток — #222/#a5a5a5),
+   а «соединённую» пару (сток — ярко-зелёная #85d685) — в акцент. */
+${SK} .dnd-quiz__item {
+  background-color: var(--sk-panel) !important;
+  border-color: var(--sk-border) !important;
+  border-radius: 12px !important;
+}
+${SK} .matching-quiz__item::before {
+  color: var(--sk-fg-3) !important;
+}
+${SK} .dnd-quiz__item-handle,
+${SK} .dnd-quiz__item-btn {
+  color: var(--sk-fg-muted) !important;
+}
+${SK} .dnd-quiz__item:not(.animated) .dnd-quiz__item-handle:hover,
+${SK} .dnd-quiz__item-btn:focus,
+${SK} .dnd-quiz__item-btn:hover {
+  color: var(--sk-fg) !important;
+}
+${SK} .matching-quiz__item[data-drag-added] {
+  background-color: var(--sk-accent) !important;
+  border-color: transparent !important;
+  color: var(--sk-fg) !important;
 }
 /* левый сайдбар урока: сток даёт панели #222 (нейтрально-серый, «дефолтный»
    на фоне синевато-графитового канваса) и заметно контрастирует с полем
