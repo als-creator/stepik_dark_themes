@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.0
+// @version      2.9.1
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2035,6 +2035,16 @@ ${SK} .user-edit-menu__links a.active {
   --link-color: var(--sk-fg) !important;
   color: var(--sk-fg) !important;
   background-color: var(--sk-bg-alt) !important;
+}
+/* из-за увеличенных отступов пунктов меню (padding: 8px 12px) колонка
+   меню становится шире 25%, и на flex-контейнере с flex-wrap: wrap форма
+   «уезжает» под меню (меню оказывается сверху страницы). На десктопе
+   фиксируем двухколоночную сетку без переноса: колонка меню схлопывается
+   до ширины своего контента (~247px), форма остаётся справа */
+@media (min-width: 768px) {
+  ${SK} .user-edit > .flex-row {
+    flex-wrap: nowrap !important;
+  }
 }
 /* разделитель секций настроек (#f3f4f6) */
 ${SK} .user-edit__settings-divider {
