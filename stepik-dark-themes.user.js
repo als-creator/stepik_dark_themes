@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.4
+// @version      2.9.5
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -139,7 +139,7 @@
         '--progress-bar': 'var(--sk-accent)',
         '--pulsar-color': 'var(--sk-accent)',
         '--rating-stars-active-color': 'var(--sk-warning)',
-        '--rating-stars-neutral-color': 'var(--sk-border)',
+        '--rating-stars-neutral-color': 'var(--sk-fg-muted)',
         '--focus-outline-color': 'rgba(100, 200, 255, 0.35)',
         '--stepik-loader-icon-bg-color': 'var(--sk-surface-2)',
         '--stepik-loader-icon-color': 'var(--sk-fg)',
@@ -249,7 +249,7 @@
         '--progress-bar': 'var(--sk-accent)',
         '--pulsar-color': 'var(--sk-accent)',
         '--rating-stars-active-color': 'var(--sk-warning)',
-        '--rating-stars-neutral-color': 'var(--sk-border)',
+        '--rating-stars-neutral-color': 'var(--sk-fg-muted)',
         '--focus-outline-color': 'rgba(100, 200, 255, 0.35)',
         '--stepik-loader-icon-bg-color': 'var(--sk-surface-2)',
         '--stepik-loader-icon-color': 'var(--sk-fg)',
@@ -485,7 +485,7 @@
       '--progress-indeterminate-color-2': 'rgba(233, 249, 233, 0.5)',
       '--pulsar-color': 'var(--sk-accent)',
       '--rating-stars-active-color': 'var(--sk-warning)',
-      '--rating-stars-neutral-color': 'var(--sk-border)',
+      '--rating-stars-neutral-color': 'var(--sk-fg-muted)',
       '--focus-outline-color': 'rgba(100, 200, 255, 0.35)',
       '--stepik-loader-icon-bg-color': 'var(--sk-surface-2)',
       '--stepik-loader-icon-color': 'var(--sk-fg)',
@@ -941,6 +941,17 @@ ${SK} .main-header, ${SK} .navbar {
   background-color: var(--sk-panel) !important;
   background-image: none !important;
   border-color: var(--sk-border) !important;
+}
+/* иконка поиска в шапке: поле поиска темнеет, а сама иконка остаётся
+   стоковой rgba(20,21,37,.6) и сливается. */
+${SK} .navbar__search-wrapper .search_icon,
+${SK} .navbar__search-form_mobile .search_icon {
+  color: var(--sk-fg-2) !important;
+}
+${SK} .navbar__search-wrapper:hover .search_icon,
+${SK} .navbar__search-wrapper:focus-within .search_icon,
+${SK} .navbar__search-form_mobile:hover .search_icon {
+  color: var(--sk-fg) !important;
 }
 /* кнопки в правом верхнем углу шапки: сердечко «В избранное» и счётчик
    стрика/прогресса. Стоковая ночная тема берёт фон #333
