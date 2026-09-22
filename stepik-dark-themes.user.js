@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.8.3
+// @version      2.8.4
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1572,6 +1572,14 @@ ${SK} .s-checkbox .s-checkbox__input:checked + .s-checkbox__border .s-checkbox__
   border-top-color: var(--sk-accent) !important;
   border-left-color: var(--sk-accent) !important;
 }
+/* текст вариантов ответа ДО отправки решения: сток красит его тёмным
+   #5e5e5e (в состоянии нет ответа варианты видны до проверки) — на тёмном
+   фоне шрифт не читается, осветляем текстом темы. */
+${SK} label.s-radio,
+${SK} .s-radio__label,
+${SK} .choice-quiz-show__option {
+  color: var(--sk-fg) !important;
+}
 /* Задание «сопоставить» (matching): сток рисует карточки пунктов и целей
    белыми (.dnd-quiz__item { background:#fff; border-color:#a5a5a5;
    border-radius:3px }) — на тёмной странице это белые прямоугольники, на
@@ -2126,6 +2134,28 @@ ${SK} .profile__nav[data-type="sidebar"] a.active {
   color: var(--sk-fg-2) !important;
 }
 ${SK} .profile__nav[data-type="sidebar"] a.active {
+  color: var(--sk-fg) !important;
+}
+/* рейтинг пользователей /leaders: сток красит саму таблицу белым (#fff) и
+   чередует строки со светло-серой #f9f9f9, а номера мест, очки и имена
+   (в овальных капсулах .leaders-list-item__user-avatar) — тёмными #222.
+   Таблица — в панель с чередованием строк, весь тёмный текст — текстом темы. */
+${SK} table.leaders-list {
+  background-color: var(--sk-panel) !important;
+}
+${SK} table.leaders-list tr.leaders-list-item:nth-child(odd) {
+  background-color: var(--sk-panel) !important;
+}
+${SK} table.leaders-list tr.leaders-list-item:nth-child(even) {
+  background-color: var(--sk-panel-2) !important;
+}
+${SK} .leaders-list-item__rank-num,
+${SK} .leaders-stat,
+${SK} .leaders-list-item__user-avatar {
+  color: var(--sk-fg) !important;
+}
+${SK} .leaders-list-item__user-avatar .user-avatar__name,
+${SK} .leaders-list-item__user-avatar .user-avatar__link {
   color: var(--sk-fg) !important;
 }
 
