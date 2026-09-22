@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.8.5
+// @version      2.8.6
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2082,33 +2082,34 @@ ${SK} .activity-graph .cal-heatmap-container .graph-legend rect {
   fill: var(--sk-bg-alt) !important;
   background-color: var(--sk-bg-alt) !important;
 }
-/* градация «пройденных» дней: раньше самый активный уровень (q4/q5)
-   красился в --sk-success (#83D683) — он светлее базового акцента, и
-   квадратики «слепили». Теперь ступени — это акцент темы разной
-   плотности (color-mix с transparent): от приглушённого к базовому
-   зелёному, но НЕ светлее него. Для браузеров без color-mix остаётся
-   первая (сплошная) пара значений. */
+/* градация «пройденных» дней: раньше ступени строились от базового
+   акцента (#66CC66) вплоть до него самого — квадратики выходили
+   светлыми и «слепили» на тёмной панели. Теперь лестница собрана из
+   тёмного акцента (--sk-accent-dark): от приглушённого к насыщенному
+   тёмно-зелёному, максимальный уровень — сам accent-dark, без светлых
+   --sk-success/акцента. Для браузеров без color-mix остаётся первая
+   (сплошная) пара значений. */
 ${SK} .activity-graph .cal-heatmap-container .q2 {
   fill: var(--sk-accent-dark) !important;
   background-color: var(--sk-accent-dark) !important;
-  fill: color-mix(in srgb, var(--sk-accent) 32%, transparent) !important;
-  background-color: color-mix(in srgb, var(--sk-accent) 32%, transparent) !important;
+  fill: color-mix(in srgb, var(--sk-accent-dark) 40%, transparent) !important;
+  background-color: color-mix(in srgb, var(--sk-accent-dark) 40%, transparent) !important;
 }
 ${SK} .activity-graph .cal-heatmap-container .q3 {
   fill: var(--sk-accent-dark) !important;
   background-color: var(--sk-accent-dark) !important;
-  fill: color-mix(in srgb, var(--sk-accent) 58%, transparent) !important;
-  background-color: color-mix(in srgb, var(--sk-accent) 58%, transparent) !important;
+  fill: color-mix(in srgb, var(--sk-accent-dark) 65%, transparent) !important;
+  background-color: color-mix(in srgb, var(--sk-accent-dark) 65%, transparent) !important;
 }
 ${SK} .activity-graph .cal-heatmap-container .q4 {
-  fill: var(--sk-accent) !important;
-  background-color: var(--sk-accent) !important;
-  fill: color-mix(in srgb, var(--sk-accent) 80%, transparent) !important;
-  background-color: color-mix(in srgb, var(--sk-accent) 80%, transparent) !important;
+  fill: var(--sk-accent-dark) !important;
+  background-color: var(--sk-accent-dark) !important;
+  fill: color-mix(in srgb, var(--sk-accent-dark) 88%, transparent) !important;
+  background-color: color-mix(in srgb, var(--sk-accent-dark) 88%, transparent) !important;
 }
 ${SK} .activity-graph .cal-heatmap-container .q5 {
-  fill: var(--sk-accent) !important;
-  background-color: var(--sk-accent) !important;
+  fill: var(--sk-accent-dark) !important;
+  background-color: var(--sk-accent-dark) !important;
 }
 /* плашка «Скрыт» в списке сертификатов (сток — светло-серый #b7b7b7) */
 ${SK} .cert-widget__badge {
