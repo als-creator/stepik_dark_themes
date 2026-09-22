@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.8.6
+// @version      2.8.7
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -730,11 +730,14 @@ ${SK} .search-form-filter__toggler {
   --search-form-filter-arrow-expanded-color: var(--sk-fg-2) !important;
   --search-form-filter-arrow-hover-color: var(--sk-fg) !important;
 }
-/* прочие поля ввода Stepik (сток — белые #fff), кроме строки поиска */
+/* прочие поля ввода Stepik (сток — белые #fff), кроме строки поиска.
+   Фон «чуть светлее» панели (panel-2), чтобы поле отличалось от канвы,
+   и контур-кольцо вокруг поля (стоковые рамки нулевой ширины) */
 ${SK} .st-input-wrapper:not(.st-input-wrapper_type_search) {
-  background-color: var(--sk-panel) !important;
+  background-color: var(--sk-panel-2) !important;
   border-color: var(--sk-border) !important;
   color: var(--sk-fg) !important;
+  box-shadow: 0 0 0 1px var(--sk-border) !important;
 }
 ${SK} .st-input-wrapper:not(.st-input-wrapper_type_search) .st-input {
   color: var(--sk-fg) !important;
@@ -764,6 +767,13 @@ ${SK} .the-form-field__caption {
 }
 ${SK} .new-course-form__note {
   color: var(--sk-fg-3) !important;
+}
+/* подписи-подсказки форм преподавания (/teach/lessons и др.): сток красит
+   тёмным #222/#5E5E5E — «Максимум 64 символа», «Для отправки платёжных
+   документов» и т.п.; осветляем текстом темы */
+${SK} .new-lesson-form__note,
+${SK} .the-form-field__footnote {
+  color: var(--sk-fg-2) !important;
 }
 /* боковые панели разделов «Моё обучение»/«Преподавание»/страницы курса:
    сток рисует прямоугольники во всю высоту колонки — скругляем как
@@ -1949,6 +1959,8 @@ ${SK} .user-edit .horizontal-scroll-menu-widget__link:focus {
 }
 ${SK} .user-edit__image-field {
   background-color: var(--sk-panel) !important;
+  border: 1px solid var(--sk-border) !important;
+  border-radius: 12px !important;
   /* сток .user-edit__page-wrapper .col-xs-12{padding-left:0} убирает отступ
      слева — аватар липнет к краю панели и выглядит обрезанным; возвращаем */
   padding: 16px !important;
@@ -1962,17 +1974,20 @@ ${SK} .user-edit__image-field-pic[data-is-avatar] {
   border-radius: 20px !important;
 }
 /* поля ввода/списки без обёртки .st-input-wrapper (например,
-   /edit-profile/info): сток — белые .st-input/.st-select */
+   /edit-profile/info): сток — белые .st-input/.st-select; фон чуть
+   светлее панели и контур-кольцо (см. также .st-input-wrapper) */
 ${SK} input.st-input, ${SK} textarea.st-input,
 ${SK} select.st-select, ${SK} .st-select {
-  background-color: var(--sk-panel) !important;
+  background-color: var(--sk-panel-2) !important;
   border-color: var(--sk-border) !important;
   color: var(--sk-fg) !important;
+  box-shadow: 0 0 0 1px var(--sk-border) !important;
 }
 ${SK} input.st-input:focus, ${SK} textarea.st-input:focus,
 ${SK} select.st-select:focus, ${SK} .st-select:focus {
   background-color: var(--sk-panel-2) !important;
   border-color: var(--sk-accent) !important;
+  box-shadow: 0 0 0 1px var(--sk-accent) !important;
 }
 ${SK} input.st-input::placeholder, ${SK} textarea.st-input::placeholder {
   color: var(--sk-fg-3) !important;
@@ -1990,11 +2005,14 @@ ${SK} .s-checkbox .s-checkbox__label {
   color: var(--sk-fg-2) !important;
 }
 /* левое меню настроек: сток — белая плашка и тёмный текст #222
-   (активный пункт «Редактировать профиль» не читался на тёмном фоне) */
+   (активный пункт «Редактировать профиль» не читался на тёмном фоне).
+   Оформляем карточкой: панель + рамка со всех сторон + скругление 12px
+   (сток давал только тонкие линии сверху/снизу), активный пункт — пилюля */
 ${SK} .user-edit-menu__links {
   background-color: var(--sk-panel) !important;
-  border-top-color: var(--sk-border) !important;
-  border-bottom-color: var(--sk-border) !important;
+  border: 1px solid var(--sk-border) !important;
+  border-radius: 12px !important;
+  padding: 4px 2px !important;
 }
 ${SK} .user-edit-menu__links a {
   --link-color: var(--sk-fg-2) !important;
@@ -2002,14 +2020,36 @@ ${SK} .user-edit-menu__links a {
   --link-active-color: var(--sk-fg) !important;
   --link-line-color: transparent !important;
   color: var(--sk-fg-2) !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
 }
 ${SK} .user-edit-menu__links a.active {
   --link-color: var(--sk-fg) !important;
   color: var(--sk-fg) !important;
+  background-color: var(--sk-bg-alt) !important;
 }
 /* разделитель секций настроек (#f3f4f6) */
 ${SK} .user-edit__settings-divider {
   border-top-color: var(--sk-border) !important;
+}
+/* подписи форм раздела редактирования профиля (сток #5e5e5e): «Ваше имя»,
+   «Фамилия», «Язык», «Аватарка», «Обложка», строки соцсетей и т.п. */
+${SK} .user-edit__page-wrapper label.st-size-normal,
+${SK} .user-edit__social-base-url {
+  color: var(--sk-fg-2) !important;
+}
+/* иконки соцсетей в форме (.profile-social-icon): сток — брендовые
+   логотипы, у многих (github, skype, website) тёмный/чёрный знак — на
+   тёмной панели не виден; контраст-инверсия как у соцсетей подвала */
+${SK} .profile-social-icon {
+  filter: grayscale(1) invert(1) brightness(1.5) !important;
+}
+/* disabled-кнопки «Загрузить»/«Убрать» у обложки профиля: сток — бледно-
+   синий rgba(68,133,237,.5), на тёмном фоне сливается; серым текста темы.
+   Селектор с контекстом и .btn-link, чтобы перебить общее правило кнопок
+   [disabled] (html[data-sk-theme] button:not(...)[disabled]) */
+${SK} .user-edit__image-field .user-edit__image-upload.btn-link:disabled {
+  color: var(--sk-fg-3) !important;
 }
 ${SK} .user-financial-details-form .the-form-field__char-counter {
   background: var(--sk-panel) !important;
@@ -2026,9 +2066,12 @@ ${SK} .user-revenue__report[data-type-badge] {
   background-color: var(--sk-panel) !important;
   color: var(--sk-fg-2) !important;
 }
+/* заблокированные поля реквизитов (#fff): фон панель-2, а текст значения
+   (например, «Контактный email») — светлый fg-2, чтобы введённое было
+   читаемо («тёмный на тёмном»), но поле выглядело неактивным */
 ${SK} .user-financial-details-form .the-form-field input.st-input[disabled] {
   background-color: var(--sk-panel-2) !important;
-  color: var(--sk-fg-muted) !important;
+  color: var(--sk-fg-2) !important;
   border-color: var(--sk-border) !important;
 }
 /* тёмные подписи профиля: счётчики и их цифры, вкладка «Профиль»,
