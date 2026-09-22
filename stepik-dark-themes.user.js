@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.8.8
+// @version      2.8.9
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2002,6 +2002,12 @@ ${SK} .s-checkbox .s-checkbox__input:focus + .s-checkbox__border {
   border-color: var(--sk-accent) !important;
 }
 ${SK} .s-checkbox .s-checkbox__label {
+  color: var(--sk-fg-2) !important;
+}
+/* чекбоксы-заголовки строк форм без внутреннего span.s-checkbox__label
+   (например, подписи «Приватность» и «Программа бета‑тестирования» в
+   редактировании профиля): сток #5e5e5e — осветляем как остальные подписи */
+${SK} label.s-checkbox {
   color: var(--sk-fg-2) !important;
 }
 /* левое меню настроек: сток — белая плашка и тёмный текст #222
