@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.8
+// @version      2.9.9
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1168,6 +1168,17 @@ ${SK} button.course-card__bookmark.is-wishlist-added:not(.st-button_style_none) 
 ${SK} img.course-card__cover[src*="course_cover"],
 ${SK} .item-tile__cover-img[src*="course_cover"] {
   filter: invert(1) !important;
+}
+/* Обложки/иконки курсов с прозрачным фоном: тёмный логотип на прозрачном
+   не читается на тёмном канвасе (например курс 279297). Сканер skFixCovers
+   читает пиксели и вешает класс: тёмный логотип -> светлый «логотип-тайл»
+   (как на светлых карточках day-темы), светлая иконка -> тёмный тайл
+   панели; полноцветные фото остаются без изменений. */
+${SK} .sk-cover-dark {
+  background-color: #ffffff !important;
+}
+${SK} .sk-cover-light {
+  background-color: var(--sk-panel-2) !important;
 }
 /* карточка курса в режиме «список» (промо/каталог, data-view="search-item"):
    сток даёт padding:24px 0 — обложка и цена/«Вы записаны» прижаты к самым
@@ -2758,6 +2769,84 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     }
   }
 
+  /* Обложки/иконки курсов с прозрачным фоном. Сток на светлой теме показывает
+   * их на белых карточках, у нас канвас тёмный — тёмный логотип на прозрачном
+   * не виден (курс 279297). Читаем пиксели через canvas и вешаем класс тайла:
+   * тёмный логотип -> светлый тайл (.sk-cover-dark), светлая иконка -> тёмный
+   * тайл (.sk-cover-light), полноцветные фото не трогаем. */
+  const skCoverCache = {}; /* src -> 'dark' | 'light' | 'photo' | 'err' */
+  function skCoverAnalyze(url) {
+    return fetch(url)
+      .then((r) => (r.ok ? r.blob() : null))
+      .then((blob) => {
+        if (!blob) return 'err';
+        return createImageBitmap(blob).then((bmp) => {
+          try {
+            const cv = document.createElement('canvas');
+            cv.width = bmp.width;
+            cv.height = bmp.height;
+            const ctx = cv.getContext('2d', { willReadFrequently: true });
+            ctx.drawImage(bmp, 0, 0);
+            const d = ctx.getImageData(0, 0, cv.width, cv.height).data;
+            let n = 0, alpha = 0, lumSum = 0;
+            for (let i = 0; i < d.length; i += 4) {
+              const a = d[i + 3] / 255;
+              alpha += a;
+              lumSum += (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) * a;
+              n++;
+            }
+            const coverage = alpha / n;
+            const mean = lumSum / Math.max(alpha, 1e-6);
+            if (coverage < 0.55) return mean < 150 ? 'dark' : 'light';
+            return 'photo';
+          } finally {
+            if (bmp.close) bmp.close();
+          }
+        });
+      })
+      .catch(() => 'err');
+  }
+  function skFixCovers() {
+    let els;
+    try {
+      els = document.querySelectorAll(
+        'img.course-promo__course-cover, img.course-card__cover, ' +
+          '.item-tile__cover-img, img[src*="/media/cache/images/courses/"], ' +
+          'img[src*="/media/courses/"]:not([data-sk-cover-fixed])'
+      );
+    } catch (e) { return; }
+    for (let i = 0; i < els.length; i++) {
+      const el = els[i];
+      const src = el.getAttribute('src') || '';
+      if (!src || src.indexOf('course_cover') !== -1) {
+        el.setAttribute('data-sk-cover-fixed', '1');
+        continue;
+      }
+      const apply = (kind) => {
+        if (kind === 'dark') el.classList.add('sk-cover-dark');
+        else if (kind === 'light') el.classList.add('sk-cover-light');
+      };
+      if (skCoverCache[src]) {
+        apply(skCoverCache[src]);
+        el.setAttribute('data-sk-cover-fixed', '1');
+      } else {
+        const res = skCoverAnalyze(src);
+        if (res && typeof res.then === 'function') {
+          Promise.resolve(res).then((kind) => {
+            skCoverCache[src] = kind;
+            /* элемент мог уйти из DOM, пока шёл анализ */
+            if (el.isConnected) apply(kind);
+            el.setAttribute('data-sk-cover-fixed', '1');
+          });
+        } else {
+          skCoverCache[src] = res;
+          apply(res);
+          el.setAttribute('data-sk-cover-fixed', '1');
+        }
+      }
+    }
+  }
+
   function init() {
     applyTheme(currentTheme(), true);
     ensurePicker();
@@ -2773,13 +2862,13 @@ ${SK} .horizontal-scroller__scroll-btn:active {
       getStyleEl().textContent = buildCss(initialTheme);
     } catch (e) { /* noop */ }
     /* CKEditor и инлайновые цвета появляются асинхронно — догоняем */
-    try { skFixEditors(); skFixInlineColors(); } catch (e) { /* noop */ }
+    try { skFixEditors(); skFixInlineColors(); skFixCovers(); } catch (e) { /* noop */ }
     /* В юзерскрипте штатный setInterval держим только там, где есть DOM
      * (в тестовом Node-харнессе querySelectorAll отсутствует — иначе
      * таймер не даёт процессу завершиться). */
     if (typeof document.querySelectorAll === 'function') {
       try {
-        setInterval(() => { try { skFixEditors(); skFixInlineColors(); } catch (e) { /* noop */ } }, 1500);
+        setInterval(() => { try { skFixEditors(); skFixInlineColors(); skFixCovers(); } catch (e) { /* noop */ } }, 1500);
       } catch (e) { /* noop */ }
     }
   }
