@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.5
+// @version      2.9.6
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2595,6 +2595,11 @@ ${SK} .horizontal-scroller__scroll-btn:active {
    * достаёт, а переменные темы там не определены — переносим конкретные
    * цвета и подкрашиваем документ внутри фрейма. */
   function skFixEditors() {
+    /* Нет CKEditor-фреймов (обычный урок/страница) — выходим сразу,
+       не собирая переменные и строку CSS каждый тик интервала. */
+    let frames;
+    try { frames = document.querySelectorAll('iframe.cke_wysiwyg_frame'); } catch (e) { return; }
+    if (frames.length === 0) return;
     const cs = getComputedStyle(document.documentElement);
     const get = (n, d) => (cs.getPropertyValue(n) || '').trim() || d;
     const panel = get('--sk-panel', '#282b41');
@@ -2609,8 +2614,6 @@ ${SK} .horizontal-scroller__scroll-btn:active {
       + 'code,pre,kbd,tt{background:' + codeBg + ' !important;color:' + codeFg + ' !important;border-color:' + border + ' !important;}'
       + 'blockquote,hr{border-color:' + border + ' !important;}'
       + 'table,td,th{border-color:' + border + ' !important;}';
-    let frames;
-    try { frames = document.querySelectorAll('iframe.cke_wysiwyg_frame'); } catch (e) { return; }
     for (let i = 0; i < frames.length; i++) {
       let doc = null;
       try { doc = frames[i].contentDocument; } catch (e) { continue; }
@@ -2634,9 +2637,11 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
   }
   function skFixInlineColors() {
+    /* Уже исправленные узлы помечаются data-sk-inline-fixed=1 — исключаем
+       их прямо в селекторе, чтобы каждый тик интервала не перебирал их. */
     let nodes;
     try {
-      nodes = document.querySelectorAll('.html-content [style*="color"], .step-text-wrapper [style*="color"], .rich-text-viewer [style*="color"], .show-more__content [style*="color"], .course-promo__description [style*="color"], .profile__header-details [style*="color"]');
+      nodes = document.querySelectorAll('.html-content [style*="color"]:not([data-sk-inline-fixed]), .step-text-wrapper [style*="color"]:not([data-sk-inline-fixed]), .rich-text-viewer [style*="color"]:not([data-sk-inline-fixed]), .show-more__content [style*="color"]:not([data-sk-inline-fixed]), .course-promo__description [style*="color"]:not([data-sk-inline-fixed]), .profile__header-details [style*="color"]:not([data-sk-inline-fixed])');
     } catch (e) { return; }
     for (let i = 0; i < nodes.length; i++) {
       const el = nodes[i];
