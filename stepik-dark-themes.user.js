@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.1
+// @version      2.9.2
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1917,10 +1917,30 @@ ${SK} .grecaptcha-badge {
   filter: invert(1) hue-rotate(180deg) !important;
 }
 
-/* ================= ВИДЕО (минимальный штрих) =================
-   Видео-плеер video.js сам по себе тёмный; ночная тема Stepik его
-   не трогает. Убираем возможные светлые фоны контейнера. */
+/* ================= ВИДЕО =================
+   Плеер video.js сам по себе тёмный, но Stepik-скин красит нижнюю панель
+   управления .vjs-control-bar в #eee с чёрными иконками — внизу окна плеера
+   висит белая полоса. Красим панелью и светлыми иконками. */
 ${SK} .video-player__container, ${SK} .video-player { background-color: var(--sk-bg) !important; }
+${SK} .vjs-control-bar {
+  background-color: var(--sk-panel-2) !important;
+  color: var(--sk-fg-2) !important;
+}
+${SK} .vjs-control-bar .vjs-button,
+${SK} .vjs-control-bar .vjs-icon-placeholder {
+  color: var(--sk-fg) !important;
+}
+${SK} .vjs-control-bar .vjs-button:hover,
+${SK} .vjs-control-bar .vjs-button:hover .vjs-icon-placeholder {
+  color: var(--sk-accent) !important;
+}
+${SK} .vjs-play-progress,
+${SK} .vjs-volume-level {
+  background-color: var(--sk-accent) !important;
+}
+${SK} .vjs-load-progress {
+  background-color: var(--sk-accent-dark) !important;
+}
 
 /* ================= ЛОГОТИПЫ =================
    Логотип в шапке (topbar_logo.svg) уже белый: вордмарк + иконка с тёмной
