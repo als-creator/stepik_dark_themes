@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.14
+// @version      2.9.15
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1885,7 +1885,8 @@ ${SK} .rich-text-viewer blockquote {
 }
 ${SK} .rich-text-viewer a, ${SK} .step-text-wrapper a { color: var(--sk-blue) !important; }
 ${SK} .rich-text-viewer a:hover, ${SK} .step-text-wrapper a:hover { color: var(--sk-blue-dark) !important; }
-${SK} .rich-text-viewer code, ${SK} .step-text-wrapper code {
+${SK} .rich-text-viewer code, ${SK} .step-text-wrapper code,
+${SK} .choice-quiz-show__option code, ${SK} .s-radio__label code {
   background-color: var(--sk-code-bg) !important;
   color: var(--sk-code-fg) !important;
   border-color: var(--sk-border) !important;
@@ -2066,6 +2067,25 @@ ${SK} .code-editor-header__button:hover .svg-icon {
    на тёмных панелях. */
 ${SK} .select-box__toggle-btn .sort_icon {
   color: var(--sk-fg-2) !important;
+}
+/* Загрузка/фолбэк редактора кода: пока CodeMirror инициализируется (стартовый
+   код ещё не пришёл), Stepik показывает обычный textarea с хардкод-светлыми
+   фонами (#f5f5f5 / #fff, рамки #ccc) и лоадер-спиннер — в тёмной теме это
+   белое «окно» мелькает до прогрузки. Красим сразу в палитру кода. */
+${SK} .code-editor__textarea,
+${SK} .attempt-wrapper .textarea,
+${SK} .attempt-wrapper .autoresize-textarea {
+  background-color: var(--sk-code-bg) !important;
+  color: var(--sk-code-fg) !important;
+  border-color: var(--sk-border) !important;
+}
+${SK} .code-editor:not(.is-ready) .code-editor__loader {
+  background-color: var(--sk-code-bg) !important;
+  color: var(--sk-fg-2) !important;
+}
+${SK} .CodeMirror-scrollbar-filler,
+${SK} .CodeMirror-gutter-filler {
+  background-color: var(--sk-code-bg) !important;
 }
 
 /* ================= ТОСТЫ =================
@@ -2569,124 +2589,6 @@ ${SK} .horizontal-scroller__scroll-btn:active {
   background-color: var(--sk-border) !important;
 }
 
-/* ================= СВЕТЛЫЕ РАБОЧИЕ ПОВЕРХНОСТИ (запрошено) =================
-   Поле кода, вывод консоли, поля «ввод/вывод» примеров, поле ответа и
-   навигация урока юзеру кажутся слишком тёмными — делаем их как в дневной
-   теме: белые/светло-серые с тёмным текстом. Блок стоит в конце файла,
-   чтобы перебивать более ранние тёмные правила редактора и сайдбара. */
-${SK} .code-editor-quiz__editor,
-${SK} .editor-with-runner__editor,
-${SK} .CodeMirror,
-${SK} .code-editor,
-${SK} .code-runner,
-${SK} .code-runner__hints,
-${SK} .split-view__right,
-${SK} .split-view__actions-panel,
-${SK} .html-quiz__code-editor .CodeMirror {
-  background-color: #ffffff !important;
-  color: #222222 !important;
-}
-${SK} .CodeMirror-gutters {
-  background-color: #f6f7f9 !important;
-  border-right-color: #e3e3e3 !important;
-}
-${SK} .CodeMirror-linenumber { color: #9b9b9b !important; }
-${SK} .CodeMirror-cursor { border-left-color: #333333 !important; }
-${SK} .CodeMirror-selected,
-${SK} .CodeMirror-line::selection,
-${SK} .CodeMirror-line > span::selection { background: #d6d6f7 !important; }
-${SK} .CodeMirror-activeline-background { background: #f2f2f7 !important; }
-/* синтаксис — стандартные «дневные» цвета CodeMirror */
-${SK} .cm-keyword { color: #708 !important; }
-${SK} .cm-string, ${SK} .cm-string-2 { color: #a11 !important; }
-${SK} .cm-comment { color: #a50 !important; font-style: italic; }
-${SK} .cm-number, ${SK} .cm-atom { color: #164 !important; }
-${SK} .cm-def, ${SK} .cm-variable-2 { color: #05a !important; }
-${SK} .cm-type, ${SK} .cm-variable-3 { color: #085 !important; }
-${SK} .cm-operator { color: #a67f59 !important; }
-${SK} .cm-property, ${SK} .cm-tag, ${SK} .cm-variable { color: #222222 !important; }
-${SK} .cm-attribute { color: #00c !important; }
-${SK} .cm-meta { color: #555555 !important; }
-/* шапка редактора и вкладки файлов */
-${SK} .code-editor-header {
-  background-color: #f6f6f6 !important;
-  border-color: #e3e3e3 !important;
-  color: #222222 !important;
-}
-${SK} .code-editor-tabs__tab {
-  background-color: #e9e9e9 !important;
-  color: #4b4b4b !important;
-  border-color: #d9d9d9 !important;
-}
-${SK} .code-editor-tabs__tab.active {
-  background-color: #ffffff !important;
-  color: #222222 !important;
-}
-${SK} .code-editor-header .select-box,
-${SK} .code-editor-header .select-box__toggle-btn {
-  color: #4b4b4b !important;
-}
-/* иконки в светлой шапке — тёмные (раньше светлые для тёмной панели) */
-${SK} .code-editor-header .copy-code-btn svg,
-${SK} .code-editor-header .copy-code-btn .svg-icon,
-${SK} .code-editor-header__button,
-${SK} .code-editor-header__button .svg-icon,
-${SK} .code-editor-header .select-box__toggle-btn .sort_icon,
-${SK} .code-editor-header .select-box .svg-icon {
-  color: #5e5e5e !important;
-}
-${SK} .code-editor-header .copy-code-btn:hover svg,
-${SK} .code-editor-header .copy-code-btn:hover .svg-icon,
-${SK} .code-editor-header__button:hover,
-${SK} .code-editor-header__button:hover .svg-icon {
-  color: #222222 !important;
-}
-/* вывод консоли и поле ввода под ним */
-${SK} .code-quiz__run-panel .code-runner__input {
-  background-color: #ffffff !important;
-  color: #222222 !important;
-  border-color: #d0d0d0 !important;
-}
-/* примеры «ввод → вывод» в квизе */
-${SK} .attempt-wrapper-samples,
-${SK} .attempt-wrapper-samples__data-row-content,
-${SK} .attempt-wrapper-samples__data-row-code,
-${SK} .attempt-wrapper-samples__header-row {
-  border-color: #e3e3e3 !important;
-}
-${SK} .attempt-wrapper-samples__data-row-content {
-  background-color: #f6f6f6 !important;
-  color: #333333 !important;
-}
-${SK} .attempt-wrapper-samples__data-row-text,
-${SK} .attempt-wrapper-samples__data-row-code,
-${SK} .attempt-wrapper-samples__header-row {
-  color: #333333 !important;
-}
-/* текстовое поле ответа в квизе */
-${SK} .attempt-wrapper textarea,
-${SK} .attempt-wrapper .st-textarea,
-${SK} .attempt-wrapper input[type="text"],
-${SK} .attempt-wrapper input[type="number"] {
-  background-color: #ffffff !important;
-  color: #222222 !important;
-  border-color: #d0d0d0 !important;
-}
-/* навигация урока (левый сайдбар «Содержание» и нижняя панель) — светлая */
-${SK} .lesson-sidebar, ${SK} .lesson-sidebar__wrapper, ${SK} .lesson-sidebar__menu,
-${SK} .lesson-sidebar__content, ${SK} .lesson-toc, ${SK} .lesson-controls {
-  background-color: #ffffff !important;
-}
-${SK} .lesson-sidebar, ${SK} .lesson-sidebar__wrapper, ${SK} .lesson-sidebar__menu,
-${SK} .lesson-sidebar__content, ${SK} .lesson-toc, ${SK} .lesson-sidebar__header,
-${SK} .lesson-controls {
-  color: #222222 !important;
-}
-${SK} .lesson-sidebar a:not(.button), ${SK} .lesson-toc a,
-${SK} .lesson-sidebar__course-title, ${SK} .lesson-sidebar__lesson {
-  color: #222222 !important;
-}
-${SK} .lesson-sidebar__lock-icon { color: #5e5e5e !important; }
 `;
   }
 
