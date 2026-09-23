@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.9
+// @version      2.9.10
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -895,15 +895,24 @@ ${SK} .navbar__profile-img,
 ${SK} .comment__avatar,
 ${SK} .comments-user-badge__avatar,
 ${SK} .course-author__avatar,
-${SK} .user-avatar,
+${SK} .user-avatar:not(.leaders-list-item__user-avatar),
 ${SK} .avatar {
   box-shadow: 0 0 0 1px var(--sk-border-2) !important;
 }
+/* Большой аватар в шапке профиля (.profile-avatar.profile__avatar) — это,
+   как правило, квадратный логотип организации 150×150 со своим скруглением:
+   контрастное кольцо вокруг него выглядит как чужая рамка — снимаем. */
+${SK} .profile-avatar.profile__avatar {
+  box-shadow: none !important;
+}
 /* обёртка .user-avatar сама по себе квадратная (border-radius:0), поэтому
    круглая рамка-тень выглядела как квадратное поле вокруг аватара.
-   Скругляем обёртку и ссылку — тень повторяет круг, как у картинки. */
-${SK} .user-avatar,
-${SK} .user-avatar__link {
+   Скругляем обёртку и ссылку — тень повторяет круг, как у картинки.
+   Капсула рейтинга .leaders-list-item__user-avatar — это НЕ аватар: она
+   широкая (фото + фамилия в ряд), скругление в 50% и кольцо превращали
+   её в овал вокруг фамилии — исключена селектором :not(). */
+${SK} .user-avatar:not(.leaders-list-item__user-avatar),
+${SK} .user-avatar:not(.leaders-list-item__user-avatar) .user-avatar__link {
   border-radius: 50% !important;
 }
 
