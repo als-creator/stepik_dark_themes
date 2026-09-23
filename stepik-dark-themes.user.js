@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.15
+// @version      2.9.16
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1618,27 +1618,27 @@ ${SK} .m-step-pin[data-is-passed] .step-pin-icon__icon {
 ${SK} .m-step-pin[data-is-passed]:hover .step-pin-icon__icon {
   color: var(--sk-on-surface) !important;
 }
-/* «Квадратики» шагов в шапке урока (.player-topbar__step-pins): сток
-   заливает их всем #5e5e5e — на тёмной шапке (#282B41) весь ряд
-   сливается. Повторяем состояния ночной темы Stepik: будущий шаг —
-   нейтральный bg-level-03, активный — светлая поверхность, пройденный —
-   зелёный акцент, случайный экзамен — лавандовый. */
-${SK} .player-topbar__step-pins .m-step-pin:not([data-is-passed]) {
-  background-color: var(--theme-color-bg-level-03) !important;
+/* «Квадратики» шагов в шапке урока — тёмные, как в стоке, без белого:
+   будущие и текущий пины тёмно-серые (#5e5e5e, «дефолтные»), пройденные —
+   штатно-зелёные (#6c6), случайный экзамен — фирменный полупрозрачный
+   тёмный фон (сток rgba(94,94,94,.5)); лаванда остаётся только экзаменам
+   с попыткой (сток #9fa8e2). Активный пин отличается от будущих лишь
+   тёмным кольцом-рамкой, а не белой заливкой и белым кольцом (#fff),
+   как было с 2.9.12. */
+${SK} .player-topbar__step-pins .m-step-pin:not([data-is-passed]),
+${SK} .player-navbar .m-step-pin[data-is-active]:not([data-is-passed]) {
+  background-color: #5e5e5e !important;
 }
 ${SK} .player-topbar__step-pins .m-step-pin[data-is-active]:not([data-is-passed]) {
-  background-color: var(--theme-color-bg-surface2) !important;
+  box-shadow: 0 0 0 1px var(--sk-border-2), inset 0 0 0 1px var(--sk-border-2) !important;
 }
 ${SK} .player-topbar__step-pins .m-step-pin[data-is-random-exam][data-is-active] {
-  background-color: var(--theme-color-base-accent2-1) !important;
+  background-color: rgba(94, 94, 94, 0.5) !important;
 }
-/* активный пин светлый (bg-surface2) или лавандовый — иконка на нём
-   должна быть тёмной, наш общий fg-2 на белом «светится»; покрывает и
-   пины старого player-navbar, где активный тоже белый */
-${SK} .m-step-pin[data-is-active] .step-pin-icon__icon,
-${SK} .m-step-pin[data-is-active]:hover .step-pin-icon__icon {
-  color: var(--sk-on-surface) !important;
-}
+/* активный пин тёмный — иконка на нём светлая, как на остальных
+   не-пройденных; пройденные зелёные — иконка тёмная (--sk-on-surface
+   выше по файлу). Тёмную иконку на активном пине больше не ставим —
+   белой заливки у него больше нет. */
 /* замочки недоступных уроков в сайдбаре (сток #5e5e5e) */
 ${SK} .lesson-sidebar__lock-icon {
   color: var(--sk-fg-2) !important;
