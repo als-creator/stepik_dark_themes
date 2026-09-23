@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.16
+// @version      2.9.17
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2067,6 +2067,25 @@ ${SK} .code-editor-header__button:hover .svg-icon {
    на тёмных панелях. */
 ${SK} .select-box__toggle-btn .sort_icon {
   color: var(--sk-fg-2) !important;
+}
+/* Загрузка/фолбэк редактора кода: пока CodeMirror инициализируется (стартовый
+   код ещё не пришёл), Stepik показывает обычный textarea с хардкод-светлыми
+   фонами (#f5f5f5 / #fff, рамки #ccc) и лоадер-спиннер — в тёмной теме это
+   белое «окно» мелькает до прогрузки. Красим сразу в палитру кода. */
+${SK} .code-editor__textarea,
+${SK} .attempt-wrapper .textarea,
+${SK} .attempt-wrapper .autoresize-textarea {
+  background-color: var(--sk-code-bg) !important;
+  color: var(--sk-code-fg) !important;
+  border-color: var(--sk-border) !important;
+}
+${SK} .code-editor:not(.is-ready) .code-editor__loader {
+  background-color: var(--sk-code-bg) !important;
+  color: var(--sk-fg-2) !important;
+}
+${SK} .CodeMirror-scrollbar-filler,
+${SK} .CodeMirror-gutter-filler {
+  background-color: var(--sk-code-bg) !important;
 }
 
 /* ================= ТОСТЫ =================
