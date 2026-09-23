@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.16
+// @version      2.9.17
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1601,14 +1601,10 @@ ${SK} .quiz-layout, ${SK} .quiz-layout-head {
   color: var(--sk-fg) !important;
   border-color: var(--sk-border) !important;
 }
-/* пины «закреплённых шагов» в верхней панели плеера: значки типов шагов
-   сток рисует rgba(0,0,0,.5) — на тёмном топбаре почти не видны */
-${SK} .step-pin-icon__icon {
-  color: var(--sk-fg-2) !important;
-}
-${SK} .m-step-pin:hover .step-pin-icon__icon {
-  color: var(--sk-accent) !important;
-}
+/* Иконки-значки типов шагов в пинах (.step-pin-icon__icon) — по умолчанию,
+   как в светлой теме: сток красит их из --step-pin-icon-color
+   (rgba(0,0,0,.5) на тёмно-сером пине). Раньше скрипт перекрашивал их
+   в светлый fg-2 (и в акцент при наведении) — возвращаем стоковый вид. */
 /* Пройденные шаги: пин заливается зелёным (акцент), светлая иконка
    (fg-2) на нём «светится» и теряется. Как в ночной теме Stepik —
    значок на цветной плашке тёмный (fg-oncolorbg = on-surface). */
