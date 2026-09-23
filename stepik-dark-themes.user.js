@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.13
+// @version      2.9.14
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1552,11 +1552,31 @@ ${SK} meter[value="0"] {
   --meter-background-empty: var(--sk-bg-alt) !important;
   --meter-color: var(--sk-accent) !important;
 }
-/* миниатюра-заглушка урока (сток — светлый SVG #eee/#ccc, на тёмной
-   панели светится белым квадратом): гасим яркость картинки */
-${SK} .lesson-widget__cover-image {
+/* Миниатюры-обложки уроков в содержании курса (45×45 — «большие иконки»
+   списка уроков). Раньше гасили яркость картинки фильтром
+   grayscale+brightness(0.3) — на тёмной панели цветные обложки
+   превращались в почти чёрные квадраты. Теперь подложку делаем тёмной
+   (для картинок с прозрачным фоном), а саму обложку оставляем с родными
+   цветами; тёмный логотип на прозрачном фоне получает светлый тайл от
+   сканера skFixCovers (класс .sk-cover-dark), как обложки курсов. */
+${SK} .lesson-widget__cover-image,
+${SK} .future-lesson-widget__cover {
   background-color: var(--sk-bg-alt) !important;
-  filter: grayscale(1) brightness(0.3) !important;
+}
+/* штатная заглушка урока (lesson_cover.svg, светлый SVG на прозрачном) —
+   лёгкое приглушение, без превращения соседних обложек в тёмные квадраты */
+${SK} .lesson-widget__cover-image[style*="lesson_cover"],
+${SK} .future-lesson-widget__cover[style*="lesson_cover"] {
+  filter: brightness(0.85) !important;
+}
+/* тайлы от сканера skFixCovers: специфичнее базового правила панели */
+${SK} .lesson-widget__cover-image.sk-cover-dark,
+${SK} .future-lesson-widget__cover.sk-cover-dark {
+  background-color: #ffffff !important;
+}
+${SK} .lesson-widget__cover-image.sk-cover-light,
+${SK} .future-lesson-widget__cover.sk-cover-light {
+  background-color: var(--sk-panel-2) !important;
 }
 /* заголовки содержания в новом интерфейсе (не цвет карточки курса) */
 ${SK} .toc-promo-lesson__title {
@@ -2955,22 +2975,35 @@ ${SK} .lesson-sidebar__lock-icon { color: #5e5e5e !important; }
       })
       .catch(() => 'err');
   }
+  /* Миниатюры-обложки уроков в содержании курса (45×45) Stepik ставит
+   * фоном через background-image, а не <img>, — ловим их тем же сканером,
+   * чтобы тёмный логотип на прозрачном фоне не пропадал на тёмной панели. */
+  function skBgUrl(raw) {
+    const m = /url\((['"]?)([^'")]+)\1\)/.exec(String(raw || ''));
+    return m ? m[2] : '';
+  }
   function skFixCovers() {
     let els;
     try {
       els = document.querySelectorAll(
         'img.course-promo__course-cover, img.course-card__cover, ' +
           '.item-tile__cover-img, img[src*="/media/cache/images/courses/"], ' +
-          'img[src*="/media/courses/"]:not([data-sk-cover-fixed])'
+          'img[src*="/media/courses/"]:not([data-sk-cover-fixed]), ' +
+          '.lesson-widget__cover-image:not([data-sk-cover-fixed]), ' +
+          '.future-lesson-widget__cover:not([data-sk-cover-fixed])'
       );
     } catch (e) { return; }
     for (let i = 0; i < els.length; i++) {
       const el = els[i];
-      const src = el.getAttribute('src') || '';
-      if (!src || src.indexOf('course_cover') !== -1) {
+      let src = el.getAttribute('src') || '';
+      if (!src) src = skBgUrl(el.style.backgroundImage || '');
+      if (src.indexOf('course_cover') !== -1 || src.indexOf('lesson_cover') !== -1) {
         el.setAttribute('data-sk-cover-fixed', '1');
         continue;
       }
+      /* скелетон ещё грузится (url нет) — не фиксируем, проверим в следующем
+         тике, когда подтянется настоящая обложка */
+      if (!src) continue;
       const apply = (kind) => {
         if (kind === 'dark') el.classList.add('sk-cover-dark');
         else if (kind === 'light') el.classList.add('sk-cover-light');
