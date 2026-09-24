@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.17
+// @version      2.9.18
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -640,6 +640,18 @@ ${SK} .teach-nav__menu {
   --menu-item-selected-background: var(--sk-panel-2) !important;
   --menu-item-active-background: var(--sk-panel-2) !important;
   --menu-item-hover-background: var(--sk-panel-2) !important;
+}
+
+/* Баннер в верхней части сайдбаров /learn и /teach рисует компонент
+ * image-by-time-of-day: он подставляет картинку по времени суток
+ * (header-img-morning/day/evening/night.png), а не по теме юзерскрипта,
+ * поэтому на тёмном фоне висит светлый «утренний» вариант (негатив).
+ * Подменять на ночной файл хрупко — Stepik уже раз менял имена слотов —
+ * а баннер чисто декоративный, без функциональной нагрузки: скрываем
+ * контейнер целиком (вместе с его нижним отступом 24px). */
+${SK} .learn-nav__header-img,
+${SK} .teach-nav__header-img {
+  display: none !important;
 }
 
 /* ================= СТРОКА ПОИСКА НА ГЛАВНОЙ / КАТАЛОГ =================
@@ -2927,31 +2939,6 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     }
   }
 
-  /* Баннер в шапке сайдбара /learn и /teach рисует компонент
-   * image-by-time-of-day: он подставляет дневную/ночную картинку по
-   * времени суток, а не по теме юзерскрипта, поэтому на тёмном фоне
-   * висит светлая header-img-day.png («негатив»). Активному <img>
-   * меняем src/srcset на ночной вариант (Stepik отдаёт его штатно). */
-  function skFixLearnBanner() {
-    let els;
-    try {
-      els = document.querySelectorAll(
-        '.learn-nav__header-img img[data-active], .teach-nav__header-img img[data-active]'
-      );
-    } catch (e) { return; }
-    for (let i = 0; i < els.length; i++) {
-      const el = els[i];
-      const src = el.getAttribute('src') || '';
-      if (src.indexOf('header-img-day') === -1) continue;
-      el.setAttribute('src', 'https://stepik.org/static/frontend/learning/header-img-night.png');
-      el.setAttribute(
-        'srcset',
-        'https://stepik.org/static/frontend/learning/header-img-night.png 1x, ' +
-          'https://stepik.org/static/frontend/learning/header-img-night@2x.png 2x'
-      );
-    }
-  }
-
   function init() {
     applyTheme(currentTheme(), true);
     ensurePicker();
@@ -2967,13 +2954,13 @@ ${SK} .horizontal-scroller__scroll-btn:active {
       getStyleEl().textContent = buildCss(initialTheme);
     } catch (e) { /* noop */ }
     /* CKEditor и инлайновые цвета появляются асинхронно — догоняем */
-    try { skFixEditors(); skFixInlineColors(); skFixCovers(); skFixLearnBanner(); } catch (e) { /* noop */ }
+    try { skFixEditors(); skFixInlineColors(); skFixCovers(); } catch (e) { /* noop */ }
     /* В юзерскрипте штатный setInterval держим только там, где есть DOM
      * (в тестовом Node-харнессе querySelectorAll отсутствует — иначе
      * таймер не даёт процессу завершиться). */
     if (typeof document.querySelectorAll === 'function') {
       try {
-        setInterval(() => { try { skFixEditors(); skFixInlineColors(); skFixCovers(); skFixLearnBanner(); } catch (e) { /* noop */ } }, 1500);
+        setInterval(() => { try { skFixEditors(); skFixInlineColors(); skFixCovers(); } catch (e) { /* noop */ } }, 1500);
       } catch (e) { /* noop */ }
     }
   }
