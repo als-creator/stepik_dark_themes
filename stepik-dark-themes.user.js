@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.19
+// @version      2.9.20
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2927,22 +2927,22 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     }
   }
 
-  /* Баннер в шапке сайдбара /learn и /teach рисует компонент
-   * image-by-time-of-day: он подставляет дневную/ночную картинку по
-   * времени суток, а не по теме юзерскрипта, поэтому на тёмном фоне
-   * висит светлая header-img-day.png («негатив»). Активному <img>
-   * меняем src/srcset на ночной вариант (Stepik отдаёт его штатно). */
+  /* Баннеры в шапках сайдбаров /learn, /teach и других страниц рисует
+   * компонент image-by-time-of-day: он подставляет картинку по времени
+   * суток (header-img-morning/day/evening/night.png), а не по теме
+   * юзерскрипта, поэтому на тёмном фоне висит светлый «утренний» вариант
+   * («негатив»). Любому активному <img> с не-ночной header-img-* меняем
+   * src/srcset на ночной файл (Stepik отдаёт его штатно). */
   function skFixLearnBanner() {
     let els;
     try {
-      els = document.querySelectorAll(
-        '.learn-nav__header-img img[data-active], .teach-nav__header-img img[data-active]'
-      );
+      els = document.querySelectorAll('.image-by-time-of-day img[data-active]');
     } catch (e) { return; }
     for (let i = 0; i < els.length; i++) {
       const el = els[i];
       const src = el.getAttribute('src') || '';
-      if (src.indexOf('header-img-day') === -1) continue;
+      if (src.indexOf('header-img-night') !== -1) continue;
+      if (src.indexOf('header-img-') === -1) continue;
       el.setAttribute('src', 'https://stepik.org/static/frontend/learning/header-img-night.png');
       el.setAttribute(
         'srcset',
