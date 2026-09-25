@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.21
+// @version      2.9.23
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -62,7 +62,8 @@
         warning: '#FFD481', warningDark: '#F1A53C',
         success: '#83D683',
         onSurface: '#141525', selection: '#2E3140',
-        codeBg: '#0C0D16', codeGutter: '#1F1F2F', codeFg: '#E8E9F0',
+        codeBg: '#191B2A', codeGutter: '#202335', codeFg: '#E8E9F0',
+        codeBgLight: '#262A3E',
         codeComment: '#6E7084', codeKeyword: '#98A0E8', codeString: '#8FDC8F',
         codeNumber: '#FFB86C', codeFunction: '#79C0FF', codeType: '#FFD481',
         codeOperator: '#56A4FF', codeLineno: '#535366', codeCursor: '#F2F2F7',
@@ -172,7 +173,8 @@
         warning: '#FFD98C', warningDark: '#F5AF4A',
         success: '#8FDC8F',
         onSurface: '#1A1B28', selection: '#33354B',
-        codeBg: '#07080F', codeGutter: '#151621', codeFg: '#EEEEF4',
+        codeBg: '#12131E', codeGutter: '#1A1C29', codeFg: '#EEEEF4',
+        codeBgLight: '#222438',
         codeComment: '#76778F', codeKeyword: '#A5ACF3', codeString: '#94E7A0',
         codeNumber: '#FFBE7A', codeFunction: '#85C6FF', codeType: '#FFDD99',
         codeOperator: '#6CB0FF', codeLineno: '#424359', codeCursor: '#F7F7FB',
@@ -280,7 +282,8 @@
         danger: '#f38ba8', dangerDark: '#eba0ac', warning: '#f9e2af', warningDark: '#fab387',
         success: '#a6e3a1', successDark: '#94e2d5',
         surface: '#1b1b2a', surface2: '#26263a', separator: '#45475a', selection: '#585b70',
-        codeBg: '#11111b', codeGutter: '#181825', codeFg: '#cdd6f4',
+        codeBg: '#181825', codeGutter: '#1E1E2E', codeFg: '#cdd6f4',
+        codeBgLight: '#28293B',
         codeComment: '#6c7086', codeKeyword: '#f5c2e7', codeString: '#a6e3a1',
         codeNumber: '#fab387', codeFunction: '#89b4fa', codeType: '#f9e2af',
         codeOperator: '#94e2d5', codeLineno: '#585b70', codeCursor: '#f5e0dc'
@@ -302,7 +305,8 @@
         danger: '#ed8796', dangerDark: '#ee99a0', warning: '#eed49f', warningDark: '#f5a97f',
         success: '#a6da95', successDark: '#8bd5ca',
         surface: '#1f2133', surface2: '#2c3044', separator: '#494d64', selection: '#5b6078',
-        codeBg: '#181926', codeGutter: '#1e2030', codeFg: '#cad3f5',
+        codeBg: '#1E2030', codeGutter: '#24273A', codeFg: '#cad3f5',
+        codeBgLight: '#2B2E42',
         codeComment: '#6e738d', codeKeyword: '#f5bde6', codeString: '#a6da95',
         codeNumber: '#f5a97f', codeFunction: '#8aadf4', codeType: '#eed49f',
         codeOperator: '#8bd5ca', codeLineno: '#5b6078', codeCursor: '#f4dbd6'
@@ -324,7 +328,8 @@
         danger: '#e78284', dangerDark: '#ea999c', warning: '#e5c890', warningDark: '#ef9f76',
         success: '#a6d189', successDark: '#81c8be',
         surface: '#2b2f41', surface2: '#383d52', separator: '#51576d', selection: '#626880',
-        codeBg: '#232634', codeGutter: '#292c3c', codeFg: '#c6d0f5',
+        codeBg: '#292C3C', codeGutter: '#303446', codeFg: '#c6d0f5',
+        codeBgLight: '#383B4E',
         codeComment: '#737994', codeKeyword: '#f4b8e4', codeString: '#a6d189',
         codeNumber: '#ef9f76', codeFunction: '#8caaee', codeType: '#e5c890',
         codeOperator: '#81c8be', codeLineno: '#626880', codeCursor: '#f2d5cf'
@@ -347,7 +352,8 @@
         danger: '#da4453', dangerDark: '#e74c5a', warning: '#fdbc4b', warningDark: '#f67400',
         success: '#27ae60', successDark: '#1e8f4e',
         surface: '#26292c', surface2: '#2f3338', separator: '#3f4347', selection: '#2d5c76',
-        codeBg: '#232629', codeGutter: '#31363b', codeFg: '#cfcfc2',
+        codeBg: '#202225', codeGutter: '#292D31', codeFg: '#cfcfc2',
+        codeBgLight: '#2F3339',
         codeComment: '#7a7c7d', codeKeyword: '#efc9a0', codeString: '#f44f4f',
         codeNumber: '#f67400', codeFunction: '#8e44ad', codeType: '#2980b9',
         codeOperator: '#3f8058', codeLineno: '#7a7c7d', codeCursor: '#3daee9'
@@ -369,7 +375,8 @@
         danger: '#e85848', dangerDark: '#f15b4a', warning: '#fce94f', warningDark: '#ce5c00',
         success: '#4e9a06', successDark: '#3a7804',
         surface: '#242424', surface2: '#303434', separator: '#3c3a3a', selection: '#184880',
-        codeBg: '#201f1f', codeGutter: '#302f2f', codeFg: '#d3d7c1',
+        codeBg: '#1A1919', codeGutter: '#222222', codeFg: '#d3d7c1',
+        codeBgLight: '#2A2A2A',
         codeComment: '#4e9a06', codeKeyword: '#ffffff', codeString: '#edd400',
         codeNumber: '#fce94f', codeFunction: '#729fcf', codeType: '#508ed8',
         codeOperator: '#eeeeec', codeLineno: '#e0dedb', codeCursor: '#ffffff'
@@ -396,7 +403,8 @@
         danger: '#ef2929', dangerDark: '#cc0000', warning: '#fcaf3e', warningDark: '#f57900',
         success: '#8ae234', successDark: '#4e9a06',
         surface: '#2a3031', surface2: '#343b3d', separator: '#555753', selection: '#3465a4',
-        codeBg: '#232829', codeGutter: '#2e3436', codeFg: '#babdb6',
+        codeBg: '#262B2C', codeGutter: '#2C3234', codeFg: '#babdb6',
+        codeBgLight: '#343A3C',
         codeComment: '#5c6370', codeKeyword: '#c678dd', codeString: '#98c379',
         codeNumber: '#d19a66', codeFunction: '#61aeee', codeType: '#e6c07b',
         codeOperator: '#56b6c2', codeLineno: '#5c6370', codeCursor: '#abb2bf'
@@ -524,6 +532,7 @@
       success: s.success,
       onSurface: s.ink, selection: s.selection,
       codeBg: s.codeBg, codeGutter: s.codeGutter, codeFg: s.codeFg,
+      codeBgLight: s.codeBgLight,
       codeComment: s.codeComment, codeKeyword: s.codeKeyword, codeString: s.codeString,
       codeNumber: s.codeNumber, codeFunction: s.codeFunction, codeType: s.codeType,
       codeOperator: s.codeOperator, codeLineno: s.codeLineno, codeCursor: s.codeCursor
@@ -555,7 +564,7 @@
   --sk-danger:${s.danger}; --sk-danger-dark:${s.dangerDark};
   --sk-warning:${s.warning}; --sk-warning-dark:${s.warningDark}; --sk-success:${s.success};
   --sk-on-surface:${s.onSurface}; --sk-selection:${s.selection};
-  --sk-code-bg:${s.codeBg}; --sk-code-gutter:${s.codeGutter}; --sk-code-fg:${s.codeFg};
+  --sk-code-bg:${s.codeBg}; --sk-code-bg-light:${s.codeBgLight}; --sk-code-gutter:${s.codeGutter}; --sk-code-fg:${s.codeFg};
   --sk-code-comment:${s.codeComment}; --sk-code-keyword:${s.codeKeyword}; --sk-code-string:${s.codeString};
   --sk-code-number:${s.codeNumber}; --sk-code-function:${s.codeFunction}; --sk-code-type:${s.codeType};
   --sk-code-operator:${s.codeOperator}; --sk-code-lineno:${s.codeLineno}; --sk-code-cursor:${s.codeCursor};
@@ -2026,20 +2035,45 @@ ${SK} .table-quiz {
 }
 
 /* ================= РЕДАКТОР КОДА (CodeMirror) =================
-   У CodeMirror нет собственной тёмной темы в Stepik — красим сами. */
+   У CodeMirror нет собственной тёмной темы в Stepik — красим сами.
+   Фоны редактора — три ступени графита, и чёрного в них нет: стоковые
+   значения этих токенов в самом скрипте были почти чёрными (--sk-code-bg
+   #0C0D16 темнее фона страницы), из-за чего окно кода, гуттер и панель
+   вывода читались как чёрные пятна. Теперь (светлее → темнее):
+     --sk-code-bg-light — канвас окна кода (светлее всех);
+     --sk-code-gutter   — гуттер с номерами строк (на ступень ниже);
+     --sk-code-bg       — панель вывода и вкладки (ещё на ступень ниже). */
 ${SK} .CodeMirror, ${SK} .code-editor, ${SK} .editor-with-runner,
+${SK} .editor-with-runner__editor, ${SK} .code-editor-quiz__editor,
+${SK} .html-quiz__code-editor, ${SK} .html-quiz__code-editor .CodeMirror,
+${SK} .split-view__left {
+  background-color: var(--sk-code-bg-light) !important;
+  color: var(--sk-code-fg) !important;
+}
 ${SK} .split-view__right, ${SK} .split-view__actions-panel,
-${SK} .code-runner, ${SK} .code-runner__hints,
-${SK} .html-quiz__code-editor .CodeMirror {
+${SK} .code-runner, ${SK} .code-runner__hints {
   background-color: var(--sk-code-bg) !important;
   color: var(--sk-code-fg) !important;
+}
+/* Шапка редактора (.code-editor-header) и полоса вкладок
+   (.split-view__tabs): сток красит их --theme-color-bg-level-01, а в
+   палитровых темах этот токен темнее канваса — светлое окно кода
+   выглядит вставленным в чёрную рамку. Даём шапке ступень панелей
+   инструментов (--sk-panel-2): она чуть светлее канваса, как и в
+   дневной теме. */
+${SK} .code-editor-header,
+${SK} .split-view__tabs {
+  background-color: var(--sk-panel-2) !important;
+  border-color: var(--sk-border) !important;
 }
 ${SK} .CodeMirror-gutters { background-color: var(--sk-code-gutter) !important; border-right-color: var(--sk-border) !important; }
 ${SK} .CodeMirror-linenumber { color: var(--sk-code-lineno) !important; }
 ${SK} .CodeMirror-cursor { border-left-color: var(--sk-code-cursor) !important; }
 ${SK} .CodeMirror-selected, ${SK} .CodeMirror-line::selection,
 ${SK} .CodeMirror-line > span::selection { background: var(--sk-code-selection) !important; }
-${SK} .CodeMirror-activeline-background { background: var(--sk-panel-2) !important; }
+/* Активная строка: канвас теперь светлый графит, поэтому подсветку берём
+   не панелью (она светлее канваса и режет глаз), а тонким белым тинтом. */
+${SK} .CodeMirror-activeline-background { background: rgba(255, 255, 255, 0.05) !important; }
 ${SK} .cm-keyword { color: var(--sk-code-keyword) !important; }
 ${SK} .cm-string, ${SK} .cm-string-2 { color: var(--sk-code-string) !important; }
 ${SK} .cm-comment { color: var(--sk-code-comment) !important; font-style: italic; }
@@ -2051,7 +2085,7 @@ ${SK} .cm-property, ${SK} .cm-tag { color: var(--sk-code-fg) !important; }
 ${SK} .cm-attribute { color: var(--sk-code-type) !important; }
 ${SK} .cm-meta { color: var(--sk-code-comment) !important; }
 ${SK} .code-editor-tabs__tab { background-color: var(--sk-code-gutter) !important; color: var(--sk-fg-2) !important; border-color: var(--sk-border) !important; }
-${SK} .code-editor-tabs__tab.active { background-color: var(--sk-code-bg) !important; color: var(--sk-fg) !important; }
+${SK} .code-editor-tabs__tab.active { background-color: var(--sk-code-bg-light) !important; color: var(--sk-fg) !important; }
 /* Иконки в шапке редактора: кнопка копирования (.copy-code-btn) и кнопки
    в .code-editor-header__button сток красит чёрным (--theme-color-fg-tertiary
    в тёмной коже) — на тёмной панели значки сливаются. */
@@ -2071,6 +2105,46 @@ ${SK} .code-editor-header__button:hover,
 ${SK} .code-editor-header__button:hover .svg-icon {
   color: var(--sk-fg) !important;
 }
+/* Селектор языка в шапке редактора (.code-editor-header__select-language →
+   .select-box → кнопка button.select-box__toggle-btn «Python 3.6»): сток
+   красит кнопку и шеврон --theme-color-fg-tertiary (чернота в тёмной коже),
+   и на подсвеченной шапке редактора она выглядит чёрным «провалом».
+   Красим в графит панели на ступень ниже самой шапки (--sk-panel-2),
+   чтобы кнопка не сливалась с ней. */
+${SK} .code-editor-header__select-language .select-box button.select-box__toggle-btn {
+  background-color: var(--sk-panel) !important;
+  color: var(--sk-fg-2) !important;
+  border-color: var(--sk-border) !important;
+}
+${SK} .code-editor-header__select-language .select-box button.select-box__toggle-btn:hover {
+  background-color: var(--sk-panel-2) !important;
+  color: var(--sk-fg) !important;
+}
+${SK} .code-editor-header__select-language .select-box__toggle-btn .sort_icon,
+${SK} .code-editor-header__select-language .select-box__toggle-btn svg,
+${SK} .code-editor-header__select-language .select-box__toggle-btn .svg-icon {
+  color: var(--sk-fg-2) !important;
+}
+${SK} .code-editor-header__select-language .select-box__toggle-btn:hover .sort_icon,
+${SK} .code-editor-header__select-language .select-box__toggle-btn:hover svg,
+${SK} .code-editor-header__select-language .select-box__toggle-btn:hover .svg-icon {
+  color: var(--sk-fg) !important;
+}
+/* Пункты выпадашки выбора языка (.select-box__option / .select-box-option__
+   в .drop-down__body): сток красит их светлым (--menu-item-color из
+   тёмно-зелёного каскада) — на тёмной панели читаются плохо. Форсируем
+   наши пункты меню. */
+${SK} .code-editor-header__select-language .drop-down__body .select-box__option,
+${SK} .code-editor-header__select-language .drop-down__content .select-box__option,
+${SK} .code-editor-header__select-language .menu-item.select-box__option,
+${SK} .code-editor-header__select-language .select-box-option__slot-item,
+${SK} .code-editor-header__select-language .select-box-option__content {
+  color: var(--sk-fg-2) !important;
+}
+${SK} .code-editor-header__select-language .menu-item.select-box__option:hover {
+  background-color: var(--sk-panel-2) !important;
+  color: var(--sk-fg) !important;
+}
 /* Шеврон выпадашек (сортировка и т.п.): сток #5e5e5e — едва виден
    на тёмных панелях. */
 ${SK} .select-box__toggle-btn .sort_icon {
@@ -2083,17 +2157,22 @@ ${SK} .select-box__toggle-btn .sort_icon {
 ${SK} .code-editor__textarea,
 ${SK} .attempt-wrapper .textarea,
 ${SK} .attempt-wrapper .autoresize-textarea {
-  background-color: var(--sk-code-bg) !important;
+  background-color: var(--sk-code-bg-light) !important;
   color: var(--sk-code-fg) !important;
   border-color: var(--sk-border) !important;
 }
 ${SK} .code-editor:not(.is-ready) .code-editor__loader {
-  background-color: var(--sk-code-bg) !important;
+  background-color: var(--sk-code-bg-light) !important;
   color: var(--sk-fg-2) !important;
 }
-${SK} .CodeMirror-scrollbar-filler,
+/* «Добивки» скроллбаров CodeMirror: в стоке белые (#fff, vendor.css), а
+   горизонтальная тёмная полоса в светлом окне кода читается как трещина.
+   Филлер под гуттером красим в цвет гуттера, под строками — в канвас. */
+${SK} .CodeMirror-scrollbar-filler {
+  background-color: var(--sk-code-bg-light) !important;
+}
 ${SK} .CodeMirror-gutter-filler {
-  background-color: var(--sk-code-bg) !important;
+  background-color: var(--sk-code-gutter) !important;
 }
 
 /* ================= ТОСТЫ =================
