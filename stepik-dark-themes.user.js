@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.29
+// @version      2.9.30
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -31,6 +31,61 @@
   }
 
   /* ============================================================
+   *  Язык интерфейса
+   *
+   *  Свой текст у скрипта один — подписи в панели переключателя, подсказка
+   *  на кнопке и надпись индикатора загрузки. Язык страницы Stepik лежит в
+   *  <html lang> (переключатель языка в шапке меняет его на лету, без
+   *  перезагрузки — проверено: отметка на window переживает смену языка).
+   *  Поэтому skLang() читает атрибут каждый раз и ничего не кэширует: панель
+   *  перерисовывается при открытии, если язык успел смениться. Русский — для
+   *  ru (и если атрибута нет вовсе), английский — для en и для остальных
+   *  семи языков платформы (be, uk, de, es, pt, zh, …).
+   *  Описания тем лежат в самих темах: `desc` — по-русски, `descEn` — по-
+   *  английски; `nameEn` нужен только там, где в название входит русское
+   *  слово.
+   * ============================================================ */
+
+  const I18N = {
+    ru: {
+      loading: 'загрузка…',
+      panelTitle: 'Темы Stepik',
+      panelSub: 'Фирменная · Catppuccin · Kate · Tango LOR — нажмите для применения',
+      off: 'Светлая тема (выключить)',
+      aria: 'Тема оформления',
+      title: (n) => `Тема: ${n} — клик для смены`,
+      titleOff: 'Тема: выключена — клик для смены',
+    },
+    en: {
+      loading: 'loading…',
+      panelTitle: 'Stepik themes',
+      panelSub: 'Official · Catppuccin · Kate · Tango LOR — click to apply',
+      off: 'Light theme (turn off)',
+      aria: 'Colour theme',
+      title: (n) => `Theme: ${n} — click to change`,
+      titleOff: 'Theme: off — click to change',
+    },
+  };
+
+  function skLang() {
+    const l = (document.documentElement.getAttribute('lang') || '').toLowerCase();
+    if (!l || l.indexOf('ru') === 0) return 'ru';
+    return 'en';
+  }
+
+  function skT(key) {
+    return I18N[skLang()][key];
+  }
+
+  function skThemeName(t) {
+    return (skLang() === 'en' && t.nameEn) || t.name;
+  }
+
+  function skThemeDesc(t) {
+    return (skLang() === 'en' && t.descEn) || t.desc;
+  }
+
+  /* ============================================================
    *  Палитры
    *
    *  Две формы темы:
@@ -47,8 +102,10 @@
     /* ------------------------------------------------ Фирменная */
     'stepik-night': {
       name: 'Stepik Night (фирменная)',
+      nameEn: 'Stepik Night (official)',
       source: 'официальная ночная тема stepik.org',
       desc: 'Точные фирменные токены ночной темы Stepik',
+      descEn: 'Exact tokens of the official Stepik night theme',
       swatches: ['#141525', '#EEEEF0', '#56A4FF'],
       sk: {
         bg: '#141525', bgAlt: '#1F1F2F', panel: '#282B41', panel2: '#353547',
@@ -161,6 +218,7 @@
       name: 'Stepik Night Deep',
       source: 'официальная ночная тема stepik.org (тёмный вариант)',
       desc: 'Фирменные цвета, канвас темнее и выше контраст',
+      descEn: 'Official colours, darker canvas, higher contrast',
       swatches: ['#0C0D17', '#F2F2F7', '#5DA3FF'],
       sk: {
         bg: '#0C0D17', bgAlt: '#151621', panel: '#1E1F2C', panel2: '#2C2D40',
@@ -273,6 +331,7 @@
       name: 'Catppuccin Mocha',
       source: 'Catppuccin (тёмная серия)',
       desc: 'Тёплый тёмный, основной вариант Catppuccin',
+      descEn: 'Warm dark, the main Catppuccin flavour',
       swatches: ['#1e1e2e', '#cba6f7', '#a6e3a1'],
       sem: {
         bg: '#1e1e2e', bgAlt: '#181825', panel: '#181825', panel2: '#313244',
@@ -297,6 +356,7 @@
       name: 'Catppuccin Macchiato',
       source: 'Catppuccin (тёмная серия)',
       desc: 'Чуть холоднее и светлее Mocha',
+      descEn: 'A little cooler and lighter than Mocha',
       swatches: ['#24273a', '#c6a0f6', '#a6da95'],
       sem: {
         bg: '#24273a', bgAlt: '#1e2030', panel: '#1e2030', panel2: '#363a4f',
@@ -321,6 +381,7 @@
       name: 'Catppuccin Frappe',
       source: 'Catppuccin (тёмная серия)',
       desc: 'Тёмный с лёгким «задымлённым» оттенком',
+      descEn: 'Dark with a light smoky tint',
       swatches: ['#303446', '#ca9ee6', '#a6d189'],
       sem: {
         bg: '#303446', bgAlt: '#292c3c', panel: '#292c3c', panel2: '#414559',
@@ -346,6 +407,7 @@
       name: 'Kate Breeze Dark',
       source: 'редактор Kate (KSyntaxHighlighting)',
       desc: 'Официальная тёмная тема Kate/KDE, акцент #3daee9',
+      descEn: 'Official dark theme for Kate/KDE, accent #3daee9',
       swatches: ['#232629', '#56bdf4', '#27ae60'],
       sem: {
         bg: '#232629', bgAlt: '#202225', panel: '#2a2e32', panel2: '#31363b',
@@ -370,6 +432,7 @@
       name: 'Kate Oblivion',
       source: 'редактор Kate (адаптация GtkSourceView)',
       desc: 'Классическая тёмная схема Oblivion, жёлто-зелёная',
+      descEn: 'Classic dark Oblivion scheme, yellow-green',
       swatches: ['#201f1f', '#87b5e0', '#edd400'],
       sem: {
         bg: '#201f1f', bgAlt: '#1a1919', panel: '#2e3436', panel2: '#302f2f',
@@ -399,6 +462,7 @@
       name: 'Linux.org.ru (Tango)',
       source: 'linux.org.ru, тёмная тема (палитра Tango)',
       desc: 'Графит Tango: лаймовый и небесно-синий акценты, тёплый текст',
+      descEn: 'Tango graffiti: lime and sky-blue accents, warm text',
       swatches: ['#2e3436', '#8ae234', '#729fcf'],
       sem: {
         bg: '#2e3436', bgAlt: '#262b2c', panel: '#262b2c', panel2: '#3a4143',
@@ -630,7 +694,7 @@ ${SK}.sk-boot::before {
   animation: sk-boot-spin 0.9s linear infinite;
 }
 ${SK}.sk-boot::after {
-  content: "загрузка…";
+  content: "${skT('loading')}";
   position: fixed;
   left: 0;
   right: 0;
@@ -2887,7 +2951,7 @@ ${SK} .horizontal-scroller__scroll-btn:active {
 
     if (!silent) setStored(active ? themeId : '');
     const btn = document.getElementById('sk-dark-theme-toggle');
-    if (btn) btn.title = active ? `Тема: ${THEMES[themeId].name} — клик для смены` : 'Тема: выключена — клик для смены';
+    if (btn) btn.title = active ? skT('title')(skThemeName(THEMES[themeId])) : skT('titleOff');
     updatePicker(active ? themeId : null);
   }
 
@@ -2946,13 +3010,13 @@ ${SK} .horizontal-scroller__scroll-btn:active {
       const dots = t.swatches.map((c) => `<i style="background:${c}"></i>`).join('');
       items += `<button class="sk-item" data-sk-theme-id="${id}" type="button">
         <span class="sk-dots">${dots}</span>
-        <span class="sk-txt"><span class="sk-name">${t.name}</span>
-        <span class="sk-about">${t.desc}</span></span>
+        <span class="sk-txt"><span class="sk-name">${skThemeName(t)}</span>
+        <span class="sk-about">${skThemeDesc(t)}</span></span>
       </button>`;
     });
-    return `<h3>Темы Stepik</h3>
-      <p class="sk-sub">Фирменная · Catppuccin · Kate · Tango LOR — нажмите для применения</p>
-      <button class="sk-item sk-off" data-sk-theme-id="" type="button">Светлая тема (выключить)</button>
+    return `<h3>${skT('panelTitle')}</h3>
+      <p class="sk-sub">${skT('panelSub')}</p>
+      <button class="sk-item sk-off" data-sk-theme-id="" type="button">${skT('off')}</button>
       <div class="sk-sep"></div>
       ${items}`;
   }
@@ -2965,19 +3029,38 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     });
   }
 
+  /* Язык страницы меняется на лету (переключатель в шапке — переход внутри
+     SPA, без перезагрузки), поэтому подписи пересобираем при каждом
+     открытии панели, если язык успел поменяться. */
+  function refreshPickerLang() {
+    const panel = document.getElementById('sk-dark-theme-panel');
+    const btn = document.getElementById('sk-dark-theme-toggle');
+    if (!panel || !btn) return;
+    const lang = skLang();
+    if (panel.getAttribute('data-sk-lang') === lang) return;
+    panel.setAttribute('data-sk-lang', lang);
+    panel.innerHTML = pickerHtml();
+    btn.setAttribute('aria-label', skT('aria'));
+    const id = document.documentElement.getAttribute('data-sk-theme');
+    btn.title = id && THEMES[id] ? skT('title')(skThemeName(THEMES[id])) : skT('titleOff');
+    updatePicker(id || null);
+  }
+
   function ensurePicker() {
     if (document.getElementById('sk-dark-theme-toggle')) return;
     const btn = document.createElement('button');
     btn.id = 'sk-dark-theme-toggle';
     btn.type = 'button';
-    btn.setAttribute('aria-label', 'Тема оформления');
+    btn.setAttribute('aria-label', skT('aria'));
     btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>';
     const panel = document.createElement('div');
     panel.id = 'sk-dark-theme-panel';
     panel.style.display = 'none';
+    panel.setAttribute('data-sk-lang', skLang());
     panel.innerHTML = pickerHtml();
 
     btn.addEventListener('click', () => {
+      refreshPickerLang();
       panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
     });
     panel.addEventListener('click', (e) => {
