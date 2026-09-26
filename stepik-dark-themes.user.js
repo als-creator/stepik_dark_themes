@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.25
+// @version      2.9.26
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1860,6 +1860,21 @@ ${SK} .lesson-controls .button_style_secondary:focus {
 ${SK} .lesson-controls .svg-icon {
   color: var(--sk-fg-2) !important;
 }
+/* Кнопка «вверх» в правом нижнем углу урока: сток — белый круг 48×48
+   (background #fff, цвет иконки #222). На тёмной теме это самый заметный
+   светлый элемент, и он ещё и стоит ровно под нашим переключателем
+   (right/bottom 16 против 18) — белый ободок торчит из-под кнопки. Фон
+   берём от панели, иконку (спрайт рисуется через fill="currentColor",
+   так что хватает цвета текста), тень — чёрную. */
+${SK} .lesson__go-top.st-button_style_none {
+  background-color: var(--sk-panel-2) !important;
+  color: var(--sk-fg-2) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,.45) !important;
+}
+${SK} .lesson__go-top.st-button_style_none:hover {
+  color: var(--sk-fg) !important;
+  box-shadow: 0 3px 14px rgba(0,0,0,.55) !important;
+}
 /* CKEditor («Развёрнутый ответ»): стоковая светлая кожа — панель
    инструментов #f8f8f8, нижняя панель и область ввода #fff. Перекрашиваем
    саму кожу и (скриптом ниже) документ внутри iframe. */
@@ -2206,6 +2221,14 @@ ${SK} .cm-bracket { color: var(--sk-code-fg) !important; }
 ${SK} .cm-link { color: var(--sk-code-string) !important; }
 ${SK} .cm-header { color: var(--sk-code-keyword) !important; }
 ${SK} .cm-error, ${SK} .cm-invalidchar { color: var(--sk-code-error) !important; }
+/* Служебные классы CodeMirror (подсветка диффа/результатов поиска в
+   редакторе). Сток: .cm-positive #292 и .cm-negative #d44 — тёмно-зелёный
+   и тёмно-красный, на тёмном канвасе почти не видны. Пробрасываем на
+   палитровые зелёный строк (--sk-code-string) и светло-красный ошибок
+   (--sk-code-error). Применяются редко (diff-режим редактора), но в тёмной
+   теме были бы нечитаемы. */
+${SK} .cm-positive { color: var(--sk-code-string) !important; }
+${SK} .cm-negative { color: var(--sk-code-error) !important; }
 ${SK} .code-editor-tabs__tab { background-color: var(--sk-code-gutter) !important; color: var(--sk-fg-2) !important; border-color: var(--sk-border) !important; }
 ${SK} .code-editor-tabs__tab.active { background-color: var(--sk-code-bg-light) !important; color: var(--sk-fg) !important; }
 /* Иконки в шапке редактора: кнопка копирования (.copy-code-btn) и кнопки
