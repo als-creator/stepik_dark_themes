@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.25
+// @version      2.9.26
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -66,7 +66,7 @@
         codeBgLight: '#262A3E',
         codeComment: '#9092A3', codeKeyword: '#98A0E8', codeString: '#8FDC8F',
         codeNumber: '#FFB86C', codeFunction: '#79C0FF', codeType: '#FFD481',
-        codeOperator: '#56A4FF', codeLineno: '#535366', codeCursor: '#F2F2F7',
+        codeOperator: '#56A4FF', codeLineno: '#8B8BA0', codeCursor: '#F2F2F7',
       },
       tokens: {
         '--theme-color-fg-primary': '#EEEEF0',
@@ -177,7 +177,7 @@
         codeBgLight: '#222438',
         codeComment: '#8B8CA0', codeKeyword: '#A5ACF3', codeString: '#94E7A0',
         codeNumber: '#FFBE7A', codeFunction: '#85C6FF', codeType: '#FFDD99',
-        codeOperator: '#6CB0FF', codeLineno: '#424359', codeCursor: '#F7F7FB',
+        codeOperator: '#6CB0FF', codeLineno: '#8283A2', codeCursor: '#F7F7FB',
       },
       tokens: {
         '--theme-color-fg-primary': '#F2F2F7',
@@ -286,7 +286,7 @@
         codeBgLight: '#28293B',
         codeComment: '#8E92A4', codeKeyword: '#f5c2e7', codeString: '#a6e3a1',
         codeNumber: '#fab387', codeFunction: '#89b4fa', codeType: '#f9e2af',
-        codeOperator: '#94e2d5', codeLineno: '#585b70', codeCursor: '#f5e0dc'
+        codeOperator: '#94e2d5', codeLineno: '#83879E', codeCursor: '#f5e0dc'
       }
     },
 
@@ -309,7 +309,7 @@
         codeBgLight: '#2B2E42',
         codeComment: '#9397AB', codeKeyword: '#f5bde6', codeString: '#a6da95',
         codeNumber: '#f5a97f', codeFunction: '#8aadf4', codeType: '#eed49f',
-        codeOperator: '#8bd5ca', codeLineno: '#5b6078', codeCursor: '#f4dbd6'
+        codeOperator: '#8bd5ca', codeLineno: '#8A8FA7', codeCursor: '#f4dbd6'
       }
     },
 
@@ -332,7 +332,7 @@
         codeBgLight: '#383B4E',
         codeComment: '#A3A7B8', codeKeyword: '#f4b8e4', codeString: '#a6d189',
         codeNumber: '#ef9f76', codeFunction: '#8caaee', codeType: '#e5c890',
-        codeOperator: '#81c8be', codeLineno: '#626880', codeCursor: '#f2d5cf'
+        codeOperator: '#81c8be', codeLineno: '#999EB1', codeCursor: '#f2d5cf'
       }
     },
 
@@ -356,7 +356,7 @@
         codeBgLight: '#2F3339',
         codeComment: '#9A9C9C', codeKeyword: '#efc9a0', codeString: '#F67373',
         codeNumber: '#FA7600', codeFunction: '#D3A8E6', codeType: '#53A4D9',
-        codeOperator: '#58AD78', codeLineno: '#7a7c7d', codeCursor: '#3daee9'
+        codeOperator: '#58AD78', codeLineno: '#939596', codeCursor: '#3daee9'
       }
     },
 
@@ -407,7 +407,7 @@
         codeBgLight: '#343A3C',
         codeComment: '#9EA4AF', codeKeyword: '#CE8AE2', codeString: '#98c379',
         codeNumber: '#d19a66', codeFunction: '#61aeee', codeType: '#e6c07b',
-        codeOperator: '#56b6c2', codeLineno: '#5c6370', codeCursor: '#abb2bf'
+        codeOperator: '#56b6c2', codeLineno: '#939AA7', codeCursor: '#abb2bf'
       }
     }
   };
@@ -1652,6 +1652,13 @@ ${SK} .player-topbar__step-pins .m-step-pin[data-is-active]:not([data-is-passed]
 ${SK} .player-topbar__step-pins .m-step-pin[data-is-random-exam][data-is-active] {
   background-color: rgba(94, 94, 94, 0.5) !important;
 }
+/* Указатель-треугольник под активным шагом: сток рисует его белым
+   (border-color: transparent transparent #fff), и это единственное
+   светлое пятно среди тёмно-серых пинов. Красим в fg-2 — тот же
+   приглушённый светлый, что и текст в шапке. */
+${SK} .player-topbar__step-pins .m-step-pin[data-is-active]::after {
+  border-bottom-color: var(--sk-fg-2) !important;
+}
 /* активный пин тёмный — иконка на нём светлая, как на остальных
    не-пройденных; пройденные зелёные — иконка тёмная (--sk-on-surface
    выше по файлу). Тёмную иконку на активном пине больше не ставим —
@@ -1766,6 +1773,19 @@ ${SK} .lesson-sidebar__content.custom-scrollbar {
   --custom-scrollbar-thumb-color: var(--sk-border-2) !important;
   --custom-scrollbar-thumb-hover-color: var(--sk-accent) !important;
   --custom-scrollbar-thumb-active-color: var(--sk-accent) !important;
+}
+/* Активный урок в списке: сток заливает строку полупрозрачным зелёным
+   rgba(102,204,102,.5) и рисует белый треугольник-указатель справа.
+   Полупрозрачный зелёный смешивается с тёмным фоном сайдбара в
+   грязно-зелёный (светлый текст на нём ~1.4:1 — нечитаемо), а
+   треугольник так и остаётся белым. Отмечаем строку панелью на ступень
+   выше фона сайдбара (текст остаётся --sk-fg, 6–9:1 по всем темам),
+   указатель — акцентом темы. */
+${SK} .lesson-sidebar__lesson.active {
+  background-color: var(--sk-panel-2) !important;
+}
+${SK} .lesson-sidebar__lesson.active::after {
+  border-right-color: var(--sk-accent) !important;
 }
 /* нижняя панель управления уроком под списком шагов (шестерёнка и
    «развернуть»): сток заливает её нейтрально-серым #222, кнопки — тем же
@@ -2209,6 +2229,14 @@ ${SK} .CodeMirror-scrollbar-filler {
 }
 ${SK} .CodeMirror-gutter-filler {
   background-color: var(--sk-code-gutter) !important;
+}
+/* Скрытая <textarea>, которую CodeMirror держит «под» собой для ввода
+   (position:absolute; bottom:-1em), от стокового сброса остаётся белой
+   (#fff). CM5 выносит её за пределы видимой области, поэтому на живых
+   страницах она не показывается (проверено hit-тестом по сетке), но
+   фон в #fff — мина под любое изменение вёрстки: обнуляем. */
+${SK} .CodeMirror textarea {
+  background-color: transparent !important;
 }
 
 /* ================= ТОСТЫ =================
