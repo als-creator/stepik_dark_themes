@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.20
+// @version      2.9.21
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -64,7 +64,7 @@
         onSurface: '#141525', selection: '#2E3140',
         codeBg: '#191B2A', codeGutter: '#202335', codeFg: '#E8E9F0',
         codeBgLight: '#262A3E',
-        codeComment: '#6E7084', codeKeyword: '#98A0E8', codeString: '#8FDC8F',
+        codeComment: '#9092A3', codeKeyword: '#98A0E8', codeString: '#8FDC8F',
         codeNumber: '#FFB86C', codeFunction: '#79C0FF', codeType: '#FFD481',
         codeOperator: '#56A4FF', codeLineno: '#535366', codeCursor: '#F2F2F7',
       },
@@ -175,7 +175,7 @@
         onSurface: '#1A1B28', selection: '#33354B',
         codeBg: '#12131E', codeGutter: '#1A1C29', codeFg: '#EEEEF4',
         codeBgLight: '#222438',
-        codeComment: '#76778F', codeKeyword: '#A5ACF3', codeString: '#94E7A0',
+        codeComment: '#8B8CA0', codeKeyword: '#A5ACF3', codeString: '#94E7A0',
         codeNumber: '#FFBE7A', codeFunction: '#85C6FF', codeType: '#FFDD99',
         codeOperator: '#6CB0FF', codeLineno: '#424359', codeCursor: '#F7F7FB',
       },
@@ -284,7 +284,7 @@
         surface: '#1b1b2a', surface2: '#26263a', separator: '#45475a', selection: '#585b70',
         codeBg: '#181825', codeGutter: '#1E1E2E', codeFg: '#cdd6f4',
         codeBgLight: '#28293B',
-        codeComment: '#6c7086', codeKeyword: '#f5c2e7', codeString: '#a6e3a1',
+        codeComment: '#8E92A4', codeKeyword: '#f5c2e7', codeString: '#a6e3a1',
         codeNumber: '#fab387', codeFunction: '#89b4fa', codeType: '#f9e2af',
         codeOperator: '#94e2d5', codeLineno: '#585b70', codeCursor: '#f5e0dc'
       }
@@ -307,7 +307,7 @@
         surface: '#1f2133', surface2: '#2c3044', separator: '#494d64', selection: '#5b6078',
         codeBg: '#1E2030', codeGutter: '#24273A', codeFg: '#cad3f5',
         codeBgLight: '#2B2E42',
-        codeComment: '#6e738d', codeKeyword: '#f5bde6', codeString: '#a6da95',
+        codeComment: '#9397AB', codeKeyword: '#f5bde6', codeString: '#a6da95',
         codeNumber: '#f5a97f', codeFunction: '#8aadf4', codeType: '#eed49f',
         codeOperator: '#8bd5ca', codeLineno: '#5b6078', codeCursor: '#f4dbd6'
       }
@@ -330,7 +330,7 @@
         surface: '#2b2f41', surface2: '#383d52', separator: '#51576d', selection: '#626880',
         codeBg: '#292C3C', codeGutter: '#303446', codeFg: '#c6d0f5',
         codeBgLight: '#383B4E',
-        codeComment: '#737994', codeKeyword: '#f4b8e4', codeString: '#a6d189',
+        codeComment: '#A3A7B8', codeKeyword: '#f4b8e4', codeString: '#a6d189',
         codeNumber: '#ef9f76', codeFunction: '#8caaee', codeType: '#e5c890',
         codeOperator: '#81c8be', codeLineno: '#626880', codeCursor: '#f2d5cf'
       }
@@ -354,9 +354,9 @@
         surface: '#26292c', surface2: '#2f3338', separator: '#3f4347', selection: '#2d5c76',
         codeBg: '#202225', codeGutter: '#292D31', codeFg: '#cfcfc2',
         codeBgLight: '#2F3339',
-        codeComment: '#7a7c7d', codeKeyword: '#efc9a0', codeString: '#f44f4f',
-        codeNumber: '#f67400', codeFunction: '#8e44ad', codeType: '#2980b9',
-        codeOperator: '#3f8058', codeLineno: '#7a7c7d', codeCursor: '#3daee9'
+        codeComment: '#9A9C9C', codeKeyword: '#efc9a0', codeString: '#F67373',
+        codeNumber: '#FA7600', codeFunction: '#D3A8E6', codeType: '#53A4D9',
+        codeOperator: '#58AD78', codeLineno: '#7a7c7d', codeCursor: '#3daee9'
       }
     },
 
@@ -377,8 +377,8 @@
         surface: '#242424', surface2: '#303434', separator: '#3c3a3a', selection: '#184880',
         codeBg: '#1A1919', codeGutter: '#222222', codeFg: '#d3d7c1',
         codeBgLight: '#2A2A2A',
-        codeComment: '#4e9a06', codeKeyword: '#ffffff', codeString: '#edd400',
-        codeNumber: '#fce94f', codeFunction: '#729fcf', codeType: '#508ed8',
+        codeComment: '#53A506', codeKeyword: '#ffffff', codeString: '#edd400',
+        codeNumber: '#fce94f', codeFunction: '#729fcf', codeType: '#5A95DA',
         codeOperator: '#eeeeec', codeLineno: '#e0dedb', codeCursor: '#ffffff'
       }
     },
@@ -405,7 +405,7 @@
         surface: '#2a3031', surface2: '#343b3d', separator: '#555753', selection: '#3465a4',
         codeBg: '#262B2C', codeGutter: '#2C3234', codeFg: '#babdb6',
         codeBgLight: '#343A3C',
-        codeComment: '#5c6370', codeKeyword: '#c678dd', codeString: '#98c379',
+        codeComment: '#9EA4AF', codeKeyword: '#CE8AE2', codeString: '#98c379',
         codeNumber: '#d19a66', codeFunction: '#61aeee', codeType: '#e6c07b',
         codeOperator: '#56b6c2', codeLineno: '#5c6370', codeCursor: '#abb2bf'
       }
@@ -1940,13 +1940,28 @@ ${SK} .hljs-selector-pseudo, ${SK} .hljs-link {
 ${SK} .hljs-deletion { color: var(--sk-danger) !important; }
 ${SK} .hljs-emphasis { font-style: italic; }
 ${SK} .hljs-strong { font-weight: 700; }
-/* фон блока кода в стоке почти чёрный (#0C0D16) и на тёмном канвасе
-   выглядит провалом — поднимаем блоки до поверхности, инлайн-«чипы»
-   оставляем как есть */
+/* Блок кода в тексте урока — та же поверхность, что окно редактора:
+   --sk-code-bg-light. Раньше здесь был --sk-bg-alt, который в kate-breeze-dark
+   (#202225) темнее фона страницы (#232629) — блок читался как чёрная дыра.
+   Инлайн-«чипы» (code без pre) оставляем на --sk-code-bg, они лежат
+   прямо на фоне текста. */
 ${SK} .rich-text-viewer pre code,
 ${SK} .step-text-wrapper pre code,
 ${SK} .html-content pre code {
-  background-color: var(--sk-bg-alt) !important;
+  background-color: var(--sk-code-bg-light) !important;
+}
+/* Блок кода, который Stepik собирает сам (pre.highlight-code + code.hljs) —
+   выбора языка в code-quiz, отправленные решения в sql-quiz и split-view,
+   code в html-quiz. Вне обёрток текста сток красит его светлой темой
+   highlight.js: белый фон (#fff) и чёрный текст (#000), то есть на тёмной
+   теме белый блок с чёрным текстом, а наши светлые токены подсветки кода
+   оказываются на белом. Красим компонент напрямую, чтобы он не зависел от
+   предка. */
+${SK} pre.highlight-code,
+${SK} pre.highlight-code > code {
+  background-color: var(--sk-code-bg-light) !important;
+  color: var(--sk-code-fg) !important;
+  border-color: var(--sk-border) !important;
 }
 ${SK} .rich-text-viewer table {
   background-color: var(--sk-panel) !important;
