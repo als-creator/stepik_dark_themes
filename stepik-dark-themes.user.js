@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.26
+// @version      2.9.27
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -67,6 +67,7 @@
         codeComment: '#9092A3', codeKeyword: '#98A0E8', codeString: '#8FDC8F',
         codeNumber: '#FFB86C', codeFunction: '#79C0FF', codeType: '#FFD481',
         codeOperator: '#56A4FF', codeLineno: '#8B8BA0', codeCursor: '#F2F2F7',
+        codeError: '#FF7A65',
       },
       tokens: {
         '--theme-color-fg-primary': '#EEEEF0',
@@ -178,6 +179,7 @@
         codeComment: '#8B8CA0', codeKeyword: '#A5ACF3', codeString: '#94E7A0',
         codeNumber: '#FFBE7A', codeFunction: '#85C6FF', codeType: '#FFDD99',
         codeOperator: '#6CB0FF', codeLineno: '#8283A2', codeCursor: '#F7F7FB',
+        codeError: '#FF8070',
       },
       tokens: {
         '--theme-color-fg-primary': '#F2F2F7',
@@ -286,7 +288,8 @@
         codeBgLight: '#28293B',
         codeComment: '#8E92A4', codeKeyword: '#f5c2e7', codeString: '#a6e3a1',
         codeNumber: '#fab387', codeFunction: '#89b4fa', codeType: '#f9e2af',
-        codeOperator: '#94e2d5', codeLineno: '#83879E', codeCursor: '#f5e0dc'
+        codeOperator: '#94e2d5', codeLineno: '#83879E', codeCursor: '#f5e0dc',
+        codeError: '#f38ba8'
       }
     },
 
@@ -309,7 +312,8 @@
         codeBgLight: '#2B2E42',
         codeComment: '#9397AB', codeKeyword: '#f5bde6', codeString: '#a6da95',
         codeNumber: '#f5a97f', codeFunction: '#8aadf4', codeType: '#eed49f',
-        codeOperator: '#8bd5ca', codeLineno: '#8A8FA7', codeCursor: '#f4dbd6'
+        codeOperator: '#8bd5ca', codeLineno: '#8A8FA7', codeCursor: '#f4dbd6',
+        codeError: '#ed8796'
       }
     },
 
@@ -332,7 +336,8 @@
         codeBgLight: '#383B4E',
         codeComment: '#A3A7B8', codeKeyword: '#f4b8e4', codeString: '#a6d189',
         codeNumber: '#ef9f76', codeFunction: '#8caaee', codeType: '#e5c890',
-        codeOperator: '#81c8be', codeLineno: '#999EB1', codeCursor: '#f2d5cf'
+        codeOperator: '#81c8be', codeLineno: '#999EB1', codeCursor: '#f2d5cf',
+        codeError: '#E98F91'
       }
     },
 
@@ -356,7 +361,8 @@
         codeBgLight: '#2F3339',
         codeComment: '#9A9C9C', codeKeyword: '#efc9a0', codeString: '#F67373',
         codeNumber: '#FA7600', codeFunction: '#D3A8E6', codeType: '#53A4D9',
-        codeOperator: '#58AD78', codeLineno: '#939596', codeCursor: '#3daee9'
+        codeOperator: '#58AD78', codeLineno: '#939596', codeCursor: '#3daee9',
+        codeError: '#E57D88'
       }
     },
 
@@ -379,7 +385,8 @@
         codeBgLight: '#2A2A2A',
         codeComment: '#53A506', codeKeyword: '#ffffff', codeString: '#edd400',
         codeNumber: '#fce94f', codeFunction: '#729fcf', codeType: '#5A95DA',
-        codeOperator: '#eeeeec', codeLineno: '#e0dedb', codeCursor: '#ffffff'
+        codeOperator: '#eeeeec', codeLineno: '#e0dedb', codeCursor: '#ffffff',
+        codeError: '#EB6B5C'
       }
     },
 
@@ -407,7 +414,8 @@
         codeBgLight: '#343A3C',
         codeComment: '#9EA4AF', codeKeyword: '#CE8AE2', codeString: '#98c379',
         codeNumber: '#d19a66', codeFunction: '#61aeee', codeType: '#e6c07b',
-        codeOperator: '#56b6c2', codeLineno: '#939AA7', codeCursor: '#abb2bf'
+        codeOperator: '#56b6c2', codeLineno: '#939AA7', codeCursor: '#abb2bf',
+        codeError: '#F68181'
       }
     }
   };
@@ -535,7 +543,8 @@
       codeBgLight: s.codeBgLight,
       codeComment: s.codeComment, codeKeyword: s.codeKeyword, codeString: s.codeString,
       codeNumber: s.codeNumber, codeFunction: s.codeFunction, codeType: s.codeType,
-      codeOperator: s.codeOperator, codeLineno: s.codeLineno, codeCursor: s.codeCursor
+      codeOperator: s.codeOperator, codeLineno: s.codeLineno, codeCursor: s.codeCursor,
+      codeError: s.codeError
     };
   }
 
@@ -568,6 +577,7 @@
   --sk-code-comment:${s.codeComment}; --sk-code-keyword:${s.codeKeyword}; --sk-code-string:${s.codeString};
   --sk-code-number:${s.codeNumber}; --sk-code-function:${s.codeFunction}; --sk-code-type:${s.codeType};
   --sk-code-operator:${s.codeOperator}; --sk-code-lineno:${s.codeLineno}; --sk-code-cursor:${s.codeCursor};
+  --sk-code-error:${s.codeError};
   --sk-code-selection:${rgba(hexOf(s.selection), 0.55)};
 ${tokenLines(themeTokens(t))}
 }
@@ -2140,6 +2150,20 @@ ${SK} .cm-operator { color: var(--sk-code-operator) !important; }
 ${SK} .cm-property, ${SK} .cm-tag { color: var(--sk-code-fg) !important; }
 ${SK} .cm-attribute { color: var(--sk-code-type) !important; }
 ${SK} .cm-meta { color: var(--sk-code-comment) !important; }
+/* Остальные классы токенов CodeMirror 5. Сток (vendor.css, .cm-s-default)
+   красит их хардкодом, и почти все эти цвета — тёмные: у встроенных функций
+   .cm-builtin стоит #30a (тёмно-синий; на канвасе редактора 1.5:1, то есть
+   print в Python не читается), у .cm-link #00c, .cm-qualifier #555,
+   .cm-bracket #997, .cm-header #00f, .cm-quote #090. Штатная ночная тема
+   Stepik классы токенов не трогает, так что в тёмной теме они остаются
+   невидимыми. Раскладываем их по тем же восьми цветам палитры кода —
+   контраст каждого проверен на канвасе во всех восьми темах (AA). */
+${SK} .cm-builtin { color: var(--sk-code-function) !important; }
+${SK} .cm-qualifier, ${SK} .cm-quote, ${SK} .cm-hr { color: var(--sk-code-comment) !important; }
+${SK} .cm-bracket { color: var(--sk-code-fg) !important; }
+${SK} .cm-link { color: var(--sk-code-string) !important; }
+${SK} .cm-header { color: var(--sk-code-keyword) !important; }
+${SK} .cm-error, ${SK} .cm-invalidchar { color: var(--sk-code-error) !important; }
 ${SK} .code-editor-tabs__tab { background-color: var(--sk-code-gutter) !important; color: var(--sk-fg-2) !important; border-color: var(--sk-border) !important; }
 ${SK} .code-editor-tabs__tab.active { background-color: var(--sk-code-bg-light) !important; color: var(--sk-fg) !important; }
 /* Иконки в шапке редактора: кнопка копирования (.copy-code-btn) и кнопки
