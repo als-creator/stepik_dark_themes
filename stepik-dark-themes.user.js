@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.24
+// @version      2.9.25
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -604,6 +604,48 @@ ${SK} body {
   background-color: var(--sk-bg) !important;
   color: var(--sk-fg) !important;
   color-scheme: dark !important;
+}
+/* ================= ЗАГРУЗКА =================
+   Stepik — SPA на Ember: между первой отрисовкой оболочки и стартом бандла
+   проходит от секунды до семи, и всё это время контента на экране нет.
+   Пререндер-лоадер самого Stepik живёт уже внутри приложения, поэтому в
+   тёмной теме этот промежуток — просто чёрный прямоугольник. Показываем
+   свой индикатор сразу, на document-start, и снимаем класс, как только
+   приложение дошло до отрисовки (класс ставит и снимает skBootWatch).
+   Всё сделано на псевдоэлементах корня: ни одного лишнего DOM-узла и не
+   нужно ждать появления <body>. */
+${SK}.sk-boot::before {
+  content: "";
+  position: fixed;
+  left: 50%;
+  top: calc(50% + var(--header-height, 50px) / 2 - 46px);
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  border-radius: 50%;
+  border: 2px solid var(--sk-fg-muted);
+  border-top-color: var(--sk-fg-2);
+  z-index: 1;
+  pointer-events: none;
+  animation: sk-boot-spin 0.9s linear infinite;
+}
+${SK}.sk-boot::after {
+  content: "загрузка…";
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: calc(50% + var(--header-height, 50px) / 2 - 10px);
+  text-align: center;
+  color: var(--sk-fg-2);
+  font: 600 15px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  z-index: 1;
+  pointer-events: none;
+}
+@keyframes sk-boot-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  ${SK}.sk-boot::before { animation: none; }
 }
 ${SK} ::selection { background: var(--sk-selection); color: var(--sk-fg) !important; }
 ${SK} input, ${SK} textarea, ${SK} select { caret-color: var(--sk-fg) !important; }
@@ -3106,6 +3148,37 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     }
   }
 
+  /* Индикатор загрузки (блок ЗАГРУЗКА в coreCss). Класс sk-boot вешаем на
+   * корень сразу, на document-start, иначе от первой отрисовки оболочки
+   * до старта приложения экран пуст — в тёмной теме это чёрный
+   * прямоугольник. Наш индикатор нужен ровно до скачивания бандла, дальше
+   * загрузку показывает сам Stepik. Снимаем класс по первому из событий:
+   * шаг отрисован, приложение показало свой лоадер (он темирован нашими
+   * токенами, так что двойного «загрузка…» не бывает) или после load
+   * приложение так и не проснулось (3 с на запуск + 15 с страховка). */
+  function skBootWatch() {
+    if (typeof document.querySelectorAll !== 'function') return;
+    const root = document.documentElement;
+    let tries = 0;
+    let afterLoad = 0;
+    const id = setInterval(() => {
+      tries++;
+      let ready = false;
+      try {
+        if (document.readyState === 'complete') afterLoad++;
+        const main = document.querySelector('main.main-content');
+        ready = afterLoad > 15 ||
+          !!document.querySelector('.stepik-loader') ||
+          (!!main && main.children.length > 0);
+      } catch (e) { /* noop */ }
+      if (ready || tries > 75) {
+        try { clearInterval(id); } catch (e) { /* noop */ }
+        try { root.classList.remove('sk-boot'); } catch (e) { /* noop */ }
+      }
+    }, 200);
+    try { root.classList.add('sk-boot'); } catch (e) { /* noop */ }
+  }
+
   function init() {
     applyTheme(currentTheme(), true);
     ensurePicker();
@@ -3120,6 +3193,7 @@ ${SK} .horizontal-scroller__scroll-btn:active {
       document.documentElement.setAttribute('data-sk-theme', initialTheme);
       getStyleEl().textContent = buildCss(initialTheme);
     } catch (e) { /* noop */ }
+    try { skBootWatch(); } catch (e) { /* noop */ }
     /* CKEditor и инлайновые цвета появляются асинхронно — догоняем */
     try { skFixEditors(); skFixInlineColors(); skFixCovers(); } catch (e) { /* noop */ }
     /* В юзерскрипте штатный setInterval держим только там, где есть DOM
