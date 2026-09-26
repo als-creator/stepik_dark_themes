@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.24
+// @version      2.9.25
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1879,6 +1879,27 @@ ${SK} .ui-like__count {
 }
 ${SK} .comments-card__staff-replied {
   color: var(--sk-fg-3) !important;
+}
+/* Сообщение, к которому перешли по ?discussion=&reply=, сток заливает
+   светлым кремовым rgba(255,244,216,.8), обводит кольцом 6px того же
+   цвета и мигает анимацией comment-highlight до #ffeec2 — на тёмной теме
+   это светлое пятно посреди обсуждения. Оставляем смысл подсветки, но в
+   тёмных цветах: фон — панель на ступень выше фона обсуждения, кольцо —
+   синий акцент темы, светлая анимация отключена (иначе она всё равно
+   красит кадры в #ffeec2 поверх нашего фона). */
+${SK} .comment-widget_highlighted,
+${SK} .comments-comment__highlighted {
+  background-color: var(--sk-panel-2) !important;
+  border-color: var(--sk-blue) !important;
+  animation: none !important;
+}
+/* сток у этой же метки с «привязанным ответом» подсветку снимает
+   (background/border — inherit): сохраняем это поведение, иначе наше
+   правило с !important перебило бы его и мы бы покрасили то, что сток
+   специально оставил как есть. */
+${SK} .comment-widget_highlighted.comment-widget_has-linked-reply {
+  background-color: inherit !important;
+  border-color: inherit !important;
 }
 
 /* ============ ТЕКСТ УРОКА / ОПИСАНИЯ (rich-text) ============
