@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.36
+// @version      2.9.37
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -449,12 +449,15 @@
       source: 'редактор Kate (KSyntaxHighlighting)',
       desc: 'Официальная тёмная тема Kate/KDE, акцент #3daee9',
       descEn: 'Official dark theme for Kate/KDE, accent #3daee9',
-      swatches: ['#232629', '#56bdf4', '#27ae60'],
+      swatches: ['#232629', '#56bdf4', '#2ABD68'],
       sem: {
         bg: '#232629', bgAlt: '#202225', panel: '#2a2e32', panel2: '#31363b',
         border: '#3f4347', border2: '#4a5057',
         fg: '#cfcfc2', fg2: '#a5a6a8', fg3: '#7a7c7d', fgMuted: '#8b8e90', ink: '#181a1c',
-        accent: '#27ae60', accentBright: '#3ecf6f', accentDark: '#1e8f4e',
+        /* зелёный Tango #27ae60 на панели-2 давал 4,25:1 — на пункт
+           меню «Моё обучение» поверх фона активного пункта; подняли
+           светлоту на 3,6% (тон и насыщенность те же) — стало 4,98:1 */
+        accent: '#2ABD68', accentBright: '#3ecf6f', accentDark: '#1e8f4e',
         accent2: '#9b59b6', accent2Bright: '#c39bd3', accent2Dark: '#7d3d99',
         blue: '#3daee9', blueBright: '#56bdf4', blueDark: '#2980b9', blueDeep: '#1a5e8a',
         danger: '#da4453', dangerDark: '#e74c5a', warning: '#fdbc4b', warningDark: '#f67400',
