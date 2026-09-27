@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.27
+// @version      2.9.28
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2920,6 +2920,7 @@ ${SK} .horizontal-scroller__scroll-btn:active {
    * ============================================================ */
 
   let styleEl = null;
+  let bootTextEl = null;
   function getStyleEl() {
     if (styleEl && styleEl.parentNode) return styleEl;
     const el = document.createElement('style');
@@ -2935,6 +2936,27 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     if (document.body) document.body.setAttribute('data-theme', 'night');
   }
 
+  /* Подпись индикатора загрузки вынесена из основного стиля в отдельный
+   * <style> и идёт после него, поэтому перебивает строку content из coreCss.
+   * Так язык страницы можно уточнить одним коротким стилем: <html lang>
+   * приходит на несколько сотен миллисекунд позже document-start, а
+   * индикатор виден именно в это окно. Пересобирать ради одной строки
+   * весь CSS темы не нужно. */
+  function getBootTextEl() {
+    if (bootTextEl && bootTextEl.parentNode) return bootTextEl;
+    const el = document.createElement('style');
+    el.id = 'sk-boot-text';
+    el.setAttribute('data-sk-generated', '');
+    const main = getStyleEl();
+    (main.parentNode || document.documentElement).appendChild(el);
+    bootTextEl = el;
+    return el;
+  }
+
+  function bootTextCss() {
+    return `${SK}.sk-boot::after { content: "${skT('loading')}"; }`;
+  }
+
   function applyTheme(themeId, silent) {
     const active = themeId && THEMES[themeId];
     const root = document.documentElement;
@@ -2947,6 +2969,7 @@ ${SK} .horizontal-scroller__scroll-btn:active {
       root.removeAttribute('data-sk-theme');
       if (document.body) document.body.removeAttribute('data-theme');
       if (styleEl && styleEl.parentNode) styleEl.textContent = '';
+      if (bootTextEl && bootTextEl.parentNode) bootTextEl.textContent = '';
     }
 
     if (!silent) setStored(active ? themeId : '');
@@ -3093,14 +3116,31 @@ ${SK} .horizontal-scroller__scroll-btn:active {
    *  Запуск
    * ============================================================ */
 
+  /* Узлы для проверки внутри добавленного поддерева: сам корень (если сам
+   * подходит под селектор — типично для <div style="color:#25282d">) и все
+   * потомки под селектором. Пусто, если поддерево не наше. */
+  function skQueryScope(scope, sel) {
+    const out = [];
+    try {
+      if (scope.matches && scope.matches(sel)) out.push(scope);
+      const found = scope.querySelectorAll(sel);
+      for (let i = 0; i < found.length; i++) out.push(found[i]);
+    } catch (e) { /* noop */ }
+    return out;
+  }
+
   /* CKEditor рисует область ввода в отдельном iframe, куда наш <style> не
    * достаёт, а переменные темы там не определены — переносим конкретные
    * цвета и подкрашиваем документ внутри фрейма. */
-  function skFixEditors() {
+  function skFixEditors(scope) {
     /* Нет CKEditor-фреймов (обычный урок/страница) — выходим сразу,
        не собирая переменные и строку CSS каждый тик интервала. */
     let frames;
-    try { frames = document.querySelectorAll('iframe.cke_wysiwyg_frame'); } catch (e) { return; }
+    if (scope) {
+      frames = skQueryScope(scope, 'iframe.cke_wysiwyg_frame');
+    } else {
+      try { frames = document.querySelectorAll('iframe.cke_wysiwyg_frame'); } catch (e) { return; }
+    }
     if (frames.length === 0) return;
     const cs = getComputedStyle(document.documentElement);
     const get = (n, d) => (cs.getPropertyValue(n) || '').trim() || d;
@@ -3138,13 +3178,18 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     v /= 255;
     return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
   }
-  function skFixInlineColors() {
+  function skFixInlineColors(scope) {
     /* Уже исправленные узлы помечаются data-sk-inline-fixed=1 — исключаем
        их прямо в селекторе, чтобы каждый тик интервала не перебирал их. */
+    const SEL = '.html-content [style*="color"]:not([data-sk-inline-fixed]), .step-text-wrapper [style*="color"]:not([data-sk-inline-fixed]), .rich-text-viewer [style*="color"]:not([data-sk-inline-fixed]), .show-more__content [style*="color"]:not([data-sk-inline-fixed]), .course-promo__description [style*="color"]:not([data-sk-inline-fixed]), .profile__header-details [style*="color"]:not([data-sk-inline-fixed])';
     let nodes;
-    try {
-      nodes = document.querySelectorAll('.html-content [style*="color"]:not([data-sk-inline-fixed]), .step-text-wrapper [style*="color"]:not([data-sk-inline-fixed]), .rich-text-viewer [style*="color"]:not([data-sk-inline-fixed]), .show-more__content [style*="color"]:not([data-sk-inline-fixed]), .course-promo__description [style*="color"]:not([data-sk-inline-fixed]), .profile__header-details [style*="color"]:not([data-sk-inline-fixed])');
-    } catch (e) { return; }
+    if (scope) {
+      nodes = skQueryScope(scope, SEL);
+    } else {
+      try {
+        nodes = document.querySelectorAll(SEL);
+      } catch (e) { return; }
+    }
     for (let i = 0; i < nodes.length; i++) {
       const el = nodes[i];
       if (el.getAttribute('data-sk-inline-fixed') === '1') continue;
@@ -3207,17 +3252,21 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     const m = /url\((['"]?)([^'")]+)\1\)/.exec(String(raw || ''));
     return m ? m[2] : '';
   }
-  function skFixCovers() {
+  function skFixCovers(scope) {
+    const SEL =
+      'img.course-promo__course-cover, img.course-card__cover, ' +
+      '.item-tile__cover-img, img[src*="/media/cache/images/courses/"], ' +
+      'img[src*="/media/courses/"]:not([data-sk-cover-fixed]), ' +
+      '.lesson-widget__cover-image:not([data-sk-cover-fixed]), ' +
+      '.future-lesson-widget__cover:not([data-sk-cover-fixed])';
     let els;
-    try {
-      els = document.querySelectorAll(
-        'img.course-promo__course-cover, img.course-card__cover, ' +
-          '.item-tile__cover-img, img[src*="/media/cache/images/courses/"], ' +
-          'img[src*="/media/courses/"]:not([data-sk-cover-fixed]), ' +
-          '.lesson-widget__cover-image:not([data-sk-cover-fixed]), ' +
-          '.future-lesson-widget__cover:not([data-sk-cover-fixed])'
-      );
-    } catch (e) { return; }
+    if (scope) {
+      els = skQueryScope(scope, SEL);
+    } else {
+      try {
+        els = document.querySelectorAll(SEL);
+      } catch (e) { return; }
+    }
     for (let i = 0; i < els.length; i++) {
       const el = els[i];
       let src = el.getAttribute('src') || '';
@@ -3254,6 +3303,73 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     }
   }
 
+  let skFixPending = null;
+  let skFixQueued = false;
+
+  function skFixTree(node) {
+    if (node.nodeType === 1) {
+      skFixEditors(node);
+      skFixInlineColors(node);
+      skFixCovers(node);
+    } else if (node.nodeType === 11) {
+      const kids = node.childNodes;
+      for (let i = 0; i < kids.length; i++) skFixTree(kids[i]);
+    }
+  }
+
+  /* Приложение рендерит шаг через пару секунд после старта бандла, и текст
+   * с тёмным инлайн-цветом (color:#25282d из редактора) успевает
+   * отрисоваться тёмным по тёмному, пока до него не дойдёт очередной
+   * проход раз в 1,5 с: цвет текста «моргает». Поэтому ловим вставку
+   * узлов и правим в том же кадре, обходя только добавленные поддеревья.
+   * Свои правки будят наблюдатель снова, но следующий проход уже ничего
+   * не находит (исправленные помечены) и цепочка обрывается. */
+  function skFixRun() {
+    skFixQueued = false;
+    const nodes = skFixPending || [];
+    skFixPending = null;
+    try {
+      for (let i = 0; i < nodes.length; i++) skFixTree(nodes[i]);
+    } catch (e) { /* noop */ }
+  }
+
+  function skWatchContent() {
+    if (typeof document.querySelectorAll !== 'function') return;
+    if (!window.MutationObserver) return;
+    try {
+      const mo = new MutationObserver((records) => {
+        if (!skFixPending) skFixPending = [];
+        for (let i = 0; i < records.length; i++) {
+          const r = records[i];
+          if (r.type === 'childList') {
+            const added = r.addedNodes;
+            for (let j = 0; j < added.length; j++) skFixPending.push(added[j]);
+          } else {
+            /* узел получил inline-стиль уже после вставки */
+            skFixPending.push(r.target);
+          }
+        }
+        if (skFixQueued) return;
+        skFixQueued = true;
+        /* Пачку склеиваем в микротаску: она выполняется до отрисовки, так
+         * что узел не успевает показаться тёмным. rAF для этого не годится:
+         * в фоновой вкладке он не срабатывает вовсе и правка уехала бы до
+         * ближайшего тика. */
+        try {
+          Promise.resolve().then(skFixRun);
+        } catch (e) {
+          skFixQueued = false;
+          setTimeout(skFixRun, 0);
+        }
+      });
+      /* с documentElement, а не body: на document-start <body> ещё нет,
+         а контент оболочки появляется уже после него */
+      mo.observe(document.documentElement, {
+        childList: true, subtree: true, attributes: true, attributeFilter: ['style'],
+      });
+    } catch (e) { /* noop */ }
+  }
+
   /* Индикатор загрузки (блок ЗАГРУЗКА в coreCss). Класс sk-boot вешаем на
    * корень сразу, на document-start, иначе от первой отрисовки оболочки
    * до старта приложения экран пуст — в тёмной теме это чёрный
@@ -3283,11 +3399,30 @@ ${SK} .horizontal-scroller__scroll-btn:active {
       }
     }, 200);
     try { root.classList.add('sk-boot'); } catch (e) { /* noop */ }
+    /* <html lang> появляется позже нас (Stepik ставит его скриптом уже
+     * после document-start), а индикатор видно как раз в это окно —
+     * переписываем подпись, когда язык проявился. */
+    if (window.MutationObserver) {
+      try {
+        let lang = skLang();
+        const mo = new MutationObserver(() => {
+          const now = skLang();
+          if (now === lang) return;
+          lang = now;
+          if (!root.classList.contains('sk-boot')) return;
+          try { getBootTextEl().textContent = bootTextCss(); } catch (e) { /* noop */ }
+        });
+        mo.observe(root, { attributes: true, attributeFilter: ['lang'] });
+      } catch (e) { /* noop */ }
+    }
   }
 
   function init() {
     applyTheme(currentTheme(), true);
     ensurePicker();
+    /* Пререндер оболочки уже в DOM — правим инлайн-цвета сразу, не дожидаясь
+     * первого тика. */
+    try { skFixEditors(); skFixInlineColors(); skFixCovers(); } catch (e) { /* noop */ }
   }
 
   /* Применяем тему сразу в момент document-start, чтобы не было
@@ -3299,9 +3434,14 @@ ${SK} .horizontal-scroller__scroll-btn:active {
       document.documentElement.setAttribute('data-sk-theme', initialTheme);
       getStyleEl().textContent = buildCss(initialTheme);
     } catch (e) { /* noop */ }
+    try { getBootTextEl().textContent = bootTextCss(); } catch (e) { /* noop */ }
     try { skBootWatch(); } catch (e) { /* noop */ }
     /* CKEditor и инлайновые цвета появляются асинхронно — догоняем */
     try { skFixEditors(); skFixInlineColors(); skFixCovers(); } catch (e) { /* noop */ }
+    /* и ловим их появление сразу, а не по таймеру: иначе текст с тёмным
+     * инлайн-цветом доходит до экрана тёмным по тёмному и через 1,5 с
+     * «моргает» светлым (проверено: 1425 мс на живом уроке) */
+    try { skWatchContent(); } catch (e) { /* noop */ }
     /* В юзерскрипте штатный setInterval держим только там, где есть DOM
      * (в тестовом Node-харнессе querySelectorAll отсутствует — иначе
      * таймер не даёт процессу завершиться). */
