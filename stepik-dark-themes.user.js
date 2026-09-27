@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.38
+// @version      2.9.39
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1315,10 +1315,15 @@ ${SK} .stepik-loader__message { color: var(--sk-fg-2) !important; }
 
 /* ================= ОСНОВНОЙ МАКЕТ =================
    Белые «поля» по краям центрированного макета рисуются box-shadow
-   через --marco-layout-outer-color (#fcfcfc) — делаем тёмными. */
+   через --marco-layout-outer-color (#fcfcfc) — делаем тёмными.
+   Фон левой колонки (--marco-layout-nav-bg) в стоке — тот же «уровень 00»,
+   что и фон страницы, т.е. колонка от фона не отличается: карточку
+   меню рисует сама .nav-menu. Держим --sk-bg: при --sk-bg-alt (он же фон
+   подвала) колонка на /learn обрывалась под скруглённой карточкой меню
+   полосой «цвета подвала». */
 ${SK} .marco-layout {
   --marco-layout-outer-color: var(--sk-bg) !important;
-  --marco-layout-nav-bg: var(--sk-bg-alt) !important;
+  --marco-layout-nav-bg: var(--sk-bg) !important;
 }
 
 /* ================= КАРТОЧКИ КУРСОВ (каталог · главная · карусель) =================
