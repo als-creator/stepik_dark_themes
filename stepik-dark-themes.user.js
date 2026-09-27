@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.34
+// @version      2.9.35
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1266,9 +1266,12 @@ ${SK} .learn-last-activity-dropdown__icon {
   color: var(--sk-fg) !important;
 }
 /* подвал: сток красит фон хардкодом (#f6f6f6 у modern-варианта, тёмные
-   ссылки #222), поэтому перекрываем фон и все тексты внутри */
+   ссылки #222), поэтому перекрываем фон и все тексты внутри.
+   Тег <footer> есть и у компонентов окон (.modal-popup__footer) — им фон
+   подвала не нужен: он давал тёмную полосу во всю ширину под кнопками
+   окна подтверждения («Сбросить»/«Отменить»). */
 ${SK} .page-footer, ${SK} .page_footer, ${SK} .page-footer-modern,
-${SK} footer:not([class*="lesson"]) {
+${SK} footer:not([class*="lesson"]):not([class*="modal"]):not([class*="popup"]) {
   background-color: var(--sk-bg-alt) !important;
   color: var(--sk-fg-2) !important;
   border-color: var(--sk-border) !important;
