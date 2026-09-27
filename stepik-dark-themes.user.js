@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.32
+// @version      2.9.33
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -28,6 +28,43 @@
   function hexOf(c) {
     if (c && c[0] === '#') return c;
     return '#888888';
+  }
+
+  /* Светлый вариант смыслового цвета для текста на тёмной панели. Базовые
+   * зелёный/красный в части палитр дают на панели меньше 4,5:1 (проверено:
+   * kate-breeze-dark — 2,87:1 у красного, linuxorg — 2,49:1), а текстом
+   * статуса отмечают верные и неверные решения. Поэтому подмешиваем цвет
+   * текста темы до тех пор, пока контраст не наберёт порог. */
+  function skReadable(color, bg, mixWith, target) {
+    const need = target || 4.5;
+    const toRgb = (c) => {
+      const h = String(hexOf(c)).replace('#', '');
+      const n = parseInt(h.length === 3 ? h.replace(/(.)/g, '$1$1') : h, 16);
+      if (isNaN(n)) return null;
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    };
+    const lum = (p) => {
+      const f = (v) => {
+        v /= 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      };
+      return 0.2126 * f(p[0]) + 0.7152 * f(p[1]) + 0.0722 * f(p[2]);
+    };
+    const c = toRgb(color);
+    const b = toRgb(bg);
+    const w = toRgb(mixWith);
+    if (!c || !b || !w) return hexOf(color);
+    const lb = lum(b);
+    for (let step = 0; step <= 100; step++) {
+      const k = step / 100;
+      const p = [0, 1, 2].map((i) => Math.round(c[i] + (w[i] - c[i]) * k));
+      const hi = Math.max(lum(p), lb);
+      const lo = Math.min(lum(p), lb);
+      if ((hi + 0.05) / (lo + 0.05) >= need) {
+        return '#' + p.map((v) => ('0' + v.toString(16)).slice(-2)).join('');
+      }
+    }
+    return hexOf(mixWith);
   }
 
   /* ============================================================
@@ -636,6 +673,7 @@
   --sk-blue:${s.blue}; --sk-blue-dark:${s.blueDark};
   --sk-danger:${s.danger}; --sk-danger-dark:${s.dangerDark};
   --sk-warning:${s.warning}; --sk-warning-dark:${s.warningDark}; --sk-success:${s.success};
+  --sk-success-text:${skReadable(s.success, s.panel2, s.fg)}; --sk-danger-text:${skReadable(s.danger, s.panel2, s.fg)};
   --sk-on-surface:${s.onSurface}; --sk-selection:${s.selection};
   --sk-code-bg:${s.codeBg}; --sk-code-bg-light:${s.codeBgLight}; --sk-code-gutter:${s.codeGutter}; --sk-code-fg:${s.codeFg};
   --sk-code-comment:${s.codeComment}; --sk-code-keyword:${s.codeKeyword}; --sk-code-string:${s.codeString};
@@ -1796,6 +1834,25 @@ ${SK} .submission-show__title-text,
 ${SK} .submission-show__title-code-lang {
   color: var(--sk-fg) !important;
 }
+/* Вкладка «Решения» — просмотр попыток других участников. Подпись «Решение»
+   сток красит #222, а чипы выбора решения попадают под общий
+   button:not(.st-button_style_none) с зелёной заливкой #54ad54, и статусные
+   цвета #167116/#d41f1f рассчитаны на светлый фон: на тёмной панели это
+   тёмное по тёмному (на стенде — 1,13:1 у подписи и 2,2:1 у чипа).
+   Переписываем и подпись, и чипы, сохраняя смысл статуса. */
+${SK} .submission-selector__label { color: var(--sk-fg-2) !important; }
+${SK} .submission-selector__select {
+  color: var(--sk-fg) !important;
+  background-color: var(--sk-panel-2) !important;
+}
+${SK} .submission-selector__select:hover { background-color: var(--sk-border) !important; }
+${SK} .submission-selector__select[data-status="correct"] { color: var(--sk-success-text) !important; }
+${SK} .submission-selector__select[data-status="wrong"] { color: var(--sk-danger-text) !important; }
+/* Ответ текстового поля внутри решения: сток пишет его #2b2b2b (наше правило
+   на .autoresize-textarea покрывает не все случаи разметки). */
+${SK} .submission-show__submission [data-submission-view][data-type="string-quiz"] textarea {
+  color: var(--sk-fg) !important;
+}
 ${SK} .attempt-wrapper-button.white {
   background-color: var(--sk-panel-2) !important;
   border-color: var(--sk-border) !important;
@@ -2084,7 +2141,7 @@ ${SK} .choice-quiz-show__option code, ${SK} .s-radio__label code {
    #000088, строки #008800, числа #006666, встроенные #660066, комментарии
    #880000 — тёмным по тёмному, код в блоках не читается. Переводим классы
    .hljs-* на палитровые токены (по аналогии с CodeMirror ниже). */
-${SK} .hljs-subst { color: var(--sk-code-fg) !important; }
+${SK} .hljs-subst, ${SK} .hljs-params { color: var(--sk-code-fg) !important; }
 ${SK} .hljs-comment, ${SK} .hljs-quote {
   color: var(--sk-code-comment) !important;
   font-style: italic;
@@ -2112,6 +2169,10 @@ ${SK} .hljs-selector-pseudo, ${SK} .hljs-link {
 ${SK} .hljs-deletion { color: var(--sk-danger) !important; }
 ${SK} .hljs-emphasis { font-style: italic; }
 ${SK} .hljs-strong { font-weight: 700; }
+/* Формулы highlight.js сток красит светлой заливкой #eee — на тёмном канвасе
+   это белое пятно посреди кода. Их подсветка приходит из того же блока кода,
+   поэтому оставляем родной фон. */
+${SK} .hljs-formula { background-color: transparent !important; }
 /* Блок кода в тексте урока — та же поверхность, что окно редактора:
    --sk-code-bg-light. Раньше здесь был --sk-bg-alt, который в kate-breeze-dark
    (#202225) темнее фона страницы (#232629) — блок читался как чёрная дыра.
