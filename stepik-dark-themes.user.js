@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.40
+// @version      2.9.41
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1200,6 +1200,76 @@ ${SK} .lesson-end-modal__cert-note,
 ${SK} .submission-modal__review-another {
   background-color: var(--sk-panel-2) !important;
   color: var(--sk-fg) !important;
+}
+
+/* ОКНО ВХОДА/РЕГИСТРАЦИИ. Собой перекрашенной коробки .modal-dialog-inner
+   мало: виджет внутри рисует СВОЮ белую плашку (сток .sign-form —
+   background-color:#FFF, рамка #d8d8d8) и закрывает её целиком, поэтому
+   окно входа оставалось белым, а текст наследовал наш светлый --sk-fg
+   («Или войдите через социальные сети» — 1,16:1). Поля формы сток тоже
+   белые (#fff + тёмный текст), подвал виджета — #eee, разделитель табов —
+   #d9d9d9 с белыми «засечками», линия hr.split — #ddd, ссылки и подписи —
+   стоковые #4485ed и #777. */
+${SK} .auth-widget.sign-form {
+  background-color: var(--sk-panel) !important;
+  border-color: var(--sk-border) !important;
+  color: var(--sk-fg) !important;
+}
+${SK} .auth-widget .auth-widget__grey-footer {
+  background-color: var(--sk-panel-2) !important;
+  color: var(--sk-fg-2) !important;
+}
+/* поля формы — по образцу .st-input из блока форм (панель-2, рамка-токен) */
+${SK} .sign-form__body .sign-form__input {
+  background-color: var(--sk-panel-2) !important;
+  border-color: var(--sk-border) !important;
+  color: var(--sk-fg) !important;
+  box-shadow: none !important;
+}
+${SK} .sign-form__body .sign-form__input:focus {
+  background-color: var(--sk-panel-2) !important;
+  border-color: var(--sk-accent) !important;
+  box-shadow: 0 0 0 1px var(--sk-accent) !important;
+}
+${SK} .sign-form__body .sign-form__input::placeholder {
+  color: var(--sk-fg-2) !important;
+}
+/* ссылки формы и согласия: сток --link-color:#4485ed — 3,61:1 на панели */
+${SK} .sign-form__body a:not(.social-btn),
+${SK} .auth-agreements__caption a {
+  --link-color: var(--sk-blue) !important;
+  color: var(--sk-blue) !important;
+}
+${SK} .social-title,
+${SK} .sign-form__body .sign-form__desc {
+  color: var(--sk-fg-2) !important;
+}
+/* сообщения формы: сток — чистый red и бледный #6c6, в части палитр на
+   панели не добирают контраста, поэтому берём уже посчитанные скриптом
+   «текстовые» варианты этих цветов */
+${SK} .sign-form__body .sign-form__messages {
+  color: var(--sk-danger-text) !important;
+}
+${SK} .sign-form__body .sign-form__message_success {
+  color: var(--sk-success-text) !important;
+}
+/* линия-разделитель перед «войти через соцсети» (сток hr.split — #ddd) */
+${SK} .auth-widget hr.split {
+  border-color: var(--sk-border) !important;
+}
+/* разделитель под шапкой табов: сток #d9d9d9 + белые «засечки» по краям */
+${SK} .light-tabs__header::before {
+  background-color: var(--sk-border) !important;
+  border-left-color: var(--sk-panel) !important;
+  border-right-color: var(--sk-panel) !important;
+}
+/* содержимое табов в рамке (окно восстановления пароля и др.): сток
+   #d8d8d8, пустое содержимое — #eee */
+${SK} .light-tabs__content {
+  border-color: var(--sk-border) !important;
+}
+${SK} .light-tabs__content .light-tabs__content_empty {
+  background-color: var(--sk-panel-2) !important;
 }
 
 /* ================= СКРОЛЛБАРЫ ================= */
