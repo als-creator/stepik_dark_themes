@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.33
+// @version      2.9.34
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -90,6 +90,8 @@
       panelSub: 'Фирменная · Catppuccin · Kate · Tango LOR — нажмите для применения',
       off: 'Светлая тема (выключить)',
       aria: 'Тема оформления',
+      embedOn: 'Сделать вставку тёмной',
+      embedOff: 'Вернуть вставку как есть',
       title: (n) => `Тема: ${n} — клик для смены`,
       titleOff: 'Тема: выключена — клик для смены',
     },
@@ -99,6 +101,8 @@
       panelSub: 'Official · Catppuccin · Kate · Tango LOR — click to apply',
       off: 'Light theme (turn off)',
       aria: 'Colour theme',
+      embedOn: 'Darken the embed',
+      embedOff: 'Restore the embed',
       title: (n) => `Theme: ${n} — click to change`,
       titleOff: 'Theme: off — click to change',
     },
@@ -2516,6 +2520,48 @@ ${SK} .grecaptcha-badge {
   filter: invert(1) hue-rotate(180deg) !important;
 }
 
+/* ================= ВСТАВКИ В ТЕКСТЕ (iframe) =================
+   Содержимое вставки — чужой документ на другом домене (quizlet.com и
+   подобные): ни наш <style>, ни скрипт туда не достают, перекрасить белый
+   кадр нечем. Поэтому не лезем внутрь, а даём кадру обрамление темы и
+   кнопку в углу: по клику весь кадр инвертируется (приём тот же, что у
+   .grecaptcha-badge выше) — белый фон становится тёмным, тёмный текст
+   светлым. Фотографии на карточках при этом уходят в негатив, поэтому
+   по умолчанию кадр остаётся как отдал внешний сервис, а решение
+   запоминается по адресу в localStorage (иначе пришлось бы нажимать
+   заново на каждом шаге). Рамка — тенью на обёртке, а не border на самом
+   iframe: filter инвертировал бы и цвет рамки. */
+${SK} .sk-embed {
+  position: relative; display: block; width: 100%; max-width: 100%;
+  vertical-align: top; overflow: hidden; border-radius: 8px;
+  background-color: var(--sk-panel-2) !important;
+  box-shadow: 0 0 0 1px var(--sk-border);
+}
+${SK} .sk-embed > iframe {
+  display: block; margin: 0 !important; border: none !important;
+}
+${SK} .sk-embed[data-sk-embed-invert] > iframe {
+  filter: invert(1) hue-rotate(180deg);
+}
+${SK} .sk-embed-btn {
+  display: flex !important; position: absolute; top: 6px; right: 6px; z-index: 3;
+  width: 26px; height: 26px; padding: 0; box-sizing: border-box;
+  align-items: center; justify-content: center; cursor: pointer;
+  border: 1px solid var(--sk-border) !important; border-radius: 7px;
+  background: var(--sk-panel) !important; color: var(--sk-fg-2) !important;
+  opacity: .8; transition: opacity .15s ease, transform .15s ease;
+}
+${SK} .sk-embed:hover .sk-embed-btn, ${SK} .sk-embed-btn:focus-visible { opacity: 1; }
+${SK} .sk-embed-btn:hover { transform: scale(1.08); }
+/* Кадр перевёрнут: кнопка остаётся видимой и подсвечивается тинтом акцента
+   (тонким — чтобы текст на ней не терял контраст). */
+${SK} .sk-embed-btn[aria-pressed="true"] {
+  background: var(--sk-accent-2-tint) !important;
+  box-shadow: 0 0 0 1px var(--sk-accent);
+  opacity: 1;
+}
+${SK} .sk-embed-btn svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; }
+
 /* ================= ВИДЕО =================
    Плеер video.js сам по себе тёмный, но Stepik-скин красит нижнюю панель
    управления .vjs-control-bar в #eee с чёрными иконками — внизу окна плеера
@@ -3373,6 +3419,132 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     }
   }
 
+  /* Вставки в тексте урока: iframe с чужим документом (карточки Quizlet и
+   * подобные сервисы). Внутрь другого домена не залезть — ни наш <style>, ни
+   * скрипт туда не достанут, а белый кадр на тёмной странице режет глаз.
+   * Поэтому содержимое не трогаем, а даём кнопку: по клику весь кадр
+   * инвертируется (приём тот же, что у .grecaptcha-badge) — белый фон
+   * становится тёмным, тёмный текст светлым. Фотографии на карточках при
+   * этом уходят в негатив, поэтому по умолчанию кадр остаётся как отдал
+   * внешний сервис, а выбор запоминается по адресу: иначе пришлось бы
+   * нажимать заново на каждом шаге. */
+  const SK_EMBED_STORE = 'sk-embed-invert';
+  /* Видео и музыка — не документы: инвертировать их нельзя (картинка в
+   * негативе, а у бумажного плеера светлый кадр ещё и врёт про цвета), им
+   * кнопка не нужна. */
+  const SK_EMBED_SKIP =
+    /(^|\.)(youtube\.com|youtu\.be|vimeo\.com|dailymotion\.com|facebook\.com|instagram\.com|twitter\.com|soundcloud\.com|spotify\.com|vk\.com|rutube\.ru|ok\.ru)$/i;
+  const SK_EMBED_SEL =
+    'iframe.rendered-html__iframe, .rich-text-viewer iframe, .step-text-wrapper iframe';
+  const SK_EMBED_ICON =
+    '<svg viewBox="0 0 16 16" aria-hidden="true">' +
+    '<circle cx="8" cy="8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.3"/>' +
+    '<path d="M8 1.6a6.4 6.4 0 0 1 0 12.8z" fill="currentColor"/></svg>';
+
+  function skEmbedMap() {
+    let raw = null;
+    try { raw = localStorage.getItem(SK_EMBED_STORE); } catch (e) { return {}; }
+    if (!raw) return {};
+    try {
+      const o = JSON.parse(raw);
+      return (o && typeof o === 'object') ? o : {};
+    } catch (e) { return {}; }
+  }
+
+  function skEmbedWant(key) {
+    return skEmbedMap()[key] === 1;
+  }
+
+  function skEmbedSave(key, on) {
+    const o = skEmbedMap();
+    if (on) {
+      o[key] = 1;
+    } else {
+      /* выключенных не копим: ключей накапливалось бы на каждый кадр */
+      delete o[key];
+    }
+    try { localStorage.setItem(SK_EMBED_STORE, JSON.stringify(o)); } catch (e) { /* noop */ }
+  }
+
+  function skEmbedPaint(wrap, key) {
+    const on = skEmbedWant(key);
+    if (on) {
+      wrap.setAttribute('data-sk-embed-invert', '');
+    } else {
+      wrap.removeAttribute('data-sk-embed-invert');
+    }
+    const btn = wrap.querySelector('.sk-embed-btn');
+    if (btn) {
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      btn.setAttribute('title', on ? skT('embedOff') : skT('embedOn'));
+    }
+  }
+
+  function skEmbedWrap(frame) {
+    if (frame.getAttribute('data-sk-embed') === '1') return;
+    const src = frame.getAttribute('src') || '';
+    /* src ставится позже узла (шаг рендерится асинхронно) — без него нечем
+     * ни ключ выбрать, ни понять, вставляемый это документ или видео;
+     * догонит ближайший проход раз в 1,5 с. */
+    if (!src) return;
+    let host = '';
+    try { host = new URL(src, document.baseURI || location.href).hostname; } catch (e) { host = ''; }
+    if (SK_EMBED_SKIP.test(host)) return;
+    const parent = frame.parentNode;
+    if (!parent) return;
+    /* Кадр уже в нашей обёртке: SPA перерисовала содержимое, а не узел
+     * целиком. Вкладывать вторую обёртку нельзя — рамка и тень удвоятся. */
+    let own = null;
+    try { own = parent.closest ? parent.closest('.sk-embed') : null; } catch (e) { own = null; }
+    if (own) {
+      frame.setAttribute('data-sk-embed', '1');
+      skEmbedPaint(own, src);
+      return;
+    }
+    const wrap = document.createElement('span');
+    wrap.className = 'sk-embed';
+    try { parent.replaceChild(wrap, frame); } catch (e) { return; }
+    wrap.appendChild(frame);
+    const btn = document.createElement('button');
+    btn.className = 'sk-embed-btn';
+    btn.type = 'button';
+    /* Событие гасим явно: у Lesson клик по шагу открывает панель, и без
+     * stopPropagation кнопка переключала бы ещё и её. */
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const on = wrap.getAttribute('data-sk-embed-invert') === null;
+      skEmbedSave(src, on);
+      skEmbedPaint(wrap, src);
+    });
+    btn.innerHTML = SK_EMBED_ICON;
+    wrap.appendChild(btn);
+    frame.setAttribute('data-sk-embed', '1');
+    /* Обёртка тянется на всю колонку текста — так вставка Stepik и выглядит.
+     * Но если кадр уже (автор вставил iframe без ширины, а такие в стоке
+     * 300px), поджимаем обёртку под кадр: иначе кнопка в углу повиснет в
+     * стороне от него, на пустой полосе. */
+    try {
+      const w = frame.offsetWidth;
+      if (w > 0 && w < wrap.offsetWidth) wrap.style.width = w + 'px';
+    } catch (e) { /* noop */ }
+    skEmbedPaint(wrap, src);
+  }
+
+  function skFixEmbeds(scope) {
+    let els;
+    if (scope) {
+      els = skQueryScope(scope, SK_EMBED_SEL);
+    } else {
+      try {
+        els = document.querySelectorAll(SK_EMBED_SEL);
+      } catch (e) { return; }
+    }
+    for (let i = 0; i < els.length; i++) {
+      if (els[i].tagName === 'IFRAME') skEmbedWrap(els[i]);
+    }
+  }
+
   let skFixPending = null;
   let skFixQueued = false;
 
@@ -3381,6 +3553,7 @@ ${SK} .horizontal-scroller__scroll-btn:active {
       skFixEditors(node);
       skFixInlineColors(node);
       skFixCovers(node);
+      skFixEmbeds(node);
     } else if (node.nodeType === 11) {
       const kids = node.childNodes;
       for (let i = 0; i < kids.length; i++) skFixTree(kids[i]);
@@ -3435,7 +3608,13 @@ ${SK} .horizontal-scroller__scroll-btn:active {
       /* с documentElement, а не body: на document-start <body> ещё нет,
          а контент оболочки появляется уже после него */
       mo.observe(document.documentElement, {
-        childList: true, subtree: true, attributes: true, attributeFilter: ['style'],
+        childList: true, subtree: true, attributes: true,
+        /* src в фильтре — не ради картинок: у кадра вставки src приходит
+         * позже узла, и без этого прохода обёртка ждала бы тика в 1,5 с, то
+         * есть уже после загрузки кадра. А перенос уже загруженного iframe
+         * браузер считает новым документом и грузит заново (на стенде — 2
+         * загрузки вместо 1; перенос в том же кадре или в микротаске — 1). */
+        attributeFilter: ['style', 'src'],
       });
     } catch (e) { /* noop */ }
   }
@@ -3492,7 +3671,7 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     ensurePicker();
     /* Пререндер оболочки уже в DOM — правим инлайн-цвета сразу, не дожидаясь
      * первого тика. */
-    try { skFixEditors(); skFixInlineColors(); skFixCovers(); } catch (e) { /* noop */ }
+    try { skFixEditors(); skFixInlineColors(); skFixCovers(); skFixEmbeds(); } catch (e) { /* noop */ }
   }
 
   /* Применяем тему сразу в момент document-start, чтобы не было
@@ -3507,7 +3686,7 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     try { getBootTextEl().textContent = bootTextCss(); } catch (e) { /* noop */ }
     try { skBootWatch(); } catch (e) { /* noop */ }
     /* CKEditor и инлайновые цвета появляются асинхронно — догоняем */
-    try { skFixEditors(); skFixInlineColors(); skFixCovers(); } catch (e) { /* noop */ }
+    try { skFixEditors(); skFixInlineColors(); skFixCovers(); skFixEmbeds(); } catch (e) { /* noop */ }
     /* и ловим их появление сразу, а не по таймеру: иначе текст с тёмным
      * инлайн-цветом доходит до экрана тёмным по тёмному и через 1,5 с
      * «моргает» светлым (проверено: 1425 мс на живом уроке) */
@@ -3517,7 +3696,7 @@ ${SK} .horizontal-scroller__scroll-btn:active {
      * таймер не даёт процессу завершиться). */
     if (typeof document.querySelectorAll === 'function') {
       try {
-        setInterval(() => { try { skFixEditors(); skFixInlineColors(); skFixCovers(); } catch (e) { /* noop */ } }, 1500);
+        setInterval(() => { try { skFixEditors(); skFixInlineColors(); skFixCovers(); skFixEmbeds(); } catch (e) { /* noop */ } }, 1500);
       } catch (e) { /* noop */ }
     }
   }
