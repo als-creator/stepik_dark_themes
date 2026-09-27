@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.33
+// @version      2.9.34
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1105,6 +1105,97 @@ ${SK} .ui-tooltip, ${SK} .popper {
 }
 ${SK} [data-tooltip]::after {
   background-color: var(--sk-panel) !important;
+  color: var(--sk-fg) !important;
+}
+
+/* tippy с темой «white» (карточка дней стрика в шапке, подсказки навигации):
+   в стоке это белый фон #fff с тёмным текстом #222 — в ночной теме светлое
+   пятно поверх тёмной страницы. Текст внутри tooltip'ов берёт цвета из
+   --theme-color-*, поэтому красим только саму коробку. */
+${SK} .tippy-box[data-theme~="white"] {
+  background-color: var(--sk-panel) !important;
+  color: var(--sk-fg) !important;
+  border-color: var(--sk-border) !important;
+}
+${SK} .tippy-box[data-theme~="white"] .tippy-arrow {
+  color: var(--sk-panel) !important;
+}
+
+/* ================= МОДАЛЬНЫЕ ОКНА =================
+   Обе системы окон в стоке белые, а текст внутри наследует от body уже
+   перекрашенный нами светлый --sk-fg: получалось белое окно с нечитаемым
+   текстом (жалоба: «при нажатии кнопки окно с “Сбросить”/“Отменить” — оно
+   светлое»).
+   1) .modal-popup — новая система: .modal-popup__container жёстко #fff
+      (тёмный #282b41 в стоке встречается только у видео-модалки редактора
+      курса, то есть по умолчанию окно белое и в ночи);
+   2) .modal-dialog — старая система (.modal-dialog-confirm и прочие
+      подтверждалки): .modal-dialog-inner тоже #fff, крестик #000,
+      разделители #d8d8d8, текст подтверждалки #999. */
+${SK} .modal-popup__container {
+  background-color: var(--sk-panel) !important;
+  color: var(--sk-fg) !important;
+}
+${SK} .modal-popup__title h2,
+${SK} .modal-popup__content,
+${SK} .modal-popup__content p,
+${SK} .modal-popup__content h4,
+${SK} .modal-popup__footer {
+  color: var(--sk-fg) !important;
+}
+${SK} .modal-popup__subtitle {
+  color: var(--sk-fg-2) !important;
+}
+/* крестик закрытия: стоковый #999 (актив #5e5e5e) на тёмной панели не виден */
+${SK} button:not(.st-button_style_none).modal-popup__button {
+  color: var(--sk-fg-2) !important;
+}
+${SK} button:not(.st-button_style_none).modal-popup__button:hover,
+${SK} button:not(.st-button_style_none).modal-popup__button:focus-visible {
+  color: var(--sk-fg) !important;
+}
+/* исключение: в окнах тарифов крестик лежит на обложке — он и должен быть
+   белым, поэтому перекраску выше здесь отменяем */
+${SK} .modal-popup[data-theme="upgrade-plan-pro"] .modal-popup__button,
+${SK} .modal-popup[data-theme="upgrade-plan-enterprise"] .modal-popup__button {
+  color: #fff !important;
+}
+
+${SK} .modal-dialog .modal-dialog-block .modal-dialog-inner {
+  background: var(--sk-panel) !important;
+  color: var(--sk-fg) !important;
+}
+${SK} .modal-dialog .modal-dialog-block .modal-dialog-top__header,
+${SK} .modal-dialog .modal-dialog__header,
+${SK} .modal-dialog .modal-dialog__footer {
+  border-color: var(--sk-border) !important;
+}
+${SK} .modal-dialog .modal-dialog-block .modal-dialog-top__title,
+${SK} .modal-dialog .modal-dialog__headline-text,
+${SK} .modal-dialog .modal-dialog__body,
+${SK} .modal-dialog .modal-dialog__content,
+${SK} .modal-dialog .modal-dialog__footer,
+${SK} .modal-dialog .modal-dialog-confirm,
+${SK} .modal-dialog-confirm__text {
+  color: var(--sk-fg) !important;
+}
+${SK} .modal-dialog .modal-dialog__caption,
+${SK} .modal-dialog .modal-dialog__footer-text,
+${SK} .modal-dialog .modal-dialog-block .modal-dialog-top__title small {
+  color: var(--sk-fg-2) !important;
+}
+${SK} .modal-dialog .modal-dialog-block .modal-dialog-top__close {
+  color: var(--sk-fg-2) !important;
+}
+${SK} .modal-dialog .modal-dialog-block .modal-dialog-top__close:hover {
+  color: var(--sk-fg) !important;
+}
+/* светлые плашки-врезки внутри окон (сертификат в окне итогов урока,
+   «посмотреть ещё отзыв» в окне проверки): сток — светло-сиреневые
+   #E9EBFA / #e9ebfa */
+${SK} .lesson-end-modal__cert-note,
+${SK} .submission-modal__review-another {
+  background-color: var(--sk-panel-2) !important;
   color: var(--sk-fg) !important;
 }
 
