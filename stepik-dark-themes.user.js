@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.31
+// @version      2.9.32
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -3435,7 +3435,8 @@ ${SK} .horizontal-scroller__scroll-btn:active {
   const SK_EMBED_SKIP =
     /(^|\.)(youtube\.com|youtu\.be|vimeo\.com|dailymotion\.com|facebook\.com|instagram\.com|twitter\.com|soundcloud\.com|spotify\.com|vk\.com|rutube\.ru|ok\.ru)$/i;
   const SK_EMBED_SEL =
-    'iframe.rendered-html__iframe, .rich-text-viewer iframe, .step-text-wrapper iframe';
+    'iframe.rendered-html__iframe, .rich-text-viewer iframe:not(.cke_wysiwyg_frame), ' +
+    '.step-text-wrapper iframe:not(.cke_wysiwyg_frame)';
   const SK_EMBED_ICON =
     '<svg viewBox="0 0 16 16" aria-hidden="true">' +
     '<circle cx="8" cy="8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.3"/>' +
@@ -3489,6 +3490,8 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     if (!src) return;
     let host = '';
     try { host = new URL(src, document.baseURI || location.href).hostname; } catch (e) { host = ''; }
+    /* Пустой хост — это about:blank/srcdoc/data:, то есть не вставка */
+    if (!host) return;
     if (SK_EMBED_SKIP.test(host)) return;
     const parent = frame.parentNode;
     if (!parent) return;
