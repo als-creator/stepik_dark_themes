@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.32
+// @version      2.9.33
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2954,9 +2954,22 @@ ${SK} .learn-last-activity-pin__caption {
 }
 /* «дни стрика» в попапе прогресса: в стоке пройденный день — зелёный
    (#6c6) с галочкой, будущий — светло-серый, сегодняшний — зелёная
-   рамка; перекрасив все в одну панель, мы теряли градацию */
+   рамка; перекрасив все в одну панель, мы теряли градацию.
+   ПОРЯДОК ПРАВИЛ ЗНАЧИТ, как и в стоке: у ячейки, которая сегодня уже
+   пройдена, зелёный фон должен перебивать «прозрачный» из правила
+   [data-is-today] — иначе сегодня выглядит тёмным пятном в зелёной
+   неделе (жалоба). Рамка от [data-is-today] при этом сохраняется,
+   как и в стоке. */
 ${SK} .learn-last-activity-pin .learn-last-activity-pin__streak {
   background-color: var(--sk-panel-2) !important;
+}
+${SK} .learn-last-activity-pin[data-is-future] .learn-last-activity-pin__streak {
+  background-color: var(--sk-bg-alt) !important;
+  border: 1px solid var(--sk-border-2) !important;
+}
+${SK} .learn-last-activity-pin[data-is-today] .learn-last-activity-pin__streak {
+  background-color: transparent !important;
+  border: 2px solid var(--sk-accent) !important;
 }
 ${SK} .learn-last-activity-pin[data-is-solved] .learn-last-activity-pin__streak {
   background-color: var(--sk-accent) !important;
@@ -2964,16 +2977,8 @@ ${SK} .learn-last-activity-pin[data-is-solved] .learn-last-activity-pin__streak 
 ${SK} .learn-last-activity-pin[data-is-solved] .learn-last-activity-pin__streak::after {
   background-color: var(--sk-bg) !important;
 }
-${SK} .learn-last-activity-pin[data-is-future] .learn-last-activity-pin__streak {
-  background-color: var(--sk-bg-alt) !important;
-  border: 1px solid var(--sk-border-2) !important;
-}
 ${SK} .learn-last-activity-pin[data-is-future] .learn-last-activity-pin__caption {
   color: var(--sk-fg-muted) !important;
-}
-${SK} .learn-last-activity-pin[data-is-today] .learn-last-activity-pin__streak {
-  background-color: transparent !important;
-  border: 2px solid var(--sk-accent) !important;
 }
 ${SK} .learn-last-activity-pin[data-is-current]:not([data-is-today]) .learn-last-activity-pin__caption {
   border-bottom-color: var(--sk-fg-2) !important;
