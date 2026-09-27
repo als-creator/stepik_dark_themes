@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.31
+// @version      2.9.32
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2206,6 +2206,15 @@ ${SK} table {
 ${SK} table th, ${SK} table td {
   color: var(--sk-fg) !important;
   border-color: var(--sk-border) !important;
+}
+/* Шапка и подвал таблицы: critical.css красит их глобальным правилом
+   (table tfoot, table thead { background:#f5f5f5 }). Мы перекрывали только
+   .rich-text-viewer, поэтому шапка quiz «таблицы» (.table-quiz__table) и
+   любых таблиц вне этого контейнера оставалась белой, а текст в ней —
+   светлым, то есть нечитаемым. Правило ниже по специфичности, чем
+   частные вроде .user-revenue__table thead, — их значения сохраняются. */
+${SK} table thead, ${SK} table tfoot {
+  background-color: var(--sk-panel) !important;
 }
 /* Чётные строки ЛЮБОЙ таблицы: сток глобально красит их #f9f9f9
    (table tr.alt, table tr.even, table tr:nth-of-type(even)) — без этого
