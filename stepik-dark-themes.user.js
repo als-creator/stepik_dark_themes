@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.39
+// @version      2.9.40
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark/Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -966,10 +966,20 @@ ${SK} .teachlearn__course-nav,
 ${SK} .learn-nav {
   border-radius: 12px !important;
 }
+/* Скругление не должно отнимать у панели стоковую прокрутку. В стоке
+   .nav-menu — прокручиваемая колонка (overflow-y:auto; overflow-x:hidden),
+   а наш overflow:hidden её отключал: панель position:sticky, и у
+   авторизованного пользователя с длинным списком курсов всё, что ниже
+   края окна, было недоступно — прокрутить панель было нечем. Клипаем только
+   по X: скруглённые углы clip-ятся и при прокрутке (как у .course-nav
+   ниже), вертикаль возвращаем стоковую. */
 ${SK} .nav-menu.teach-nav,
 ${SK} .nav-menu.learn-nav,
 ${SK} .teachlearn__course-nav,
-${SK} .learn-nav,
+${SK} .learn-nav {
+  overflow: hidden auto !important;
+}
+/* .nav-links-block в стоке не прокручивается — там клипаем обе оси */
 ${SK} .nav-links-block {
   overflow: hidden !important;
 }
@@ -1389,14 +1399,14 @@ ${SK} .stepik-loader__message { color: var(--sk-fg-2) !important; }
 /* ================= ОСНОВНОЙ МАКЕТ =================
    Белые «поля» по краям центрированного макета рисуются box-shadow
    через --marco-layout-outer-color (#fcfcfc) — делаем тёмными.
-   Фон левой колонки (--marco-layout-nav-bg) в стоке — тот же «уровень 00»,
-   что и фон страницы, т.е. колонка от фона не отличается: карточку
-   меню рисует сама .nav-menu. Держим --sk-bg: при --sk-bg-alt (он же фон
-   подвала) колонка на /learn обрывалась под скруглённой карточкой меню
-   полосой «цвета подвала». */
+   Фон левой колонки (--marco-layout-nav-bg) — --sk-bg-alt: колонка идёт
+   от самой шапки вниз, и карточка меню в ней — продолжение панели. Тот же
+   цвет у фона подвала, из-за чего 2.9.39 пробовал --sk-bg, но тогда под
+   скруглённой карточкой появлялась полоса цвета страницы, а в двух
+   верхних углах карточки (прямо под логотипом) — артефакты-вырезы. */
 ${SK} .marco-layout {
   --marco-layout-outer-color: var(--sk-bg) !important;
-  --marco-layout-nav-bg: var(--sk-bg) !important;
+  --marco-layout-nav-bg: var(--sk-bg-alt) !important;
 }
 
 /* ================= КАРТОЧКИ КУРСОВ (каталог · главная · карусель) =================
