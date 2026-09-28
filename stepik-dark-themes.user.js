@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.67
+// @version      2.9.68
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -3610,9 +3610,13 @@ ${SK} .horizontal-scroller__scroll-btn:active {
    * ============================================================ */
 
   const PICKER_CSS = `
+/* padding: 0 обязателен на обеих кнопках: у стокового button он равен
+   12px 24px, а при border-box и width: 46px содержимое (значок) получает
+   ширину 46 - 48 = -2px и сжимается flex-алгоритмом до нуля — круг есть, а
+   значка в нём нет (проверено на /catalog: svg 0x24 при height 24). */
 #sk-dark-theme-toggle {
   position: fixed; right: 18px; bottom: 18px; z-index: 2147483645;
-  width: 46px; height: 46px; border-radius: 50%; border: none; cursor: pointer;
+  width: 46px; height: 46px; padding: 0; border-radius: 50%; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   background: var(--sk-panel-2, #313244) !important; color: var(--sk-fg-2, #bac2de) !important;
   box-shadow: 0 4px 16px rgba(0,0,0,.45); font-size: 20px; line-height: 1;
@@ -3625,7 +3629,7 @@ ${SK} .horizontal-scroller__scroll-btn:active {
    панель её не задевает. z-index ниже панели и переключателя. */
 #sk-dark-theme-top {
   position: fixed; right: 18px; bottom: 74px; z-index: 2147483644;
-  width: 46px; height: 46px; border-radius: 50%; border: none; cursor: pointer;
+  width: 46px; height: 46px; padding: 0; border-radius: 50%; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   background: var(--sk-panel-2, #313244) !important; color: var(--sk-fg-2, #bac2de) !important;
   box-shadow: 0 4px 16px rgba(0,0,0,.45); font-size: 20px; line-height: 1;
