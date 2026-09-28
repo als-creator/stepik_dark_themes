@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.58
+// @version      2.9.59
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1825,6 +1825,20 @@ ${SK} .course-promo__bottom {
    серым #5E5E5E: в Breeze Dark 2,35:1. Берём читаемый приглушённый токен. */
 ${SK} .select-box__caption {
   color: var(--sk-fg-3-text) !important;
+}
+/* Наведение и раскрытый список: сток заливает кнопку селекта белым (#fff) и
+   красит текст в #222 (варианты minimal/flat/modern) — на тёмной странице
+   это белая плашка, а светлая подпись на ней даёт 1,35:1. Отдаём кнопке
+   панель-2, подписи — основной текст. Вариант primary-outlined (зелёная
+   рамка) не затрагиваем: там своя рамка, белой заливки у него нет. */
+${SK} .select-box button.select-box__toggle-btn:hover,
+${SK} .select-box button.select-box__toggle-btn[data-active] {
+  background-color: var(--sk-panel-2) !important;
+  color: var(--sk-fg) !important;
+}
+${SK} .select-box button.select-box__toggle-btn:hover .select-box__caption,
+${SK} .select-box button.select-box__toggle-btn[data-active] .select-box__caption {
+  color: var(--sk-fg) !important;
 }
 /* отзывы на промо (.course-review-card): сток даёт автору и заголовку
    ссылку #222, а дате — серый #777; на тёмном канвасе они сливаются */
