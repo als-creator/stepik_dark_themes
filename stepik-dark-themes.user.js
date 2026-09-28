@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.42
+// @version      2.9.43
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -693,6 +693,7 @@
   --sk-accent-2:${s.accent2}; --sk-accent-2-dark:${s.accent2Dark}; --sk-accent-2-tint:${rgba(hexOf(s.accent2), 0.14)};
   --sk-accent-2-text:${skReadable(s.accent2, skLighter(s.panel, s.panel2), s.fg, 4.6)};
   --sk-blue:${s.blue}; --sk-blue-dark:${s.blueDark};
+  --sk-blue-text:${skReadable(s.blue, skLighter(s.panel, s.panel2), s.fg, 4.6)};
   --sk-danger:${s.danger}; --sk-danger-dark:${s.dangerDark};
   --sk-warning:${s.warning}; --sk-warning-dark:${s.warningDark}; --sk-success:${s.success};
   --sk-success-text:${skReadable(s.success, skLighter(s.panel, s.panel2), s.fg, 4.6)}; --sk-danger-text:${skReadable(s.danger, skLighter(s.panel, s.panel2), s.fg, 4.6)};
@@ -1070,15 +1071,49 @@ ${SK} .rubricator-meta-category__category {
 }
 
 /* ================= БЕЙДЖИ КУРСОВ =================
-   «Черновик» в стоке — светло-серая плашка #999 с белым текстом;
-   градиентные бейджи (basic/paid/private) — светло-градиентные. Гасим
-   фон в панель, оставляя цветной текст, чтобы бейдж читался на карточке. */
+   Стоковые бейджи — светлые градиентные плашки с цветным текстом
+   (#56a4ff / #54ad54 / #4485ed / #6c7bdf), а два исключения совсем без
+   читаемости: «Программа» — сплошной индиго #6C7BDF с белым текстом
+   (3,79:1), «Тариф» — заливка акцентом с белым. На тёмной подложке и то и
+   другое не читается, поэтому все бейджи гасим в панель-2, а текст берём
+   читаемыми токенами темы: синий — --sk-blue-text, оплаченный —
+   --sk-success-text, «недействительные» и снятые с продажи —
+   --sk-danger-text, корпоративный — второй акцент текстом, остальные —
+   обычный текст темы. Фон плашек basic/paid/private/enterprise задан явно:
+   сток объявляет их как var(--course-badge-default-bg), но это значение
+   вычислено ещё на :root, где --course-badge-default-bg — transparent, и до
+   бейджа доходит прозрачным. */
 ${SK} .course-badge {
-  --course-badge-default-bgi: none !important;
   --course-badge-default-bg: var(--sk-panel-2) !important;
+  --course-badge-default-bgi: none !important;
+  --course-badge-default-fg: var(--sk-fg-2) !important;
   --course-badge-draft-bg: var(--sk-panel-2) !important;
   --course-badge-draft-bgi: none !important;
   --course-badge-draft-fg: var(--sk-fg-2) !important;
+  --course-badge-basic-bg: var(--sk-panel-2) !important;
+  --course-badge-basic-fg: var(--sk-blue-text) !important;
+  --course-badge-basic-bgi: none !important;
+  --course-badge-basic-invalid-bg: var(--sk-panel-2) !important;
+  --course-badge-basic-invalid-bgi: none !important;
+  --course-badge-basic-invalid-fg: var(--sk-danger-text) !important;
+  --course-badge-paid-bg: var(--sk-panel-2) !important;
+  --course-badge-paid-fg: var(--sk-success-text) !important;
+  --course-badge-paid-bgi: none !important;
+  --course-badge-paid-invalid-bg: var(--sk-panel-2) !important;
+  --course-badge-paid-invalid-bgi: none !important;
+  --course-badge-paid-invalid-fg: var(--sk-danger-text) !important;
+  --course-badge-private-bg: var(--sk-panel-2) !important;
+  --course-badge-private-fg: var(--sk-blue-text) !important;
+  --course-badge-private-bgi: none !important;
+  --course-badge-enterprise-bg: var(--sk-panel-2) !important;
+  --course-badge-enterprise-fg: var(--sk-accent-2-text) !important;
+  --course-badge-enterprise-bgi: none !important;
+  --course-badge-spec-bg: var(--sk-panel-2) !important;
+  --course-badge-spec-bgi: none !important;
+  --course-badge-spec-fg: var(--sk-fg) !important;
+  --course-badge-tarif-count-bg: var(--sk-panel-2) !important;
+  --course-badge-tarif-count-bgi: none !important;
+  --course-badge-tarif-count-fg: var(--sk-fg) !important;
 }
 
 /* ================= АВАТАРЫ / РЕЙТИНГ В ПРОФИЛЕ =================
