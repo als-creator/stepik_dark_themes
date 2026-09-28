@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.66
+// @version      2.9.67
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -106,6 +106,7 @@
       panelSub: 'Night · Catppuccin · Breeze · Oblivion · Tango — нажмите для применения',
       off: 'Светлая тема (выключить)',
       aria: 'Тема оформления',
+      top: 'Наверх',
       embedOn: 'Сделать вставку тёмной',
       embedOff: 'Вернуть вставку как есть',
       title: (n) => `Тема: ${n} — клик для смены`,
@@ -117,6 +118,7 @@
       panelSub: 'Night · Catppuccin · Breeze · Oblivion · Tango — click to apply',
       off: 'Light theme (turn off)',
       aria: 'Colour theme',
+      top: 'Back to top',
       embedOn: 'Darken the embed',
       embedOff: 'Restore the embed',
       title: (n) => `Theme: ${n} — click to change`,
@@ -3618,6 +3620,22 @@ ${SK} .horizontal-scroller__scroll-btn:active {
 }
 #sk-dark-theme-toggle:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(0,0,0,.55); }
 #sk-dark-theme-toggle svg { width: 24px; height: 24px; fill: currentColor; }
+/* Кнопка «наверх» — над переключателем тем. Нижний край панели тем тоже
+   bottom: 74px, то есть ровно над этой кнопкой, поэтому в открытом виде
+   панель её не задевает. z-index ниже панели и переключателя. */
+#sk-dark-theme-top {
+  position: fixed; right: 18px; bottom: 74px; z-index: 2147483644;
+  width: 46px; height: 46px; border-radius: 50%; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--sk-panel-2, #313244) !important; color: var(--sk-fg-2, #bac2de) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,.45); font-size: 20px; line-height: 1;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+/* [hidden] в авторском блоке перебивает системный display:none, поэтому
+   гасим его явно — иначе кнопка «висит» над переключателем всегда. */
+#sk-dark-theme-top[hidden] { display: none !important; }
+#sk-dark-theme-top:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(0,0,0,.55); }
+#sk-dark-theme-top svg { width: 24px; height: 24px; fill: currentColor; }
 #sk-dark-theme-panel {
   position: fixed; right: 18px; bottom: 74px; z-index: 2147483646;
   width: 300px; max-width: calc(100vw - 32px); max-height: min(80vh, 560px); overflow-y: auto;
@@ -3684,6 +3702,8 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     panel.setAttribute('data-sk-lang', lang);
     panel.innerHTML = pickerHtml();
     btn.setAttribute('aria-label', skT('aria'));
+    const top = document.getElementById('sk-dark-theme-top');
+    if (top) { top.setAttribute('aria-label', skT('top')); top.title = skT('top'); }
     const id = document.documentElement.getAttribute('data-sk-theme');
     btn.title = id && THEMES[id] ? skT('title')(skThemeName(THEMES[id])) : skT('titleOff');
     updatePicker(id || null);
@@ -3701,6 +3721,39 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     panel.style.display = 'none';
     panel.setAttribute('data-sk-lang', skLang());
     panel.innerHTML = pickerHtml();
+
+    /* Кнопка «наверх» — над переключателем (просьба пользователя). Пока
+       страница не прокручена, её прячем: вверху она бесполезна, а висела бы
+       рядом с переключателем лишней кружкой. Порог 300px — ниже обычного
+       «залипания» шапки. Клик — плавно наверх. */
+    const top = document.createElement('button');
+    top.id = 'sk-dark-theme-top';
+    top.type = 'button';
+    top.hidden = true;
+    top.setAttribute('aria-label', skT('top'));
+    top.title = skT('top');
+    top.innerHTML = '<svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8 8 8z"/></svg>';
+    top.addEventListener('click', () => {
+      try { window.scrollTo({ top: 0, left: 0, behavior: 'smooth' }); }
+      catch (e) { window.scrollTo(0, 0); }
+    });
+    /* Прокручивает всегда окно (document.scrollingElement = HTML на /learn,
+       /learn/courses, /catalog, страницах курса и урока — внутренних
+       прокручиваемых контейнеров нет), поэтому достаточно window. */
+    let topShown = false;
+    const syncTop = () => {
+      const y = window.pageYOffset || document.documentElement.scrollTop || 0;
+      const нужно = y > 300;
+      if (нужно === topShown) return;
+      topShown = нужно;
+      top.hidden = !нужно;
+    };
+    window.addEventListener('scroll', syncTop, { passive: true });
+    window.addEventListener('resize', syncTop, { passive: true });
+    /* Браузер восстанавливает позицию прокрутки после load, а кнопка уже
+       смонтирована — без этой проверки она останется скрытой до первого
+       события прокрутки. */
+    window.addEventListener('load', syncTop);
 
     btn.addEventListener('click', () => {
       refreshPickerLang();
@@ -3726,8 +3779,11 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     const mount = () => {
       const head = document.head || document.documentElement;
       if (!document.getElementById('sk-dark-theme-picker-css')) head.appendChild(ps);
-      (document.body || document.documentElement).appendChild(btn);
-      (document.body || document.documentElement).appendChild(panel);
+      const корень = document.body || document.documentElement;
+      корень.appendChild(btn);
+      корень.appendChild(top);
+      корень.appendChild(panel);
+      syncTop();
     };
     if (document.body) mount(); else document.addEventListener('DOMContentLoaded', mount);
   }
