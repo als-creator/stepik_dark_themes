@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.46
+// @version      2.9.47
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1797,6 +1797,16 @@ ${SK} .profile__title-action.button-link,
 ${SK} .lesson-end-modal a:not(.button) {
   --link-color: var(--sk-blue-text) !important;
   color: var(--sk-blue-text) !important;
+}
+/* цена курса: сток красит контейнер цены (.course-card__price,
+   .specialization-card__price, .learn-course-tile__price) в индиго #6c7bdf,
+   а это 3,61:1 на панели в Breeze Dark. Берём читаемый второй акцент
+   текстом. «Бесплатно» (#6c6) и скидка (#ff7965) у контейнера своего цвета
+   не имеют — остаются как есть. */
+${SK} .course-card__price,
+${SK} .specialization-card__price,
+${SK} .learn-course-tile__price {
+  color: var(--sk-accent-2-text) !important;
 }
 /* зачёркнутая «старая» цена в карточках/промо: стоковый индиго #3e50cb
    на тёмной панели почти не виден (контраст ~2:1) */
