@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.52
+// @version      2.9.53
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -730,6 +730,39 @@ ${SK} body {
   background-color: var(--sk-bg) !important;
   color: var(--sk-fg) !important;
   color-scheme: dark !important;
+}
+/* ================= ЗЕЛЁНЫЕ КНОПКИ СТОКА =================
+   Сток заливает обычные кнопки фирменным зелёным #54ad54 и сажает на них
+   БЕЛЫЙ текст — это 2,81:1, а на его собственном тёмном hover-е #288b28 и
+   подавно. Заливаем их фирменным акцентом темы и берём тёмный текст
+   --sk-on-surface — ровно так уже оформлены кнопки полей фото и обложки в
+   профиле (2.8.8). Оттенок при наведении и нажатии задаём вуалью поверх
+   заливки: тон остаётся токеном темы, а на светлой вуали текст только
+   выигрывает. Список кнопок — те, что с заливкой действительно видны
+   гостю: «Искать» в каталоге, «Купить» на промо и «Продолжить» в
+   карточке избранного курса. Остальные зелёные кнопки стока — ссылки
+   (прозрачная заливка, цветной текст) или варианты .is-outlined, их
+   заливка не затрагивается. */
+${SK} button.search-form__submit,
+${SK} button.course-promo-enrollment__join-btn,
+${SK} button.lfcc__continue-btn {
+  background-color: var(--sk-accent) !important;
+  color: var(--sk-on-surface) !important;
+}
+${SK} button.search-form__submit:hover,
+${SK} button.search-form__submit:focus-visible,
+${SK} button.course-promo-enrollment__join-btn:hover,
+${SK} button.course-promo-enrollment__join-btn:focus-visible,
+${SK} button.lfcc__continue-btn:hover,
+${SK} button.lfcc__continue-btn:focus-visible {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.14)) !important;
+  color: var(--sk-on-surface) !important;
+}
+${SK} button.search-form__submit:active,
+${SK} button.course-promo-enrollment__join-btn:active,
+${SK} button.lfcc__continue-btn:active {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.14)) !important;
+  color: var(--sk-on-surface) !important;
 }
 /* ================= ЗАГРУЗКА =================
    Stepik — SPA на Ember: между первой отрисовкой оболочки и стартом бандла
