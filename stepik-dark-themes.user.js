@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.54
+// @version      2.9.55
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2134,6 +2134,13 @@ ${SK} .toc-promo-lesson__title {
 ${SK} .progress-pie,
 ${SK} .course-card__widget[data-type="enrolled-progress"] > i {
   color: var(--sk-accent) !important;
+}
+/* числа рядом с иконками в карточках курсов (число учащихся, рейтинг) —
+   сток красит весь блок .course-card__widgets в #999: в Oblivion по панели
+   карточки это 4,44:1. Отдаём приглушённому, но читаемому токену. */
+${SK} .course-card__widgets,
+${SK} .course-card[data-view="centered"] .course-card__widgets {
+  color: var(--sk-fg-3-text) !important;
 }
 
 /* ================= УРОК / КВИЗ ================= */
