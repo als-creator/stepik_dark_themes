@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.55
+// @version      2.9.56
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2184,6 +2184,12 @@ ${SK} button.lesson-sidebar__expand-sidebar:not(.st-button_style_none):hover,
 ${SK} button.lesson-sidebar__expand-sidebar:not(.st-button_style_none):focus {
   background-color: var(--sk-panel-2) !important;
   color: var(--sk-fg) !important;
+}
+/* счётчики прогресса в шапке урока («8 из 11 шагов пройдено», «4 из 6 баллов
+   получено»): сток красит их в #999 — в Catppuccin Frappe это 4,32:1, в
+   Tango 4,44:1. Отдаём приглушённый, но читаемый --sk-fg-3-text. */
+${SK} .top-tools__progress {
+  color: var(--sk-fg-3-text) !important;
 }
 /* Блок решения после проверки ответа: сток заливает .submission-show
    белым (#fff) и заголовок решения пишет тёмным #222; на тёмной странице
