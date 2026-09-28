@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Stepik Dark Themes — фирменная ночная + Catppuccin, Kate & Tango
+// @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.42
-// @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): фирменная Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin (Mocha/Macchiato/Frappe), Kate (Breeze Dark/Oblivion), Linux.org.ru (Tango). Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
+// @version      2.9.43
+// @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark/Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
 // @match        https://www.stepik.org/*
@@ -32,7 +32,7 @@
 
   /* Светлый вариант смыслового цвета для текста на тёмной панели. Базовые
    * зелёный/красный в части палитр дают на панели меньше 4,5:1 (проверено:
-   * kate-breeze-dark — 2,87:1 у красного, linuxorg — 2,49:1), а текстом
+   * kate-breeze-dark — 2,87:1 у красного, Tango — 2,49:1), а текстом
    * статуса отмечают верные и неверные решения. Поэтому подмешиваем цвет
    * текста темы до тех пор, пока контраст не наберёт порог. */
   function skReadable(color, bg, mixWith, target) {
@@ -2195,10 +2195,23 @@ ${SK} .cke_path_item {
 ${SK} .cke_top, ${SK} .cke_bottom {
   border-color: var(--sk-border) !important;
 }
-${SK} .cke_button,
+/* Иконки кнопок — спрайты-PNG с чёрным глифом (background-image из инлайн-
+   стиля), перекрасить их цветом нельзя, только фильтром. Фильтр вешаем
+   ТОЛЬКО на иконку: раньше он стоял ещё и на самой .cke_button, а фильтры
+   вложенных элементов перемножаются — двойная инверсия гасила вторую, и
+   чёрный глиф так и оставался чёрным на тёмной панели (жалоба: «значки
+   визуального редактора тёмные на тёмном»). Побочный эффект был и в том,
+   что на hover инвертировался ещё и фон кнопки. */
 ${SK} .cke_button_icon,
 ${SK} .cke_combo_arrow {
   filter: invert(1) brightness(1.7) !important;
+}
+/* подписи кнопок (в широкой раскладке панели они видимы) и «хлебные
+   крошки» элемента: сток красит #000 и #484848 */
+${SK} .cke_button,
+${SK} .cke_button_label,
+${SK} .cke_path_empty {
+  color: var(--sk-fg-2) !important;
 }
 ${SK} .cke_button:hover,
 ${SK} .cke_button:focus,
