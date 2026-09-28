@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.57
+// @version      2.9.58
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1868,7 +1868,14 @@ ${SK} .licfr__link-action {
    В светлой теме Stepik красит в #4485ed ссылки-кнопки и часть служебных
    ссылок (--link-color). На тёмном фоне это 3,79:1 на панели и 4,22:1 на
    канвасе — ниже порога в Breeze Dark и Tango. Берём --sk-blue-text: тот
-   же синий, подмешанный до 4,6:1 по более светлой из двух панелей. */
+   же синий, подмешанный до 4,6:1 по более светлой из двух панелей.
+
+   Отдельный случай — ссылки в текстах-подсказках, где сток задаёт тот же
+   --link-color:#4485ed отдельным правилом на каждую такую надпись: пустые
+   состояния разделов (.teachlearn__empty-note на /learn/courses — «найдите
+   себе первый курс в нашем каталоге») и описания блоков каталога. На фоне
+   страницы этот синий даёт 3,42:1 в Frappe, 3,51 в Tango, 4,08 в
+   Macchiato и 4,22 в Breeze Dark. */
 ${SK} .shortened-text__show-more,
 ${SK} .button-details_theme_primary,
 ${SK} .course-buy-widget__how-to-installments a,
@@ -1879,7 +1886,15 @@ ${SK} .catalog-block-promo-courses__about-card-footer a,
 ${SK} .news-item__actions .button-link,
 ${SK} .news__manage-panel-actions .button-link,
 ${SK} .profile__title-action.button-link,
-${SK} .lesson-end-modal a:not(.button) {
+${SK} .lesson-end-modal a:not(.button),
+${SK} .teachlearn__empty-note a,
+${SK} .course-reviews__empty-note a,
+${SK} .course-review-sort__empty-note a,
+${SK} .course-info__empty-note a,
+${SK} .course-blacklist__empty-note a,
+${SK} .catalog__search-results-message a,
+${SK} .catalog-block__description a,
+${SK} .promo-block__description a {
   --link-color: var(--sk-blue-text) !important;
   color: var(--sk-blue-text) !important;
 }
