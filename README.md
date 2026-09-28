@@ -10,7 +10,7 @@
 - **Breeze Dark** — тёмная схема редактора (KSyntaxHighlighting),
   акцент `#3daee9`;
 - **Oblivion** — классическая тёмная схема (адаптация из GtkSourceView);
-- **Tango** — графитовый канвас `#2e3436`, лаймовый `#8ae234` и
+- **Tango** — графитовый канвас `#2e3436`, травяной `#68C545` и
   небесно-синий `#729fcf` акценты.
 
 ## Установка
@@ -73,7 +73,7 @@
 | Catppuccin Frappe | `#303446` | `#ca9ee6` / `#a6d189` | Catppuccin |
 | Breeze Dark | `#232629` | `#3daee9` / `#27ae60` | схема редактора (KSyntaxHighlighting) |
 | Oblivion | `#201f1f` | `#729fcf` / `#8ae234` | схема редактора (GtkSourceView) |
-| Tango | `#2e3436` | `#8ae234` / `#729fcf` | палитра Tango (Tango Desktop Project) |
+| Tango | `#2e3436` | `#68C545` / `#729fcf` | палитра Tango (Tango Desktop Project) |
 
 Палитры всех тем можно посмотреть в файле `preview.html` (открыть в браузере).  
   

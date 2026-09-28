@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.65
+// @version      2.9.66
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -516,23 +516,23 @@
 
     /* ------------------------------------------------------ Tango */
     /* Палитра Tango (Tango Desktop Project): графитовая подложка
-     * #2e3436, лаймовый акцент #8ae234 и небесно-синие ссылки
+     * #2e3436, травяной акцент #68C545 и небесно-синие ссылки
      * #729fcf. Цвета синтаксиса — тёмная схема One Dark. */
     'tango': {
       name: 'Tango',
       source: 'палитра Tango (Tango Desktop Project)',
-      desc: 'Графит Tango: лаймовый и небесно-синий акценты, тёплый текст',
-      descEn: 'Tango graffiti: lime and sky-blue accents, warm text',
-      swatches: ['#2e3436', '#8ae234', '#729fcf'],
+      desc: 'Графит Tango: травяной и небесно-синий акценты, тёплый текст',
+      descEn: 'Tango graffiti: grass-green and sky-blue accents, warm text',
+      swatches: ['#2e3436', '#68C545', '#729fcf'],
       sem: {
         bg: '#2e3436', bgAlt: '#262b2c', panel: '#262b2c', panel2: '#3a4143',
         border: '#555753', border2: '#6b6f6b',
         fg: '#d3d7cf', fg2: '#babdb6', fg3: '#9fa29c', fgMuted: '#7d807b', ink: '#171b1c',
-        accent: '#8ae234', accentBright: '#9be94f', accentDark: '#4e9a06',
+        accent: '#68C545', accentBright: '#74CE4E', accentDark: '#4e9a06',
         accent2: '#ad7fa8', accent2Bright: '#c9a0c4', accent2Dark: '#75507b',
         blue: '#729fcf', blueBright: '#8bb8e8', blueDark: '#3465a4', blueDeep: '#204a87',
         danger: '#ef2929', dangerDark: '#cc0000', warning: '#fcaf3e', warningDark: '#f57900',
-        success: '#8ae234', successDark: '#4e9a06',
+        success: '#68C545', successDark: '#4e9a06',
         surface: '#2a3031', surface2: '#343b3d', separator: '#555753', selection: '#3465a4',
         codeBg: '#262B2C', codeGutter: '#2C3234', codeFg: '#babdb6',
         codeBgLight: '#343A3C',
