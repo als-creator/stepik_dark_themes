@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.54
+// @version      2.9.55
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -763,6 +763,39 @@ ${SK} button.course-promo-enrollment__join-btn:active,
 ${SK} button.lfcc__continue-btn:active {
   background-image: linear-gradient(rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.14)) !important;
   color: var(--sk-on-surface) !important;
+}
+/* ================= ЗЕЛЁНЫЕ ССЫЛКИ-ДЕЙСТВИЯ СТОКА =================
+   Стоку вторые зелёные кнопки — с прозрачной заливкой, но зелёным текстом и
+   рамкой: вариант .is-outlined (--link-color у .licl__item-action). На
+   светлых тёмных темах это уже не проходит: #54ad54 по фону — 4,39:1 в
+   Catppuccin Frappe и 4,51:1 в Tango, а на своём тёмном hover-е #288b28 и
+   того меньше. Отдаём им акцент темы — он читается на фоне, панели и
+   панели-2 (4,98–11,81:1 на восьми темах), рамку — тем же акцентом, а при
+   наведении подкладываем панель-2. Заблокированные варианты не трогаем: их
+   красит общее правило для .is-outlined[disabled] (приглушённый текст). */
+${SK} button.lesson__next-btn.is-outlined:not(:disabled):not([aria-disabled="true"]),
+${SK} button.course-promo-enrollment__wishlist-btn.is-outlined:not(:disabled):not([aria-disabled="true"]),
+${SK} a.course-promo__gifts-btn.is-outlined:not([aria-disabled="true"]) {
+  color: var(--sk-accent) !important;
+  border-color: var(--sk-accent) !important;
+}
+${SK} button.lesson__next-btn.is-outlined:not(:disabled):not([aria-disabled="true"]):hover,
+${SK} button.lesson__next-btn.is-outlined:not(:disabled):not([aria-disabled="true"]):focus,
+${SK} button.course-promo-enrollment__wishlist-btn.is-outlined:not(:disabled):not([aria-disabled="true"]):hover,
+${SK} button.course-promo-enrollment__wishlist-btn.is-outlined:not(:disabled):not([aria-disabled="true"]):focus,
+${SK} a.course-promo__gifts-btn.is-outlined:not([aria-disabled="true"]):hover,
+${SK} a.course-promo__gifts-btn.is-outlined:not([aria-disabled="true"]):focus {
+  background-color: var(--sk-panel-2) !important;
+}
+/* «Продолжить» в списке текущих курсов на /learn: сток задаёт зелёный
+   --link-color (и такой же hover для подчёркивания), а не сам color. */
+${SK} .licl__item-action:not(:disabled) {
+  --link-color: var(--sk-accent) !important;
+  --link-hover-line-color: var(--sk-accent) !important;
+  color: var(--sk-accent) !important;
+}
+${SK} .licl__item-action[data-appearance="label-danger"] {
+  color: var(--sk-danger-text) !important;
 }
 /* ================= ЗАГРУЗКА =================
    Stepik — SPA на Ember: между первой отрисовкой оболочки и стартом бандла
