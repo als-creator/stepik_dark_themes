@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.50
+// @version      2.9.51
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1778,6 +1778,25 @@ ${SK} .licfr__link-action {
   --link-active-color: var(--sk-accent) !important;
   --link-hover-line-color: var(--sk-accent) !important;
   --link-active-line-color: var(--sk-accent) !important;
+}
+/* ================= ССЫЛКИ СО СВОИМ СИНИМ (#4485ed) =================
+   В светлой теме Stepik красит в #4485ed ссылки-кнопки и часть служебных
+   ссылок (--link-color). На тёмном фоне это 3,79:1 на панели и 4,22:1 на
+   канвасе — ниже порога в Breeze Dark и Tango. Берём --sk-blue-text: тот
+   же синий, подмешанный до 4,6:1 по более светлой из двух панелей. */
+${SK} .shortened-text__show-more,
+${SK} .button-details_theme_primary,
+${SK} .course-buy-widget__how-to-installments a,
+${SK} .course-buy-widget__pay-from-company a,
+${SK} .course-promo__share-url a,
+${SK} .course-promo-includes a,
+${SK} .catalog-block-promo-courses__about-card-footer a,
+${SK} .news-item__actions .button-link,
+${SK} .news__manage-panel-actions .button-link,
+${SK} .profile__title-action.button-link,
+${SK} .lesson-end-modal a:not(.button) {
+  --link-color: var(--sk-blue-text) !important;
+  color: var(--sk-blue-text) !important;
 }
 /* зачёркнутая «старая» цена в карточках/промо: стоковый индиго #3e50cb
    на тёмной панели почти не виден (контраст ~2:1) */
