@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.63
+// @version      2.9.64
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -3736,7 +3736,13 @@ ${SK} .horizontal-scroller__scroll-btn:active {
     top.hidden = true;
     top.setAttribute('aria-label', skT('top'));
     top.title = skT('top');
-    top.innerHTML = '<svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8 8 8z"/></svg>';
+    /* Значок — из стокового спрайта Stepik: arrow2-up, то самое семейство,
+       которым нарисован слайдер курсов (arrow2-left/arrow2-right в
+       .horizontal-scroller__scroll-btn, 24×24 — как тут). Путь вписан
+       прямо в разметку, а не через <use xlink:href> на спрайт: путь к
+       спрайту у Stepik версионированный и меняется, а сорванная ссылка
+       на внешний спрайт оставила бы пустую кнопку. */
+    top.innerHTML = '<svg viewBox="0 0 18 18"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M7.687 16.438V4.204L2.342 9.549a1.104 1.104 0 01-1.555 0 1.09 1.09 0 010-1.545L8.005.787a1.09 1.09 0 011.544 0l7.218 7.217a1.09 1.09 0 11-1.545 1.545L9.878 4.204v12.234c0 .602-.493 1.095-1.096 1.095a1.099 1.099 0 01-1.095-1.095z"/></svg>';
     top.addEventListener('click', () => {
       try { window.scrollTo({ top: 0, left: 0, behavior: 'smooth' }); }
       catch (e) { window.scrollTo(0, 0); }
