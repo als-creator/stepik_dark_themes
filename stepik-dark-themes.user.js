@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.44
+// @version      2.9.45
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark/Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -966,10 +966,20 @@ ${SK} .teachlearn__course-nav,
 ${SK} .learn-nav {
   border-radius: 12px !important;
 }
+/* Скругление не должно отнимать у панели стоковую прокрутку. В стоке
+   .nav-menu — прокручиваемая колонка (overflow-y:auto; overflow-x:hidden),
+   а наш overflow:hidden её отключал: панель position:sticky, и у
+   авторизованного пользователя с длинным списком курсов всё, что ниже
+   края окна, было недоступно — прокрутить панель было нечем. Клипаем только
+   по X: скруглённые углы clip-ятся и при прокрутке (как у .course-nav
+   ниже), вертикаль возвращаем стоковую. */
 ${SK} .nav-menu.teach-nav,
 ${SK} .nav-menu.learn-nav,
 ${SK} .teachlearn__course-nav,
-${SK} .learn-nav,
+${SK} .learn-nav {
+  overflow: hidden auto !important;
+}
+/* .nav-links-block в стоке не прокручивается — там клипаем обе оси */
 ${SK} .nav-links-block {
   overflow: hidden !important;
 }
