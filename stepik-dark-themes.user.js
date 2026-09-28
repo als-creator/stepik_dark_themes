@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.49
+// @version      2.9.50
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1747,6 +1747,12 @@ ${SK} .course-promo__bottom {
   background-color: var(--sk-panel) !important;
   box-shadow: 0 -1em 2em rgba(0, 0, 0, 0.4) !important;
 }
+/* подпись выпадающего селекта (.select-box__caption) — это его текущее
+   значение («Полезные» в фильтре отзывов на промо), а сток красит его
+   серым #5E5E5E: в Breeze Dark 2,35:1. Берём читаемый приглушённый токен. */
+${SK} .select-box__caption {
+  color: var(--sk-fg-3-text) !important;
+}
 /* отзывы на промо (.course-review-card): сток даёт автору и заголовку
    ссылку #222, а дате — серый #777; на тёмном канвасе они сливаются */
 ${SK} .course-review-card__author,
@@ -3238,7 +3244,7 @@ ${SK} .learn-last-activity-pin[data-is-solved] .learn-last-activity-pin__streak:
   background-color: var(--sk-bg) !important;
 }
 ${SK} .learn-last-activity-pin[data-is-future] .learn-last-activity-pin__caption {
-  color: var(--sk-fg-muted) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 ${SK} .learn-last-activity-pin[data-is-current]:not([data-is-today]) .learn-last-activity-pin__caption {
   border-bottom-color: var(--sk-fg-2) !important;
