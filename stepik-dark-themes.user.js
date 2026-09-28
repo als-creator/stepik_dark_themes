@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.61
+// @version      2.9.62
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -887,8 +887,18 @@ ${SK} .nav-menu {
 }
 /* активный пункт левого меню: сток задаёт --menu-item-selected-color
    из «тёмно-зелёного» --theme-color-base-accent-3 (#288b28), который на
-   тёмной панели тусклый — поднимаем до яркого фирменного акцента */
+   тёмной панели тусклый — поднимаем до яркого фирменного акцента.
+
+   Селектор списка — .nav-menu__menu, поэтому блок стока перекрывает
+   переменные не только на внешнем списке, но и на вложенных (у них
+   --menu-item-selected-color:#288b28 и --menu-item-selected-background
+   :transparent). Наш список значений доставал их только по наследованию от
+   .nav-menu, а прямое стоковое объявление на вложенном <ul> сильнее, чем
+   унаследованное: выбранный пункт подсписка оставался тёмно-зелёным на
+   панели (2,46–3,74:1, восемь тем). Поэтому вложенные списки в селекторе
+   указаны явно. */
 ${SK} .nav-menu,
+${SK} .nav-menu .nav-menu__menu,
 ${SK} .learn-nav__menu,
 ${SK} .teach-nav__menu {
   --menu-item-color: var(--sk-fg-2) !important;
