@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.72
+// @version      2.9.73
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2582,6 +2582,18 @@ ${SK} .comments-user-badge__name.link-secondary {
 }
 ${SK} .ui-like__count {
   --ui-like-count-color: var(--sk-fg-3-text) !important;
+}
+/* иконка лайка (большой палец) — сток рисует её серым #999, а при наведении
+   и у поставленного лайка красит иконку и счётчик в #222, почти чёрный,
+   сливающийся с тёмным фоном; держим иконку приглушённым светлым токеном,
+   при наведении/активном лайке подсвечиваем её чуть ярче, чтобы состояние
+   читалось */
+${SK} .ui-like__icon {
+  --ui-like-icon-color: var(--sk-fg-3-text) !important;
+}
+${SK} .ui-like:hover .ui-like__icon,
+${SK} .ui-like[data-is-active] .ui-like__icon {
+  --ui-like-icon-color: var(--sk-fg) !important;
 }
 ${SK} .comments-card__staff-replied {
   color: var(--sk-fg-3-text) !important;
