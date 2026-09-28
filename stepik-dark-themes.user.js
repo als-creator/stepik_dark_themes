@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.46
+// @version      2.9.47
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -65,6 +65,22 @@
       }
     }
     return hexOf(mixWith);
+  }
+
+  /* Более светлая из двух подложек: читаемый вариант цвета набирает порог на
+   * той панели, где его показывают (карточки лежат на --sk-panel, бейджи — на
+   * --sk-panel-2), а в палитре Oblivion панель-2 темнее панели: считая всегда
+   * по панели-2, токен на карточке не дотягивает до 4,5:1. */
+  function skLighter(a, b) {
+    const lum = (c) => {
+      const n = parseInt(String(hexOf(c)).slice(1), 16);
+      const f = (v) => {
+        v /= 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      };
+      return 0.2126 * f((n >> 16) & 255) + 0.7152 * f((n >> 8) & 255) + 0.0722 * f(n & 255);
+    };
+    return lum(a) >= lum(b) ? hexOf(a) : hexOf(b);
   }
 
   /* ============================================================
@@ -245,7 +261,7 @@
         '--stepik-loader-text-color': 'var(--sk-fg-2)',
         '--form-radio-background-color': 'var(--sk-blue-dark)',
         '--feature-tariff-badge-bg': 'var(--sk-accent-2-tint)',
-        '--feature-tariff-badge-fg': 'var(--sk-accent-2)',
+        '--feature-tariff-badge-fg': 'var(--sk-accent-2-text)',
         '--feature-tariff-badge-hem': 'var(--sk-accent-2-dark)',
         '--feature-tariff-badge-active-bg': 'var(--sk-accent-2)',
         '--feature-tariff-badge-active-fg': 'var(--sk-on-surface)',
@@ -358,7 +374,7 @@
         '--stepik-loader-text-color': 'var(--sk-fg-2)',
         '--form-radio-background-color': 'var(--sk-blue-dark)',
         '--feature-tariff-badge-bg': 'var(--sk-accent-2-tint)',
-        '--feature-tariff-badge-fg': 'var(--sk-accent-2)',
+        '--feature-tariff-badge-fg': 'var(--sk-accent-2-text)',
         '--feature-tariff-badge-hem': 'var(--sk-accent-2-dark)',
         '--feature-tariff-badge-active-bg': 'var(--sk-accent-2)',
         '--feature-tariff-badge-active-fg': 'var(--sk-on-surface)',
@@ -614,7 +630,7 @@
       '--stepik-loader-text-color': 'var(--sk-fg-2)',
       '--form-radio-background-color': 'var(--sk-blue-dark)',
       '--feature-tariff-badge-bg': 'var(--sk-accent-2-tint)',
-      '--feature-tariff-badge-fg': 'var(--sk-accent-2)',
+      '--feature-tariff-badge-fg': 'var(--sk-accent-2-text)',
       '--feature-tariff-badge-hem': 'var(--sk-accent-2-dark)',
       '--feature-tariff-badge-active-bg': 'var(--sk-accent-2)',
       '--feature-tariff-badge-active-fg': 'var(--sk-on-surface)',
@@ -675,10 +691,11 @@
   --sk-fg:${s.fg}; --sk-fg-2:${s.fg2}; --sk-fg-3:${s.fg3}; --sk-fg-muted:${s.fgMuted};
   --sk-accent:${s.accent}; --sk-accent-dark:${s.accentDark};
   --sk-accent-2:${s.accent2}; --sk-accent-2-dark:${s.accent2Dark}; --sk-accent-2-tint:${rgba(hexOf(s.accent2), 0.14)};
+  --sk-accent-2-text:${skReadable(s.accent2, skLighter(s.panel, s.panel2), s.fg, 4.6)};
   --sk-blue:${s.blue}; --sk-blue-dark:${s.blueDark};
   --sk-danger:${s.danger}; --sk-danger-dark:${s.dangerDark};
   --sk-warning:${s.warning}; --sk-warning-dark:${s.warningDark}; --sk-success:${s.success};
-  --sk-success-text:${skReadable(s.success, s.panel2, s.fg)}; --sk-danger-text:${skReadable(s.danger, s.panel2, s.fg)};
+  --sk-success-text:${skReadable(s.success, skLighter(s.panel, s.panel2), s.fg, 4.6)}; --sk-danger-text:${skReadable(s.danger, skLighter(s.panel, s.panel2), s.fg, 4.6)};
   --sk-on-surface:${s.onSurface}; --sk-selection:${s.selection};
   --sk-code-bg:${s.codeBg}; --sk-code-bg-light:${s.codeBgLight}; --sk-code-gutter:${s.codeGutter}; --sk-code-fg:${s.codeFg};
   --sk-code-comment:${s.codeComment}; --sk-code-keyword:${s.codeKeyword}; --sk-code-string:${s.codeString};
@@ -1490,11 +1507,12 @@ ${SK} .course-card__authors a, ${SK} .course-card__author a {
   --link-hover-line-color: var(--sk-accent) !important;
 }
 /* заголовок и счётчик ленты курсов (.course-list-card): стоковый индиго
-   #3e50cb на тёмной панели не читается — осветляем фирменным акцентом */
+   #3e50cb на тёмной панели не читается — берём второй акцент в
+   читаемом варианте (--sk-accent-2 сам по себе даёт на панели 2,9–6,2:1) */
 ${SK} .course-list-card__title,
 ${SK} .course-list-card__courses {
-  color: var(--sk-accent-2) !important;
-  --link-color: var(--sk-accent-2) !important;
+  color: var(--sk-accent-2-text) !important;
+  --link-color: var(--sk-accent-2-text) !important;
   --link-hover-color: var(--sk-fg) !important;
   --link-hover-line-color: var(--sk-accent) !important;
 }
@@ -1707,6 +1725,17 @@ ${SK} .course-review-card__title {
 }
 ${SK} .course-review-card__date {
   color: var(--sk-fg-3) !important;
+}
+/* ссылки-действия на промо («Оставить отзыв», лицензия): сток красит их
+   индиго #6c7bdf — на канвасе это 3,25–5,1:1, берём читаемый второй
+   акцент */
+${SK} .licfr__link-action {
+  --link-color: var(--sk-accent-2-text) !important;
+  color: var(--sk-accent-2-text) !important;
+  --link-hover-color: var(--sk-accent) !important;
+  --link-active-color: var(--sk-accent) !important;
+  --link-hover-line-color: var(--sk-accent) !important;
+  --link-active-line-color: var(--sk-accent) !important;
 }
 /* зачёркнутая «старая» цена в карточках/промо: стоковый индиго #3e50cb
    на тёмной панели почти не виден (контраст ~2:1) */
@@ -3189,7 +3218,7 @@ ${SK} .learn-last-activity__days-streak {
   color: var(--sk-blue) !important;
 }
 ${SK} .learn-last-activity__days-streak b {
-  color: var(--sk-accent-2) !important;
+  color: var(--sk-accent-2-text) !important;
 }
 ${SK} .learn-featured-course-card,
 ${SK} .learn-featured-course-card[data-state="done"] {
