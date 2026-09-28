@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.63
+// @version      2.9.64
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -740,7 +740,10 @@ ${SK} body {
    заливки: тон остаётся токеном темы, а на светлой вуали текст только
    выигрывает. Список кнопок — те, что с заливкой действительно видны
    гостю: «Искать» в каталоге, «Купить» на промо и «Продолжить» в
-   карточке избранного курса, а также кнопка ответа в задании
+   карточке избранного курса, «Купить курс за …» в плеере урока
+   (.course-buy-button — текст лежит в span, но цвет наследует от кнопки)
+   и «Войти» в форме входа (.sign-form__btn: окно входа гостю открывается
+   само на /learn и /learn/courses), а также кнопка ответа в задании
    (.attempt-wrapper-button — «Отправить на проверку», «Проверить ответ»):
    сток берёт ту же заливку #54ad54 с белым текстом, 2,81:1, и в покое она
    приглушена, но в активном виде (гость вводит ответ) снова белым по
@@ -749,6 +752,8 @@ ${SK} body {
 ${SK} button.search-form__submit,
 ${SK} button.course-promo-enrollment__join-btn,
 ${SK} button.lfcc__continue-btn,
+${SK} button.course-buy-button,
+${SK} button.sign-form__btn,
 ${SK} button.attempt-wrapper-button:not(.white) {
   background-color: var(--sk-accent) !important;
   color: var(--sk-on-surface) !important;
@@ -759,6 +764,10 @@ ${SK} button.course-promo-enrollment__join-btn:hover,
 ${SK} button.course-promo-enrollment__join-btn:focus-visible,
 ${SK} button.lfcc__continue-btn:hover,
 ${SK} button.lfcc__continue-btn:focus-visible,
+${SK} button.course-buy-button:hover,
+${SK} button.course-buy-button:focus-visible,
+${SK} button.sign-form__btn:hover,
+${SK} button.sign-form__btn:focus-visible,
 ${SK} button.attempt-wrapper-button:not(.white):hover,
 ${SK} button.attempt-wrapper-button:not(.white):focus-visible {
   background-image: linear-gradient(rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.14)) !important;
@@ -767,6 +776,8 @@ ${SK} button.attempt-wrapper-button:not(.white):focus-visible {
 ${SK} button.search-form__submit:active,
 ${SK} button.course-promo-enrollment__join-btn:active,
 ${SK} button.lfcc__continue-btn:active,
+${SK} button.course-buy-button:active,
+${SK} button.sign-form__btn:active,
 ${SK} button.attempt-wrapper-button:not(.white):active {
   background-image: linear-gradient(rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.14)) !important;
   color: var(--sk-on-surface) !important;
