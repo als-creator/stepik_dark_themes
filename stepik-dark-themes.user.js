@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.59
+// @version      2.9.60
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1886,7 +1886,12 @@ ${SK} .licfr__link-action {
    состояния разделов (.teachlearn__empty-note на /learn/courses — «найдите
    себе первый курс в нашем каталоге») и описания блоков каталога. На фоне
    страницы этот синий даёт 3,42:1 в Frappe, 3,51 в Tango, 4,08 в
-   Macchiato и 4,22 в Breeze Dark. */
+   Macchiato и 4,22 в Breeze Dark.
+
+   И без своего правила, от общего a, такой же синий попадает на призыв
+   войти в обсуждениях под уроком (.comments-input__bait — «Чтобы
+   присоединиться к обсуждению, Войти»): на фоне блока обсуждений это
+   3,83:1 в Frappe, 3,98 в Tango, 4,42 в Breeze Dark и 4,46 в Macchiato. */
 ${SK} .shortened-text__show-more,
 ${SK} .button-details_theme_primary,
 ${SK} .course-buy-widget__how-to-installments a,
@@ -1905,7 +1910,8 @@ ${SK} .course-info__empty-note a,
 ${SK} .course-blacklist__empty-note a,
 ${SK} .catalog__search-results-message a,
 ${SK} .catalog-block__description a,
-${SK} .promo-block__description a {
+${SK} .promo-block__description a,
+${SK} .comments-input__bait a {
   --link-color: var(--sk-blue-text) !important;
   color: var(--sk-blue-text) !important;
 }
