@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.51
+// @version      2.9.52
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2365,6 +2365,17 @@ ${SK} .lesson__go-top.st-button_style_none {
 ${SK} .lesson__go-top.st-button_style_none:hover {
   color: var(--sk-fg) !important;
   box-shadow: 0 3px 14px rgba(0,0,0,.55) !important;
+}
+/* Заглушка редактора форматирования, пока он грузится: сток красит её в
+   #f8f8f8 с рамкой #d1d1d1 и opacity .5 — на тёмной шапке редактора это
+   белая вспышка, а текст в ней (светлый --sk-fg темы) не читается: 1,4:1.
+   Отдаём панели-2, приглушённый текст и обычную непрозрачность — при
+   opacity .5 композит всё равно не добирает до порога (2,8:1). */
+${SK} .rich-text-editor__header-placeholder {
+  background-color: var(--sk-panel-2) !important;
+  border-color: var(--sk-border) !important;
+  color: var(--sk-fg-2) !important;
+  opacity: 1 !important;
 }
 /* CKEditor («Развёрнутый ответ»): стоковая светлая кожа — панель
    инструментов #f8f8f8, нижняя панель и область ввода #fff. Перекрашиваем
