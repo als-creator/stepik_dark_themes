@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.53
+// @version      2.9.54
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2137,6 +2137,20 @@ ${SK} .player-topbar__step-pins .m-step-pin[data-is-active]::after {
 /* замочки недоступных уроков в сайдбаре (сток #5e5e5e) */
 ${SK} .lesson-sidebar__lock-icon {
   color: var(--sk-fg-2) !important;
+}
+/* вертикальная вкладка «Содержание» на краю плеера
+   (.lesson-sidebar__expand-sidebar): сток красит подпись в #999 по
+   полупрозрачной белой подложке rgba(230,233,237,.3), и на тёмном сайдбаре
+   это 2,3:1. Отдаём вкладке панель темы и светлый текст, наведение —
+   панель-2 и основной fg. */
+${SK} button.lesson-sidebar__expand-sidebar:not(.st-button_style_none) {
+  background-color: var(--sk-panel) !important;
+  color: var(--sk-fg-2) !important;
+}
+${SK} button.lesson-sidebar__expand-sidebar:not(.st-button_style_none):hover,
+${SK} button.lesson-sidebar__expand-sidebar:not(.st-button_style_none):focus {
+  background-color: var(--sk-panel-2) !important;
+  color: var(--sk-fg) !important;
 }
 /* Блок решения после проверки ответа: сток заливает .submission-show
    белым (#fff) и заголовок решения пишет тёмным #222; на тёмной странице
