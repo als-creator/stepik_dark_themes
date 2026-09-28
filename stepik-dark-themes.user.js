@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.64
+// @version      2.9.65
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -1001,7 +1001,7 @@ ${SK} .search-form-filter .st-input-wrapper .st-input::placeholder {
 ${SK} .search-form-filter__range-presets-btn:not(.st-button_style_none) {
   background-color: var(--sk-panel-2) !important;
   border-color: transparent !important;
-  color: var(--sk-blue) !important;
+  color: var(--sk-blue-text) !important;
 }
 ${SK} .search-form-filter__range-presets-btn:not(.st-button_style_none)[data-active] {
   background-color: var(--sk-accent) !important;
@@ -1024,6 +1024,15 @@ ${SK} .search-form-filter__toggler {
   --search-form-filter-arrow-normal-color: var(--sk-fg-3) !important;
   --search-form-filter-arrow-expanded-color: var(--sk-fg-2) !important;
   --search-form-filter-arrow-hover-color: var(--sk-fg) !important;
+}
+/* Паджинация (каталог, поиск, списки): активный номер у стока — бледно-
+   голубая «пилюля» с синим текстом; на тёмном фоне это 1,6–4,2:1 в разных
+   темах (в Tango — 1,62:1, читается с трудом). Красим как активный пресет
+   фильтра выше: акцентная пилюля с тёмной подписью. Остальные номера и
+   «Далее» уже читаемы (наследуют --sk-fg от контейнера). */
+${SK} .ui-paging button[data-active] {
+  background-color: var(--sk-accent) !important;
+  color: var(--sk-on-surface) !important;
 }
 /* прочие поля ввода Stepik (сток — белые #fff), кроме строки поиска.
    Фон «чуть светлее» панели (panel-2), чтобы поле отличалось от канвы,
