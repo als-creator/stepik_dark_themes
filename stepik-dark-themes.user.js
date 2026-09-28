@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.48
+// @version      2.9.49
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -689,6 +689,7 @@
   --sk-surface-2:${s.surface2};
   --sk-border:${s.border}; --sk-border-2:${s.border2};
   --sk-fg:${s.fg}; --sk-fg-2:${s.fg2}; --sk-fg-3:${s.fg3}; --sk-fg-muted:${s.fgMuted};
+  --sk-fg-3-text:${skReadable(s.fg3, skLighter(s.panel, s.panel2), s.fg, 4.6)};
   --sk-accent:${s.accent}; --sk-accent-dark:${s.accentDark};
   --sk-accent-2:${s.accent2}; --sk-accent-2-dark:${s.accent2Dark}; --sk-accent-2-tint:${rgba(hexOf(s.accent2), 0.14)};
   --sk-accent-2-text:${skReadable(s.accent2, skLighter(s.panel, s.panel2), s.fg, 4.6)};
@@ -855,7 +856,7 @@ ${SK} input.search-form__input {
   color: var(--sk-fg) !important;
 }
 ${SK} input.search-form__input::placeholder {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 ${SK} input.search-form__input:focus {
   background-color: var(--sk-bg-alt) !important;
@@ -888,7 +889,7 @@ ${SK} .form-checkbox {
 }
 ${SK} .search-form-filter__range-item .the-form-field__caption,
 ${SK} .search-form-filter__range-sep {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 ${SK} .search-form-filter .st-input-wrapper {
   background-color: var(--sk-panel) !important;
@@ -899,7 +900,7 @@ ${SK} .search-form-filter .st-input-wrapper .st-input {
   color: var(--sk-fg) !important;
 }
 ${SK} .search-form-filter .st-input-wrapper .st-input::placeholder {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 ${SK} .search-form-filter__range-presets-btn:not(.st-button_style_none) {
   background-color: var(--sk-panel-2) !important;
@@ -951,7 +952,7 @@ ${SK} .new-course-form__input {
   color: var(--sk-fg) !important;
 }
 ${SK} .new-course-form__input::placeholder {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 ${SK} .new-course-form__desc a {
   color: var(--sk-fg-2) !important;
@@ -964,7 +965,7 @@ ${SK} .the-form-field__caption {
   color: var(--sk-fg-2) !important;
 }
 ${SK} .new-course-form__note {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 /* подписи-подсказки форм преподавания (/teach/lessons и др.): сток красит
    тёмным #222/#5E5E5E — «Максимум 64 символа», «Для отправки платёжных
@@ -1557,7 +1558,7 @@ ${SK} .user-card__title {
   color: var(--sk-fg) !important;
 }
 ${SK} .user-card__widget {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 /* кнопка «хочу пройти» на карточке курса: сток — белый круг
    (background:#f6f6f6, border:2px solid #fff, серая иконка), на тёмном
@@ -1759,7 +1760,7 @@ ${SK} .course-review-card__title {
   --external-link-icon-color: var(--sk-fg) !important;
 }
 ${SK} .course-review-card__date {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 /* ссылки-действия на промо («Оставить отзыв», лицензия): сток красит их
    индиго #6c7bdf — на канвасе это 3,25–5,1:1, берём читаемый второй
@@ -1776,7 +1777,7 @@ ${SK} .licfr__link-action {
    на тёмной панели почти не виден (контраст ~2:1) */
 ${SK} .display-price__price_regular,
 ${SK} .display-price__price_regular .format-price {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 /* Оглавление курса (.toc-syllabus-section) на промо и программе: сток
    рисует секции прямоугольниками с радиусом 0 — скругляем как карточки;
@@ -1847,7 +1848,7 @@ ${SK} .tab__item[data-active] button .tab__item-counter::before {
   color: var(--sk-accent) !important;
 }
 ${SK} .tab__item:not(.active):not([data-active]), ${SK} .tab[data-disabled] .tab__item:not(.active):not([data-active]) {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 ${SK} .tab--border {
   background-image: linear-gradient(0deg, var(--sk-border), var(--sk-border)) !important;
@@ -1872,7 +1873,7 @@ ${SK} .light-tabs__switch.light-tabs__switch_active {
   border-top-color: var(--sk-accent) !important;
   color: var(--sk-fg) !important;
 }
-${SK} .st-tabs__counter { color: var(--sk-fg-muted) !important; }
+${SK} .st-tabs__counter { color: var(--sk-fg-3-text) !important; }
 /* содержимое табов в рамке (.light-tabs__content_with_border «График
    активности» и др.): сток даёт radius 6px — выравниваем со
    скруглением карточек (12px), чтобы плашки не выглядели квадратными */
@@ -2165,7 +2166,7 @@ ${SK} .dnd-quiz__item {
   border-radius: 12px !important;
 }
 ${SK} .matching-quiz__item::before {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 ${SK} .dnd-quiz__item-handle,
 ${SK} .dnd-quiz__item-btn {
@@ -2344,10 +2345,10 @@ ${SK} .comments-user-badge__name.link-secondary {
   --link-active-color: var(--sk-accent) !important;
 }
 ${SK} .ui-like__count {
-  --ui-like-count-color: var(--sk-fg-3) !important;
+  --ui-like-count-color: var(--sk-fg-3-text) !important;
 }
 ${SK} .comments-card__staff-replied {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 /* Сообщение, к которому перешли по ?discussion=&reply=, сток заливает
    светлым кремовым rgba(255,244,216,.8), обводит кольцом 6px того же
@@ -2914,7 +2915,7 @@ ${SK} select.st-select:focus, ${SK} .st-select:focus {
   box-shadow: 0 0 0 1px var(--sk-accent) !important;
 }
 ${SK} input.st-input::placeholder, ${SK} textarea.st-input::placeholder {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 /* чекбоксы: сток рисует белый квадрат .s-checkbox__border (#fff) */
 ${SK} .s-checkbox .s-checkbox__border {
@@ -3039,11 +3040,13 @@ ${SK} .profile__link,
 ${SK} .profile__text,
 ${SK} .profile__counter,
 ${SK} .profile__counter time,
-${SK} .profile__counters .svg-icon,
+${SK} .profile__counters .svg-icon {
+  color: var(--sk-fg-3) !important;
+}
 ${SK} .last-activity-stats__desc,
 ${SK} .activity-graph .activity-graph__info,
 ${SK} .cert-widget .cert-widget__details {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 /* «Присоединился …» и подпись соцсети (.profile__text/.profile__link):
    чуть светлее основного блока подписей, чтобы не сливались с канвасом */
@@ -3405,7 +3408,7 @@ ${SK} .horizontal-scroller__scroll-btn:active {
   box-sizing: border-box;
 }
 #sk-dark-theme-panel h3 { margin: 0 0 4px; font-size: 15px; font-weight: 600; color: var(--sk-fg, #cdd6f4) !important; }
-#sk-dark-theme-panel .sk-sub { margin: 0 0 12px; font-size: 12px; color: var(--sk-fg-muted, #6c7086) !important; }
+#sk-dark-theme-panel .sk-sub { margin: 0 0 12px; font-size: 12px; color: var(--sk-fg-3-text, #9b9cb4) !important; }
 #sk-dark-theme-panel button.sk-item {
   display: flex; align-items: center; gap: 10px; width: 100%;
   padding: 9px 10px; margin: 2px 0; border: 1px solid transparent; border-radius: 8px;
@@ -3418,7 +3421,7 @@ ${SK} .horizontal-scroller__scroll-btn:active {
 #sk-dark-theme-panel .sk-item .sk-dots i { width: 14px; height: 14px; border-radius: 50%; display: block; border: 1px solid rgba(255,255,255,.25); }
 #sk-dark-theme-panel .sk-item .sk-txt { display: flex; flex-direction: column; min-width: 0; }
 #sk-dark-theme-panel .sk-item .sk-name { font-weight: 600; line-height: 1.25; }
-#sk-dark-theme-panel .sk-item .sk-about { font-size: 11px; color: var(--sk-fg-3, #a6adc8) !important; line-height: 1.3; }
+#sk-dark-theme-panel .sk-item .sk-about { font-size: 11px; color: var(--sk-fg-3-text, #9b9cb4) !important; line-height: 1.3; }
 #sk-dark-theme-panel .sk-sep { height: 1px; background: var(--sk-border, #45475a) !important; margin: 8px 0; }
 #sk-dark-theme-panel .sk-off { justify-content: center; color: var(--sk-fg-2, #bac2de) !important; font-weight: 600; }
 `;
