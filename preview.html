@@ -31,12 +31,12 @@
 </head>
 <body>
   <h1>Stepik Dark Themes</h1>
-  <p class="sub">Stepik Night / Night Deep · Catppuccin (Mocha/Macchiato/Frappe) · Kate (Breeze Dark / Oblivion) · Linux.org.ru (Tango) — палитры для stepik.org</p>
+  <p class="sub">Night / Night Deep · Catppuccin (Mocha/Macchiato/Frappe) · Breeze Dark / Oblivion · Tango — палитры для stepik.org</p>
   <div class="grid" id="grid"></div>
 <script>
 const themes = [
   {
-    id: 'stepik-night', name: 'Stepik Night (фирменная)', src: 'официальная ночная тема stepik.org',
+    id: 'night', name: 'Night', src: 'ночные токены сайта (--theme-color-*)',
     palette: {
       bg: '#141525', bgAlt: '#1F1F2F', panel: '#282B41', panel2: '#353547',
       border: '#3F3F3F', border2: '#535366', fg: '#EEEEF0', fg2: '#AFAEC4', fg3: '#8E8EA3', fgMuted: '#66667A',
@@ -45,7 +45,7 @@ const themes = [
     code: { bg: '#262A3E', gutter: '#202335', fg: '#E8E9F0', comment: '#9092A3', kw: '#98A0E8', st: '#8FDC8F', nu: '#FFB86C', fn: '#79C0FF', ty: '#FFD481' }
   },
   {
-    id: 'stepik-night-deep', name: 'Stepik Night Deep', src: 'официальная ночная тема stepik.org (тёмный вариант)',
+    id: 'night-deep', name: 'Night Deep', src: 'ночные токены сайта (--theme-color-*), тёмный вариант',
     palette: {
       bg: '#0C0D17', bgAlt: '#151621', panel: '#1E1F2C', panel2: '#2C2D40',
       border: '#34354C', border2: '#424359', fg: '#F2F2F7', fg2: '#C0C1D5', fg3: '#9B9CB4', fgMuted: '#8A8BA3',
@@ -54,7 +54,7 @@ const themes = [
     code: { bg: '#222438', gutter: '#1A1C29', fg: '#EEEEF4', comment: '#8B8CA0', kw: '#A5ACF3', st: '#94E7A0', nu: '#FFBE7A', fn: '#85C6FF', ty: '#FFDD99' }
   },
   {
-    id: 'catppuccin-mocha', name: 'Catppuccin Mocha', src: 'linux.org.ru · Catppuccin (тёмная серия)',
+    id: 'catppuccin-mocha', name: 'Catppuccin Mocha', src: 'Catppuccin (тёмная серия)',
     palette: {
       bg: '#1e1e2e', bgAlt: '#181825', panel: '#181825', panel2: '#313244',
       border: '#45475a', border2: '#585b70', fg: '#cdd6f4', fg2: '#bac2de', fg3: '#a6adc8', fgMuted: '#6c7086',
@@ -63,7 +63,7 @@ const themes = [
     code: { bg: '#28293B', gutter: '#1E1E2E', fg: '#cdd6f4', comment: '#8E92A4', kw: '#f5c2e7', st: '#a6e3a1', nu: '#fab387', fn: '#89b4fa', ty: '#f9e2af' }
   },
   {
-    id: 'catppuccin-macchiato', name: 'Catppuccin Macchiato', src: 'linux.org.ru · Catppuccin (тёмная серия)',
+    id: 'catppuccin-macchiato', name: 'Catppuccin Macchiato', src: 'Catppuccin (тёмная серия)',
     palette: {
       bg: '#24273a', bgAlt: '#1e2030', panel: '#1e2030', panel2: '#363a4f',
       border: '#494d64', border2: '#5b6078', fg: '#cad3f5', fg2: '#b8c0e0', fg3: '#a5adcb', fgMuted: '#6e738d',
@@ -72,7 +72,7 @@ const themes = [
     code: { bg: '#2B2E42', gutter: '#24273A', fg: '#cad3f5', comment: '#9397AB', kw: '#f5bde6', st: '#a6da95', nu: '#f5a97f', fn: '#8aadf4', ty: '#eed49f' }
   },
   {
-    id: 'catppuccin-frappe', name: 'Catppuccin Frappe', src: 'linux.org.ru · Catppuccin (тёмная серия)',
+    id: 'catppuccin-frappe', name: 'Catppuccin Frappe', src: 'Catppuccin (тёмная серия)',
     palette: {
       bg: '#303446', bgAlt: '#292c3c', panel: '#292c3c', panel2: '#414559',
       border: '#51576d', border2: '#626880', fg: '#c6d0f5', fg2: '#b5bfe2', fg3: '#a5adce', fgMuted: '#737994',
@@ -81,7 +81,7 @@ const themes = [
     code: { bg: '#383B4E', gutter: '#303446', fg: '#c6d0f5', comment: '#A3A7B8', kw: '#f4b8e4', st: '#a6d189', nu: '#ef9f76', fn: '#8caaee', ty: '#e5c890' }
   },
   {
-    id: 'kate-breeze-dark', name: 'Kate Breeze Dark', src: 'редактор Kate (KSyntaxHighlighting)',
+    id: 'breeze-dark', name: 'Breeze Dark', src: 'схема редактора (KSyntaxHighlighting)',
     palette: {
       bg: '#232629', bgAlt: '#202225', panel: '#2a2e32', panel2: '#31363b',
       border: '#3f4347', border2: '#3a3f44', fg: '#cfcfc2', fg2: '#a5a6a8', fg3: '#7a7c7d', fgMuted: '#7a7c7d',
@@ -90,7 +90,7 @@ const themes = [
     code: { bg: '#2F3339', gutter: '#292D31', fg: '#cfcfc2', comment: '#9A9C9C', kw: '#efc9a0', st: '#F67373', nu: '#FA7600', fn: '#D3A8E6', ty: '#53A4D9' }
   },
   {
-    id: 'kate-oblivion', name: 'Kate Oblivion', src: 'редактор Kate (GtkSourceView)',
+    id: 'oblivion', name: 'Oblivion', src: 'схема редактора (GtkSourceView)',
     palette: {
       bg: '#201f1f', bgAlt: '#1a1919', panel: '#2e3436', panel2: '#302f2f',
       border: '#3c3a3a', border2: '#787775', fg: '#d3d7c1', fg2: '#eeeeec', fg3: '#e0dedb', fgMuted: '#787775',
@@ -99,7 +99,7 @@ const themes = [
     code: { bg: '#2A2A2A', gutter: '#222222', fg: '#d3d7c1', comment: '#53A506', kw: '#ffffff', st: '#edd400', nu: '#fce94f', fn: '#729fcf', ty: '#5A95DA' }
   },
   {
-    id: 'linuxorg', name: 'Linux.org.ru (Tango)', src: 'linux.org.ru, тёмная тема (палитра Tango)',
+    id: 'tango', name: 'Tango', src: 'палитра Tango (Tango Desktop Project)',
     palette: {
       bg: '#2e3436', bgAlt: '#262b2c', panel: '#262b2c', panel2: '#3a4143',
       border: '#555753', border2: '#6b6f6b', fg: '#d3d7cf', fg2: '#babdb6', fg3: '#9fa29c', fgMuted: '#7d807b',

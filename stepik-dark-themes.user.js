@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.40
-// @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему Stepik (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Stepik Night (по умолчанию), Stepik Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark/Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
+// @version      2.9.41
+// @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
 // @match        https://www.stepik.org/*
@@ -32,7 +32,7 @@
 
   /* Светлый вариант смыслового цвета для текста на тёмной панели. Базовые
    * зелёный/красный в части палитр дают на панели меньше 4,5:1 (проверено:
-   * kate-breeze-dark — 2,87:1 у красного, Tango — 2,49:1), а текстом
+   * breeze-dark — 2,87:1 у красного, Tango — 2,49:1), а текстом
    * статуса отмечают верные и неверные решения. Поэтому подмешиваем цвет
    * текста темы до тех пор, пока контраст не наберёт порог. */
   function skReadable(color, bg, mixWith, target) {
@@ -86,8 +86,8 @@
   const I18N = {
     ru: {
       loading: 'загрузка…',
-      panelTitle: 'Темы Stepik',
-      panelSub: 'Фирменная · Catppuccin · Kate · Tango LOR — нажмите для применения',
+      panelTitle: 'Тёмные темы',
+      panelSub: 'Night · Catppuccin · Breeze · Oblivion · Tango — нажмите для применения',
       off: 'Светлая тема (выключить)',
       aria: 'Тема оформления',
       embedOn: 'Сделать вставку тёмной',
@@ -97,8 +97,8 @@
     },
     en: {
       loading: 'loading…',
-      panelTitle: 'Stepik themes',
-      panelSub: 'Official · Catppuccin · Kate · Tango LOR — click to apply',
+      panelTitle: 'Dark themes',
+      panelSub: 'Night · Catppuccin · Breeze · Oblivion · Tango — click to apply',
       off: 'Light theme (turn off)',
       aria: 'Colour theme',
       embedOn: 'Darken the embed',
@@ -130,23 +130,22 @@
    *  Палитры
    *
    *  Две формы темы:
-   *   - «фирменные» (stepik-night, stepik-night-deep) — готовый
-   *     словарь tokens: точные значения ночных токенов stepik.org;
-   *   - «палитровые» (catppuccin/kate/linuxorg) — семантические поля `sem`,
-   *     из которых при генерации собираются те же токены.
+   *   - «готовые токены» (night, night-deep) — словарь tokens с точными
+   *     значениями ночной темы сайта;
+   *   - «палитровые» (catppuccin/breeze/oblivion/tango) — семантические
+   *     поля `sem`, из которых при генерации собираются те же токены.
    *  Общие переменные --sk-* нужны для точечных заплаток и UI
    *  переключателя (они не трогают страницу, только читаются нами).
    * ============================================================ */
 
   const THEMES = {
 
-    /* ------------------------------------------------ Фирменная */
-    'stepik-night': {
-      name: 'Stepik Night (фирменная)',
-      nameEn: 'Stepik Night (official)',
-      source: 'официальная ночная тема stepik.org',
-      desc: 'Точные фирменные токены ночной темы Stepik',
-      descEn: 'Exact tokens of the official Stepik night theme',
+    /* ------------------------------------------------------ Night */
+    'night': {
+      name: 'Night',
+      source: 'ночные токены сайта (--theme-color-*)',
+      desc: 'Точные токены ночной темы сайта',
+      descEn: 'Exact tokens of the site night theme',
       swatches: ['#141525', '#EEEEF0', '#56A4FF'],
       sk: {
         bg: '#141525', bgAlt: '#1F1F2F', panel: '#282B41', panel2: '#353547',
@@ -254,12 +253,12 @@
       }
     },
 
-    /* ---------------------------------------- Фирменная глубокое */
-    'stepik-night-deep': {
-      name: 'Stepik Night Deep',
-      source: 'официальная ночная тема stepik.org (тёмный вариант)',
-      desc: 'Фирменные цвета, канвас темнее и выше контраст',
-      descEn: 'Official colours, darker canvas, higher contrast',
+    /* ------------------------------------------------- Night Deep */
+    'night-deep': {
+      name: 'Night Deep',
+      source: 'ночные токены сайта (--theme-color-*), тёмный вариант',
+      desc: 'Цвета ночной темы, канвас темнее и выше контраст',
+      descEn: 'Night theme colours, darker canvas, higher contrast',
       swatches: ['#0C0D17', '#F2F2F7', '#5DA3FF'],
       sk: {
         bg: '#0C0D17', bgAlt: '#151621', panel: '#1E1F2C', panel2: '#2C2D40',
@@ -443,12 +442,12 @@
       }
     },
 
-    /* --------------------------------------------------- Kate */
-    'kate-breeze-dark': {
-      name: 'Kate Breeze Dark',
-      source: 'редактор Kate (KSyntaxHighlighting)',
-      desc: 'Официальная тёмная тема Kate/KDE, акцент #3daee9',
-      descEn: 'Official dark theme for Kate/KDE, accent #3daee9',
+    /* --------------------------------------------------- Breeze */
+    'breeze-dark': {
+      name: 'Breeze Dark',
+      source: 'схема редактора (KSyntaxHighlighting)',
+      desc: 'Тёмная схема Breeze, акцент #3daee9',
+      descEn: 'Dark Breeze scheme, accent #3daee9',
       swatches: ['#232629', '#56bdf4', '#2ABD68'],
       sem: {
         bg: '#232629', bgAlt: '#202225', panel: '#2a2e32', panel2: '#31363b',
@@ -472,11 +471,11 @@
       }
     },
 
-    'kate-oblivion': {
-      name: 'Kate Oblivion',
-      source: 'редактор Kate (адаптация GtkSourceView)',
-      desc: 'Классическая тёмная схема Oblivion, жёлто-зелёная',
-      descEn: 'Classic dark Oblivion scheme, yellow-green',
+    'oblivion': {
+      name: 'Oblivion',
+      source: 'схема редактора (адаптация GtkSourceView)',
+      desc: 'Классическая тёмная схема, жёлто-зелёная',
+      descEn: 'Classic dark scheme, yellow-green',
       swatches: ['#201f1f', '#87b5e0', '#edd400'],
       sem: {
         bg: '#201f1f', bgAlt: '#1a1919', panel: '#2e3436', panel2: '#302f2f',
@@ -497,14 +496,13 @@
       }
     },
 
-    /* --------------------------------------------- Linux.org.ru */
-    /* Палитра Tango (Tango Desktop Project), которую использует
-     * linux.org.ru: графитовая подложка #2e3436, лаймовый акцент
-     * #8ae234 (signature-user-color) и небесно-синие ссылки #729fcf.
-     * Цвета синтаксиса — тёмная схема LOR (One Dark). */
-    'linuxorg': {
-      name: 'Linux.org.ru (Tango)',
-      source: 'linux.org.ru, тёмная тема (палитра Tango)',
+    /* ------------------------------------------------------ Tango */
+    /* Палитра Tango (Tango Desktop Project): графитовая подложка
+     * #2e3436, лаймовый акцент #8ae234 и небесно-синие ссылки
+     * #729fcf. Цвета синтаксиса — тёмная схема One Dark. */
+    'tango': {
+      name: 'Tango',
+      source: 'палитра Tango (Tango Desktop Project)',
       desc: 'Графит Tango: лаймовый и небесно-синий акценты, тёплый текст',
       descEn: 'Tango graffiti: lime and sky-blue accents, warm text',
       swatches: ['#2e3436', '#8ae234', '#729fcf'],
@@ -2373,7 +2371,7 @@ ${SK} .hljs-strong { font-weight: 700; }
    поэтому оставляем родной фон. */
 ${SK} .hljs-formula { background-color: transparent !important; }
 /* Блок кода в тексте урока — та же поверхность, что окно редактора:
-   --sk-code-bg-light. Раньше здесь был --sk-bg-alt, который в kate-breeze-dark
+   --sk-code-bg-light. Раньше здесь был --sk-bg-alt, который в breeze-dark
    (#202225) темнее фона страницы (#232629) — блок читался как чёрная дыра.
    Инлайн-«чипы» (code без pre) оставляем на --sk-code-bg, они лежат
    прямо на фоне текста. */
@@ -3224,8 +3222,27 @@ ${SK} .horizontal-scroller__scroll-btn:active {
 
   const STORE = 'sk-dark-theme';
 
+  /* Ключи тем 2.9.46 названы только именами схем (без «Stepik»/«Kate»/
+   * «LOR»), поэтому прежние значения переносим на новые: у кого тема уже
+   * была выбрана, она останется выбранной. */
+  const RENAMED = {
+    'stepik-night': 'night',
+    'stepik-night-deep': 'night-deep',
+    'kate-breeze-dark': 'breeze-dark',
+    'kate-oblivion': 'oblivion',
+    'linuxorg': 'tango',
+  };
+
   function getStored() {
-    try { return localStorage.getItem(STORE); } catch (e) { return null; }
+    try {
+      const v = localStorage.getItem(STORE);
+      const новый = v && RENAMED[v];
+      if (новый) {
+        setStored(новый);
+        return новый;
+      }
+      return v;
+    } catch (e) { return null; }
   }
   function setStored(v) {
     try { if (v) localStorage.setItem(STORE, v); else localStorage.removeItem(STORE); } catch (e) { /* noop */ }
