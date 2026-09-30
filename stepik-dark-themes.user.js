@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.68
+// @version      2.9.69
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2566,6 +2566,22 @@ ${SK} .comments-input__editor {
   color: var(--sk-fg) !important;
   border-color: var(--sk-border) !important;
 }
+/* набираемый текст в поле комментария — сток красит .rich-text-editor__content
+   в чёрный #222 (та же пара, что и у .rich-text-viewer), на тёмной панели
+   набранное не видно */
+${SK} .comments-input__editor .rich-text-editor__content {
+  color: var(--sk-fg) !important;
+}
+/* аватар в поле ввода комментария: общее правило рамок аватаров рисует
+   вокруг него кольцо-тень и скругляет в 50%, а у поля ввода он узкий —
+   кольцо тянется эллипсом по нижнему краю поля. Убираем кольцо и
+   возвращаем стоковое скругление 8px (как у аватаров комментариев). */
+${SK} .comments-editor .comments-user-avatar,
+${SK} .comments-editor .comments-user-avatar .user-avatar__link,
+${SK} .comments-editor .comments-user-avatar .user-avatar__img {
+  box-shadow: none !important;
+  border-radius: 8px !important;
+}
 ${SK} .comments-comment__viewer.rich-text-viewer code,
 ${SK} .comment-widget__comment.rich-text-viewer code {
   background-color: var(--sk-code-bg) !important;
@@ -2598,26 +2614,34 @@ ${SK} .ui-like[data-is-active] .ui-like__icon {
 ${SK} .comments-card__staff-replied {
   color: var(--sk-fg-3-text) !important;
 }
-/* Сообщение, к которому перешли по ?discussion=&reply=, сток заливает
-   светлым кремовым rgba(255,244,216,.8), обводит кольцом 6px того же
-   цвета и мигает анимацией comment-highlight до #ffeec2 — на тёмной теме
-   это светлое пятно посреди обсуждения. Оставляем смысл подсветки, но в
-   тёмных цветах: фон — панель на ступень выше фона обсуждения, кольцо —
-   синий акцент темы, светлая анимация отключена (иначе она всё равно
-   красит кадры в #ffeec2 поверх нашего фона). */
+/* Сообщение, к которому перешли по ?discussion=&reply=, и только что
+   поставленный комментарий сток обводит кольцом 6px и мигает анимацией
+   comment-highlight (кремовый → #ffeec2) — на тёмной теме это светлое
+   пятно, а крашенное нами кольцо в 6px выглядит толстой голубой рамкой.
+   Оставляем смысл подсветки в тёмных цветах и убираем толщину: фон —
+   панель на ступень выше фона обсуждения, тонкое кольцо 1px синим
+   акцентом, анимация отключена; отступы правятся под новую толщину
+   (сток компенсирует 6px отрицательным margin'ом). */
 ${SK} .comment-widget_highlighted,
 ${SK} .comments-comment__highlighted {
   background-color: var(--sk-panel-2) !important;
-  border-color: var(--sk-blue) !important;
+  border: 1px solid var(--sk-blue) !important;
   animation: none !important;
 }
+${SK} .comments-comment__highlighted {
+  margin: 8px 0 !important;
+}
+${SK} .comment-widget_highlighted {
+  margin: 0 !important;
+}
 /* сток у этой же метки с «привязанным ответом» подсветку снимает
-   (background/border — inherit): сохраняем это поведение, иначе наше
+   (background/border/margin — inherit): сохраняем это поведение, иначе наше
    правило с !important перебило бы его и мы бы покрасили то, что сток
    специально оставил как есть. */
 ${SK} .comment-widget_highlighted.comment-widget_has-linked-reply {
   background-color: inherit !important;
-  border-color: inherit !important;
+  border: inherit !important;
+  margin: inherit !important;
 }
 
 /* ============ ТЕКСТ УРОКА / ОПИСАНИЯ (rich-text) ============
