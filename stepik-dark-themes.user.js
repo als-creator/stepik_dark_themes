@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.70
+// @version      2.9.71
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2019,6 +2019,23 @@ ${SK} .notification__body blockquote {
 }
 ${SK} .notification__body blockquote::before {
   background-color: var(--sk-border-2) !important;
+}
+/* Кнопка «Пометить все как прочитанные» (.notifications__mark-all-read)
+   встречается в двух видах:
+   - обычная кнопка (сток: зелёная #54ad54 + белый текст) — как другие
+     зелёные кнопки темы, красим фирменным акцентом с текстом акцента;
+   - link-кнопка (st-button_style_none): цвет текста падает в базовый
+     тёмный #222 (link/кнопка) — на тёмной странице не читается */
+${SK} button:not(.st-button_style_none).notifications__mark-all-read {
+  background-color: var(--sk-accent) !important;
+  color: var(--sk-on-surface) !important;
+}
+${SK} button.st-button_style_none.notifications__mark-all-read {
+  color: var(--sk-fg) !important;
+  --link-color: var(--sk-fg) !important;
+  --link-hover-color: var(--sk-accent) !important;
+  --link-hover-line-color: var(--sk-accent) !important;
+  --link-line-color: rgba(238, 238, 240, 0.3) !important;
 }
 
 /* ================= ВКЛАДКИ / ТАБЫ =================
