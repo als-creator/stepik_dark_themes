@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.74
+// @version      2.9.75
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2377,6 +2377,38 @@ ${SK} label.s-radio,
 ${SK} .s-radio__label,
 ${SK} .choice-quiz-show__option {
   color: var(--sk-fg) !important;
+}
+/* Сегментные «кнопки-варианты» (.radio-button-group) — выбор одного из
+   нескольких пунктов в квизах и формах. Сток красит их белыми (#fff,
+   текст #222), а ВЫБРАННЫЙ пункт — чёрным #222 с белым текстом: на тёмной
+   теме это «пункт меню выделяется тёмным на тёмном», выбранный вариант
+   теряется. Красим как остальные формы: пункты панелью, наведённый и
+   выбранный — фирменным акцентом с текстом --sk-on-surface (как у
+   основных кнопок). */
+${SK} .radio-button-group__button {
+  color: var(--sk-fg) !important;
+  background-color: var(--sk-panel) !important;
+  border-color: var(--sk-border) !important;
+}
+${SK} .radio-button-group__button:hover,
+${SK} .radio-button-group__input:focus + .radio-button-group__button {
+  color: var(--sk-fg) !important;
+  background-color: var(--sk-panel-2) !important;
+  border-color: var(--sk-border-2) !important;
+}
+${SK} .radio-button-group__input[disabled] + .radio-button-group__button {
+  background-color: var(--sk-bg-alt) !important;
+  color: var(--sk-fg-muted) !important;
+  border-color: var(--sk-border) !important;
+}
+${SK} [data-readonly] .radio-button-group__input[disabled] + .radio-button-group__button {
+  background-color: transparent !important;
+}
+${SK} .radio-button-group__input:checked + .radio-button-group__button,
+${SK} [data-readonly] .radio-button-group__input:checked + .radio-button-group__button {
+  background-color: var(--sk-accent) !important;
+  color: var(--sk-on-surface) !important;
+  border-color: var(--sk-accent) !important;
 }
 /* Задание «сопоставить» (matching): сток рисует карточки пунктов и целей
    белыми (.dnd-quiz__item { background:#fff; border-color:#a5a5a5;
