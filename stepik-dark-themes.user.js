@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.76
+// @version      2.9.77
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -3958,7 +3958,10 @@ ${SK} .horizontal-scroller__scroll-btn:active {
   /* Текст урока/описания из редактора часто несёт инлайновый цвет светлой
    * темы (style="color:#25282d" и т.п.) — статикой его не перебить. Находим
    * такие узлы и, если цвет действительно тёмный, поднимаем до --sk-fg
-   * (яркие авторские акценты вроде синих заголовков не трогаем). */
+   * (яркие авторские акценты вроде синих заголовков не трогаем). Там же
+   * снимаем «белую» подсветку, которой автор отмечал слова прямо в тексте
+   * (style="background-color:#fff"): на светлой теме она не видна, а на
+   * тёмной даёт светлые полосы поперёк строк. */
   function skLum(v) {
     v /= 255;
     return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
@@ -3966,7 +3969,11 @@ ${SK} .horizontal-scroller__scroll-btn:active {
   function skFixInlineColors(scope) {
     /* Уже исправленные узлы помечаются data-sk-inline-fixed=1 — исключаем
        их прямо в селекторе, чтобы каждый тик интервала не перебирал их. */
-    const SEL = '.html-content [style*="color"]:not([data-sk-inline-fixed]), .step-text-wrapper [style*="color"]:not([data-sk-inline-fixed]), .rich-text-viewer [style*="color"]:not([data-sk-inline-fixed]), .show-more__content [style*="color"]:not([data-sk-inline-fixed]), .course-promo__description [style*="color"]:not([data-sk-inline-fixed]), .profile__header-details [style*="color"]:not([data-sk-inline-fixed])';
+    const SCOPES = ['.html-content', '.step-text-wrapper', '.rich-text-viewer',
+      '.show-more__content', '.course-promo__description', '.profile__header-details'];
+    const SEL = SCOPES
+      .map(s => `${s} [style*="color"]:not([data-sk-inline-fixed]), ${s} [style*="background"]:not([data-sk-inline-fixed])`)
+      .join(', ');
     let nodes;
     if (scope) {
       nodes = skQueryScope(scope, SEL);
@@ -3980,13 +3987,35 @@ ${SK} .horizontal-scroller__scroll-btn:active {
       if (el.getAttribute('data-sk-inline-fixed') === '1') continue;
       let raw = '';
       try { raw = el.getAttribute('style') || ''; } catch (e) { continue; }
-      if (!/color\s*:/i.test(raw)) continue;
-      const m = getComputedStyle(el).color.match(/rgba?\(([^)]+)\)/);
-      if (m) {
-        const p = m[1].split(',').map(Number);
-        const lum = 0.2126 * skLum(p[0]) + 0.7152 * skLum(p[1]) + 0.0722 * skLum(p[2]);
-        if (lum < 0.13) {
-          try { el.style.setProperty('color', 'var(--sk-fg)', 'important'); } catch (e) {}
+      /* Сначала разбираемся с подложкой: если она светлая и остаётся
+         (жёлтый маркер, голубая заливка), тёмный текст на ней читается и
+         поднимать его нельзя. */
+      let lightBg = false;
+      if (/background(-color)?\s*:/i.test(raw)) {
+        const bm = getComputedStyle(el).backgroundColor.match(/rgba?\(([^)]+)\)/);
+        if (bm) {
+          const q = bm[1].split(',').map(Number);
+          const alpha = q.length > 3 ? q[3] : 1;
+          const bLum = 0.2126 * skLum(q[0]) + 0.7152 * skLum(q[1]) + 0.0722 * skLum(q[2]);
+          if (alpha > 0.05 && bLum > 0.7) lightBg = true;
+          /* Снимаем «белое и светлое»: все каналы не темнее 200 — на светлой
+             теме такая подсветка и так не видна, а на тёмной даёт полосу
+             поперёк строки. Насыщенные цвета вроде жёлтого маркера (там
+             каналы разные) остаются как есть. */
+          if (alpha > 0.05 && Math.min(q[0], q[1], q[2]) >= 200) {
+            try { el.style.setProperty('background-color', 'transparent', 'important'); } catch (e) {}
+            lightBg = false;
+          }
+        }
+      }
+      if (!lightBg && /color\s*:/i.test(raw)) {
+        const m = getComputedStyle(el).color.match(/rgba?\(([^)]+)\)/);
+        if (m) {
+          const p = m[1].split(',').map(Number);
+          const lum = 0.2126 * skLum(p[0]) + 0.7152 * skLum(p[1]) + 0.0722 * skLum(p[2]);
+          if (lum < 0.13) {
+            try { el.style.setProperty('color', 'var(--sk-fg)', 'important'); } catch (e) {}
+          }
         }
       }
       el.setAttribute('data-sk-inline-fixed', '1');
