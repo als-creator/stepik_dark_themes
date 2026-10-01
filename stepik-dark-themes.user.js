@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.77
+// @version      2.9.78
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -3594,6 +3594,226 @@ ${SK} .horizontal-scroller__scroll-btn {
 ${SK} .horizontal-scroller__scroll-btn:active {
   background-color: var(--sk-border) !important;
 }
+
+/* ================= АУДИТ ТЁМНОГО ТЕКСТА =================
+   Жалоба: в «моих решениях» шрифт тёмный на тёмном, плюс просьба пройти
+   весь скрипт и сделать текст контрастным везде. Разбор стокового CSS
+   показал, что часть элементов Stepik красит хардкодом в тёмное и не
+   перекрашивается. Ниже — замеры на стенде в Tango (контраст к панели
+   #262b2c до правки → после):
+     .free-answer__textarea[data-disabled]  1,21 → 9,8   (это и были «мои решения»)
+     .st-link / .st-breadcrumbs__item       3,98 → 6,2
+     .st-link.st-link_style_button          1,46 → 6,2
+     .st-button-link, .st-filter__link      2,56 → 6,2
+     button.secondary.is-outlined           1,46 → 9,8
+     .s-tag_color_white                     1,14 → 9,8
+     .error-msg, label.error                2,32 → 7,4
+     подписи #5e5e5e/#535366/#666/#6f6f6f   1,91-2,85 → 5,6-6,4
+     чёрные подписи #222/#000               1,11-1,46 → 9,8
+     кнопки под комментариями (синий на зелёном) 2,00 → 6,6 */
+
+/* «Мои решения» — поле развёрнутого ответа (.free-answer__textarea):
+   сток берёт его фон из --theme-color-fg-oncolorbg, а мы переопределили
+   этот токен в тёмный ink (#171b1c в Tango) — текст же остаётся стоковым
+   rgba(0,0,0,.75), отсюда 1,21:1. В редактируемом состоянии фон, наоборот,
+   остаётся белым. Оба состояния приводим к панели и светлому тексту. */
+${SK} .free-answer__textarea,
+${SK} .free-answer__textarea[data-disabled] {
+  background-color: var(--sk-panel-2) !important;
+  border-color: var(--sk-border) !important;
+  color: var(--sk-fg) !important;
+}
+${SK} .free-answer__textarea::placeholder { color: var(--sk-fg-3-text) !important; }
+${SK} .free-answer__rich-text-viewer,
+${SK} .free-answer__rich-text-viewer.rich-text-viewer { color: var(--sk-fg-2) !important; }
+
+/* Ссылки общего вида: стоковые #4485ed/#1466c6 на панели дают 2,56-3,98:1,
+   а .st-link.st-link_style_button — вовсе #000 (1,46:1). Отдаём фирменный
+   синий, посчитанный на панель. */
+${SK} .st-link,
+${SK} .st-link.st-link_style_button,
+${SK} .st-breadcrumbs__item,
+${SK} .st-filter__link,
+${SK} .st-filter__close,
+${SK} button:not(.st-button_style_none).st-button-link,
+${SK} button:not(.st-button_style_none).st-button_style_link,
+${SK} .course-review__author,
+${SK} .review-show__edit-action-btn,
+${SK} .reviews-pagination__pagination-next,
+${SK} .course-review-card__menu-toggler,
+${SK} .course-review-reply-card__menu-toggler,
+${SK} .course-publication-card__icon,
+${SK} .invitation-item__name,
+${SK} .email-invitations-item__name,
+${SK} .klass-gradebook__report-loading,
+${SK} .attachment-detail__link {
+  --link-color: var(--sk-blue-text) !important;
+  --link-line-color: rgba(238, 238, 240, 0.3) !important;
+  --link-hover-color: var(--sk-blue) !important;
+  --link-hover-line-color: var(--sk-blue) !important;
+  --link-active-color: var(--sk-blue) !important;
+  --link-active-line-color: var(--sk-blue) !important;
+  --link-disabled-color: var(--sk-fg-muted) !important;
+  --external-link-icon-color: var(--sk-blue-text) !important;
+  color: var(--sk-blue-text) !important;
+}
+${SK} .st-link:hover, ${SK} .st-breadcrumbs__item:hover, ${SK} .course-review__author:hover,
+${SK} .st-filter__link:hover { color: var(--sk-blue) !important; }
+
+/* Вторичные кнопки-контуры: сток красит текст в #000/#333 при прозрачной
+   заливке (1,46:1). Обычные получают текст темы, «тревожные» — красный. */
+${SK} button:not(.st-button_style_none).secondary.is-outlined,
+${SK} button:not(.st-button_style_none).std.is-outlined,
+${SK} .tariff-card__buttons > button.secondary.is-outlined,
+${SK} button:not(.st-button_style_none).secondary.is-outlined:hover,
+${SK} button:not(.st-button_style_none).secondary.is-outlined:active,
+${SK} button:not(.st-button_style_none).secondary.is-outlined:focus-visible,
+${SK} button:not(.st-button_style_none).std.is-outlined:hover,
+${SK} button:not(.st-button_style_none).std.is-outlined:active,
+${SK} .course-promo-enrollment__wishlist-btn.is-outlined {
+  color: var(--sk-fg) !important;
+  border-color: var(--sk-border) !important;
+}
+${SK} button:not(.st-button_style_none).alert.is-outlined,
+${SK} button:not(.st-button_style_none).alert.is-outlined:hover,
+${SK} button:not(.st-button_style_none).alert.is-outlined:active {
+  color: var(--sk-danger-text) !important;
+  border-color: var(--sk-danger) !important;
+}
+
+/* Ошибки и предупреждения: стоковые #d41f1f/#90d/#9900dd на панели —
+   2,32-2,74:1. Берём читаемый красный темы. */
+${SK} .error-msg,
+${SK} label.error,
+${SK} .error label,
+${SK} .member-field__errors,
+${SK} .the-form-field__message[data-type="error"],
+${SK} .tags-course-tags__note[data-is-overfilled],
+${SK} .course-promo-enrollment__cant-be-bought-warn,
+${SK} .course-promo-enrollment__course-ended-warn,
+${SK} .step-history__diff-stat-removed,
+${SK} .course-revenue__history-details-cell-income,
+${SK} .reviews-pagination__score-value[data-empty],
+${SK} .list-style__check-marks li.unchecked-red,
+${SK} label.required-input .required-input__pin,
+${SK} .member-item__action:hover,
+${SK} .invitation-item__action:hover,
+${SK} .email-invitations-item__action:hover,
+${SK} .comments-input__max-length-counter {
+  color: var(--sk-danger-text) !important;
+}
+
+/* Служебные подписи: стоковые #5e5e5e/#535366/#666/#6f6f6f/#999 на панели
+   дают 1,91-2,85:1. Отдаём приглушённый, но читаемый --sk-fg-3-text. */
+${SK} .subheader,
+${SK} .course-review__date-author,
+${SK} .course-review__rating-spacing,
+${SK} .course-review-summary__no-reviews,
+${SK} .course-reviews__filter,
+${SK} .course-pricing__status-comment,
+${SK} .course-revenue__price-title,
+${SK} .course-revenue__history-details-row-group,
+${SK} .course-revenue__history-details-cell-date,
+${SK} .course-permissions-edit__members-list_restricted,
+${SK} .st-course-widget__stats-aspect,
+${SK} .st-course-widget__stats-icon,
+${SK} .section-editor__position,
+${SK} .deadlines-editor__label,
+${SK} .catalog__reset-search-mobile,
+${SK} .mobile-banner__close-button,
+${SK} .course-checklist-refresh,
+${SK} .tags-tag__action,
+${SK} .users-list__button button,
+${SK} .import-lessons__read-file-progress,
+${SK} .import-lessons__step-ind,
+${SK} .news-editor__field-note,
+${SK} .video-help,
+${SK} .video-srt,
+${SK} .klass-gradebook__section-toggler {
+  color: var(--sk-fg-3-text) !important;
+}
+
+/* Прямо чёрные подписи (#222/#000) — 1,11-1,46:1 на панели. */
+${SK} .author-widget,
+${SK} .lesson-attachments__link,
+${SK} .diff-viewer__diff-spot,
+${SK} .reviews-pagination__link,
+${SK} .submissions-table__filter,
+${SK} .submissions-table__sort,
+${SK} .submissions-table__extra-action,
+${SK} .gradesheet-cell__text,
+${SK} .new-course-form__label,
+${SK} .new-lesson-form__label,
+${SK} .step-history__diff-block-title,
+${SK} .step-history__diff-snapshot-date,
+${SK} .plan-card__meter,
+${SK} .rubric__max-point,
+${SK} .rubric__action,
+${SK} .smart-hints__hint,
+${SK} .smart-hints_feedback-options,
+${SK} .chemical-template__input,
+${SK} .sortable-item__inner-box,
+${SK} .explore__search__input {
+  color: var(--sk-fg) !important;
+}
+
+/* Тёмные состояния (hover/active/focus), куда сток уводит текст в #222/#000. */
+${SK} .st-course-widget__menu-link:hover,
+${SK} .klass-gradebook__section-toggler:hover,
+${SK} .tags-tag__action:hover,
+${SK} .course-blacklist__action-btn:hover,
+${SK} .course-blacklist__action-btn:active,
+${SK} .catalog__reset-search-mobile:hover,
+${SK} .course-promo-toc__course-toggler:hover,
+${SK} button.date-picker__clear:hover,
+${SK} button.date-picker__clear:focus-visible,
+${SK} .notification__icon-action:hover,
+${SK} .item-tile__tool-btn:hover,
+${SK} .users-list__button button:hover,
+${SK} .discussion__load-more:hover,
+${SK} .course-reports-table__item-descr-help:hover,
+${SK} .paid-features__view-icon-link:hover,
+${SK} .promocode-editor__menu-toggler:hover,
+${SK} .news-item__mobile-menu-toggler:hover,
+${SK} .section-editor__menu-toggler:hover,
+${SK} .user-revenue__report-menu-btn:hover,
+${SK} .course-reports-table__item-sample-btn:hover,
+${SK} .comments-input__bait:hover,
+${SK} .clipboard-fragment[data-theme="line"]:hover,
+${SK} .clipboard-fragment[data-theme="area"],
+${SK} .import-lessons__step:hover .import-lessons__step-ind {
+  color: var(--sk-fg) !important;
+}
+
+/* Кнопки на зелёной стоковой заливке (#54ad54), куда сток кладёт синий
+   текст ссылки: 2:1. На светло-зелёном фоне текст должен быть тёмным —
+   тем же приёмом, что у наших акцентных кнопок. */
+${SK} button:not(.st-button_style_none).comments-card__footer-button,
+${SK} button:not(.st-button_style_none).comment-widget__footer-button,
+${SK} button:not(.st-button_style_none).course-info-editor__upload-widget-remove,
+${SK} button:not(.st-button_style_none).course-info-editor__user-remove,
+${SK} button:not(.st-button_style_none).quiz-editor__item-remove-btn,
+${SK} button:not(.st-button_style_none).quiz-editor__cases-remove-btn,
+${SK} button:not(.st-button_style_none).quiz-eitor__sorting-control,
+${SK} .lti-consumer-edit__delete-custom-field-btn {
+  color: var(--sk-on-surface) !important;
+}
+
+/* Теги и плашки, у которых сток оставляет светлую заливку, а текст тёмный
+   (1,14-1,29:1). */
+${SK} .s-tag.s-tag_color_white,
+${SK} .s-tag.s-tag_color_white .s-tag__name,
+${SK} .s-tag.s-tag_color_white a {
+  background-color: var(--sk-panel-2) !important;
+  color: var(--sk-fg) !important;
+}
+${SK} .st-course-widget__badge,
+${SK} .course-publication-card__icon {
+  background-color: var(--sk-panel-2) !important;
+  color: var(--sk-fg) !important;
+}
+${SK} .tariff-card__price-discount-note { color: var(--sk-accent-2-text) !important; }
+${SK} .form-radio, ${SK} .modal-dialog .modal-dialog-bg { color: var(--sk-fg) !important; }
 
 `;
   }
