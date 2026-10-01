@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.78
+// @version      2.9.79
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2666,15 +2666,15 @@ ${SK} .comments-card__staff-replied {
 /* Сообщение, к которому перешли по ?discussion=&reply=, и только что
    поставленный комментарий сток обводит кольцом 6px и мигает анимацией
    comment-highlight (кремовый → #ffeec2) — на тёмной теме это светлое
-   пятно, а крашенное нами кольцо в 6px выглядит толстой голубой рамкой.
-   Оставляем смысл подсветки в тёмных цветах и убираем толщину: фон —
-   панель на ступень выше фона обсуждения, тонкое кольцо 1px синим
-   акцентом, анимация отключена; отступы правятся под новую толщину
-   (сток компенсирует 6px отрицательным margin'ом). */
+   пятно. Кольцо убираем совсем (жалоба: «убрать голубую рамку после
+   написания комментария»): остаётся только фон — панель на ступень выше
+   фона обсуждения, чем свежепоставленный комментарий и выделяется.
+   Анимация отключена, отступы выправлены (сток компенсирует 6px
+   отрицательным margin'ом). */
 ${SK} .comment-widget_highlighted,
 ${SK} .comments-comment__highlighted {
   background-color: var(--sk-panel-2) !important;
-  border: 1px solid var(--sk-blue) !important;
+  border: none !important;
   animation: none !important;
 }
 ${SK} .comments-comment__highlighted {
