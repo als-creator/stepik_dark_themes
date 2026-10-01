@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.79
+// @version      2.9.80
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2793,29 +2793,40 @@ ${SK} .rich-text-viewer picture.progressive-picture[data-lqip-loader]::before {
   background-color: var(--sk-panel) !important;
 }
 
-/* «Оставить отзыв» (button-link) и ссылка «принципы сообщества»:
-   сток задаёт --link-color:#222 из светлой темы — на тёмном фоне
-   текст не виден. */
-${SK} button:not(.st-button_style_none).lesson__review-button {
-  --link-color: var(--sk-fg-2);
-  --link-line-color: currentColor;
-  --link-hover-color: var(--sk-fg);
-  --link-hover-line-color: currentColor;
-  --link-active-color: var(--sk-fg);
-  --link-active-line-color: currentColor;
-  --link-disabled-color: var(--sk-fg-muted);
-  --external-link-icon-color: var(--sk-fg-2);
+/* «Правила сообщества» (ссылка в блоке обсуждений) и «Оставить отзыв»:
+   сток задаёт ссылке --link-color:#222 из светлой темы — на тёмном фоне
+   текст не виден (жалоба с урока «Конспект лекции»). Селектор расширен на
+   любой контейнер с таким именем: разметка обсуждений менялась, и одних
+   --link-* здесь мало — если на самом элементе есть собственное правило
+   цвета, выигрывает оно, поэтому добавлен и явный color. */
+${SK} [class*="community-rules"] {
   color: var(--sk-fg-2) !important;
 }
-${SK} .discussions__community-rules a {
-  --link-color: var(--sk-blue);
-  --link-line-color: currentColor;
-  --link-hover-color: var(--sk-blue-dark);
-  --link-hover-line-color: currentColor;
-  --link-active-color: var(--sk-blue-dark);
-  --link-active-line-color: currentColor;
-  --link-disabled-color: var(--sk-fg-muted);
-  --external-link-icon-color: var(--sk-blue);
+${SK} [class*="community-rules"] a,
+${SK} [class*="community-rules"] button,
+${SK} [class*="community-rules"] .link-secondary {
+  --link-color: var(--sk-blue-text) !important;
+  --link-line-color: rgba(238, 238, 240, 0.3) !important;
+  --link-hover-color: var(--sk-blue) !important;
+  --link-hover-line-color: var(--sk-blue) !important;
+  --link-active-color: var(--sk-blue) !important;
+  --link-active-line-color: var(--sk-blue) !important;
+  --link-disabled-color: var(--sk-fg-muted) !important;
+  --external-link-icon-color: var(--sk-blue-text) !important;
+  color: var(--sk-blue-text) !important;
+}
+${SK} [class*="community-rules"] a:hover,
+${SK} [class*="community-rules"] button:hover { color: var(--sk-blue) !important; }
+${SK} button:not(.st-button_style_none).lesson__review-button {
+  --link-color: var(--sk-fg-2) !important;
+  --link-line-color: currentColor !important;
+  --link-hover-color: var(--sk-fg) !important;
+  --link-hover-line-color: currentColor !important;
+  --link-active-color: var(--sk-fg) !important;
+  --link-active-line-color: currentColor !important;
+  --link-disabled-color: var(--sk-fg-muted) !important;
+  --external-link-icon-color: var(--sk-fg-2) !important;
+  color: var(--sk-fg-2) !important;
 }
 /* «вторичные» ссылки .link-secondary: сток задаёт --link-color:#222 из
    светлой темы — на тёмном фоне ФИО получателя на странице сертификата и
