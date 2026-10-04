@@ -87,9 +87,35 @@ if (!metaMatch) {
     fail('Нет @grant — без него грант выбирается по умолчанию и скрипт может запросить лишние права');
   }
 
+  /* Автообновление. Если директивы есть, они должны указывать на тот же
+     репозиторий, что и @namespace, и быть одинаковыми: расхождение означает,
+     что одно из них осталось от прежнего адреса и пользователи молча
+     останутся на старой версии. Адрес проверяем только на вид — сетевой
+     запрос в хуке был бы медленным и ронял бы коммит из-за сети. */
+  const upd = field('updateURL');
+  const dl = field('downloadURL');
+  if (upd || dl) {
+    if (!upd || !dl) fail('Задана только одна директива — нужны обе: @updateURL и @downloadURL');
+    if (upd && dl && upd !== dl) fail('@updateURL и @downloadURL указывают на разные адреса');
+    const url = upd || dl;
+    if (!/^https:\/\/raw\.githubusercontent\.com\/[\w.-]+\/[\w.-]+\/[\w.\/-]+\.user\.js$/.test(url)) {
+      fail('@updateURL выглядит не как raw-адрес GitHub: ' + url);
+    }
+    /* Владелец и имя репозитория в адресе должны совпадать с @namespace —
+       иначе одно из двух устарело (так уже было: @namespace указывал на
+       несуществующий als/stepik-dark-themes). */
+    const ns = field('namespace') || '';
+    const nsSlug = ns.replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, '');
+    const urlSlug = (url.match(/^https:\/\/raw\.githubusercontent\.com\/([^/]+\/[^/]+)\//) || [])[1] || '';
+    if (nsSlug && urlSlug && nsSlug !== urlSlug) {
+      fail('Репозиторий в @namespace (' + nsSlug + ') и в @updateURL (' + urlSlug + ') разный');
+    }
+    note('автообновление: ' + url);
+  }
+
   const version = field('version');
   if (version && !/^\d+\.\d+\.\d+$/.test(version)) {
-    fail('@version = «' + version + '», ожидался строгий semver вида 2.9.92');
+    fail('@version = «' + version + '», ожидался строгий semver вида 2.9.89');
   }
 
   /* Совпадение с package.json: чтобы npm-метаданные не расходились с

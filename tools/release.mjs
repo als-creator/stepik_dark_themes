@@ -10,7 +10,7 @@
  * Порядок именно такой: сначала версия и проверка, и только потом коммит с
  * тегом. Поэтому «сломанная» версия не может ни закоммитироваться, ни
  * получить тег, а тег всегда указывает на рабочий скрипт — по нему версию
- * можно переустановить (git checkout v2.9.92).
+ * можно переустановить (git checkout v2.9.89).
  */
 
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -35,7 +35,18 @@ const ASSUME_ALL = rawArgs.includes('--all') || ASSUME_YES;
 const argv = rawArgs.filter((a) => a !== '--yes' && a !== '--all');
 const kinds = ['patch', 'minor', 'major'];
 const kind = argv.find((a) => kinds.includes(a)) || 'patch';
-const message = argv.filter((a) => !kinds.includes(a)).join(' ').trim();
+const message = argv.filter((a) => !kinds.includes(a) && !/^\d+\.\d+\.\d+$/.test(a)).join(' ').trim();
+
+/* Сравнение semver по трём числам: <0 / 0 / >0. */
+function cmpSemver(a, b) {
+  const pa = String(a).split('.').map((n) => parseInt(n, 10) || 0);
+  const pb = String(b).split('.').map((n) => parseInt(n, 10) || 0);
+  for (let i = 0; i < 3; i++) {
+    const d = (pa[i] || 0) - (pb[i] || 0);
+    if (d) return d < 0 ? -1 : 1;
+  }
+  return 0;
+}
 
 if (!message) {
   console.error(`
@@ -67,16 +78,34 @@ if (!m) {
   process.exit(1);
 }
 const [_, maj, min, pat] = m.map(Number);
-const next = {
+
+/* Явный номер версии: node tools/release.mjs 2.9.89 "описание".
+ * Нужен не для красоты. История этого проекта переписывалась, и версия в
+ * репозитории уехала вниз (2.9.91 → 2.9.88), а у пользователей в браузере
+ * остался 2.9.91. Обычный patch дал бы 2.9.89 — МЕНЬШЕ установленной, и
+ * Tampermonkey с @updateURL просто не поставил бы обновление, молча
+ * оставив старую версию навсегда. Поэтому номер можно задать руками, но
+ * проверка снизу всё равно не даст уйти ниже последнего тега. */
+const explicit = argv.find((a) => /^\d+\.\d+\.\d+$/.test(a));
+const auto = {
   major: `${maj + 1}.0.0`,
   minor: `${maj}.${min + 1}.0`,
   patch: `${maj}.${min}.${pat + 1}`,
 }[kind];
-const version = String(next);
+const version = String(explicit || auto);
+const wasExplicit = Boolean(explicit);
 
 const latestTag = (git(['tag', '--list', 'v*', '--sort=-v:refname']) || '').split('\n')[0];
 if (latestTag === 'v' + version) {
   console.error('  ' + C.red + `Тег v${version} уже существует.` + C.reset);
+  process.exit(1);
+}
+if (latestTag && cmpSemver(version, latestTag.replace(/^v/, '')) <= 0) {
+  console.error(`
+  ${C.red}Версия ${version} не выше последнего тега ${latestTag}.${C.reset}
+  Менеджер скриптов обновляет только когда версия ВЫШЕ установленной,
+  поэтому релиз с меньшим номером пользователям не доедет.
+`);
   process.exit(1);
 }
 
@@ -107,7 +136,7 @@ ${dirty.split('\n').map((l) => '    ' + l).join('\n')}
 }
 
 console.log(`
-  ${C.bold}${version}${C.reset}  ${C.dim}(было ${maj}.${min}.${pat})${C.reset}
+  ${C.bold}${version}${C.reset}  ${C.dim}(было ${maj}.${min}.${pat}${wasExplicit ? ', номер задан явно' : ''})${C.reset}
   ${C.dim}${message}${C.reset}
 `);
 
