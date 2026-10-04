@@ -1,0 +1,15 @@
+{
+  "name": "stepik-dark-themes",
+  "version": "2.9.88",
+  "private": true,
+  "description": "Вёрстка юзерскрипта тёмных тем для Stepik",
+  "type": "module",
+  "scripts": {
+    "check": "node tools/check.mjs",
+    "release": "node tools/release.mjs",
+    "tags:backfill": "node tools/tag-history.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.2"
+  }
+}
