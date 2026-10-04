@@ -1,6 +1,6 @@
 {
   "name": "stepik-dark-themes",
-  "version": "2.9.89",
+  "version": "2.9.83",
   "private": true,
   "description": "Вёрстка юзерскрипта тёмных тем для Stepik",
   "type": "module",
