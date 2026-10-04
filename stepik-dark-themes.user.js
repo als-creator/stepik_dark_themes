@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.80
+// @version      2.9.81
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -2609,6 +2609,33 @@ ${SK} .lesson__discussions-wrapper,
 ${SK} .lesson-modern .lesson__discussions-wrapper {
   background-color: var(--sk-bg-alt) !important;
   color: var(--sk-fg) !important;
+}
+
+/* Кнопки "Ответить", "Скрыть ответы" и др. в комментариях */
+${SK} .comment__reply,
+${SK} .comment__action,
+${SK} .comment__actions,
+${SK} .comment__actions * ,
+${SK} .discussion__reply,
+${SK} .discussion__action,
+${SK} [data-qa="comment-reply"],
+${SK} [data-qa="comment-toggle-replies"],
+${SK} [data-qa="comment-hide-replies"],
+${SK} button.comment__action,
+${SK} .comment__actions button,
+${SK} .comment__actions a,
+${SK} .comment__reply button,
+${SK} .comment__reply a,
+${SK} .comments-card__footer-button,
+${SK} .comments-card__footer-button *,
+${SK} .comments-card__show-replies,
+${SK} .comments-card__show-replies *,
+${SK} .button-link {
+  color: var(--sk-fg-2) !important;
+  -webkit-text-fill-color: var(--sk-fg-2) !important;
+  fill: var(--sk-fg-2) !important;
+  stroke: var(--sk-fg-2) !important;
+  opacity: 1 !important;
 }
 ${SK} .comments-input__editor {
   background-color: var(--sk-panel) !important;
