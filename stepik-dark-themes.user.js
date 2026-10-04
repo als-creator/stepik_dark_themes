@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.81
+// @version      2.9.82
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -859,7 +859,7 @@ ${SK}.sk-boot::after {
 @media (prefers-reduced-motion: reduce) {
   ${SK}.sk-boot::before { animation: none; }
 }
-${SK} ::selection { background: var(--sk-selection); color: var(--sk-fg) !important; }
+${SK} ::selection { background: rgba(120,160,255,0.35) !important; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
 ${SK} input, ${SK} textarea, ${SK} select { caret-color: var(--sk-fg) !important; }
 ${SK} input[type="checkbox"], ${SK} input[type="radio"] {
   accent-color: var(--sk-accent) !important;
@@ -2611,6 +2611,26 @@ ${SK} .lesson-modern .lesson__discussions-wrapper {
   color: var(--sk-fg) !important;
 }
 
+/* Легенда/подписи на схемах, картинки, SVG текст */
+${SK} .scheme__legend,
+${SK} .scheme-legend,
+${SK} .diagram__legend,
+${SK} .steps-legend,
+${SK} .steps-legend *,
+${SK} .scheme__text,
+${SK} .scheme text,
+${SK} .diagram text,
+${SK} svg text,
+${SK} .image-annotation,
+${SK} .image-annotation *,
+${SK} figcaption,
+${SK} .caption {
+  color: var(--sk-fg) !important;
+  fill: var(--sk-fg) !important;
+  stroke: none !important;
+  -webkit-text-fill-color: var(--sk-fg) !important;
+}
+
 /* Кнопки "Ответить", "Скрыть ответы" и др. в комментариях */
 ${SK} .comment__reply,
 ${SK} .comment__action,
@@ -2948,7 +2968,7 @@ ${SK} .CodeMirror-gutters { background-color: var(--sk-code-gutter) !important; 
 ${SK} .CodeMirror-linenumber { color: var(--sk-code-lineno) !important; }
 ${SK} .CodeMirror-cursor { border-left-color: var(--sk-code-cursor) !important; }
 ${SK} .CodeMirror-selected, ${SK} .CodeMirror-line::selection,
-${SK} .CodeMirror-line > span::selection { background: var(--sk-code-selection) !important; }
+${SK} .CodeMirror-line > span::selection, ${SK} .cm-selectionBackground { background: rgba(120,160,255,0.35) !important; color: #ffffff !important; }
 /* Активная строка: канвас теперь светлый графит, поэтому подсветку берём
    не панелью (она светлее канваса и режет глаз), а тонким белым тинтом. */
 ${SK} .CodeMirror-activeline-background { background: rgba(255, 255, 255, 0.05) !important; }
