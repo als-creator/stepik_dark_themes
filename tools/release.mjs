@@ -4,6 +4,9 @@
  *   node tools/release.mjs "исправить контраст в комментариях"   (patch по умолчанию)
  *   node tools/release.mjs minor "добавлена тема Oblivion+"
  *
+ *   --all   включить незакоммиченные правки без вопроса (для скриптов)
+ *   --yes   то же, плюс не спрашивать ничего вовсе
+ *
  * Порядок именно такой: сначала версия и проверка, и только потом коммит с
  * тегом. Поэтому «сломанная» версия не может ни закоммитироваться, ни
  * получить тег, а тег всегда указывает на рабочий скрипт — по нему версию
@@ -24,7 +27,12 @@ const C = {
   green: '\x1b[32m', yellow: '\x1b[33m', bold: '\x1b[1m',
 };
 
-const argv = process.argv.slice(2).filter((a) => a !== '--yes');
+const rawArgs = process.argv.slice(2);
+/* Флаги смотрим до фильтрации — иначе проверка «передан ли --all» всегда
+   даёт false, потому что сам флаг уже вырезан. */
+const ASSUME_YES = rawArgs.includes('--yes');
+const ASSUME_ALL = rawArgs.includes('--all') || ASSUME_YES;
+const argv = rawArgs.filter((a) => a !== '--yes' && a !== '--all');
 const kinds = ['patch', 'minor', 'major'];
 const kind = argv.find((a) => kinds.includes(a)) || 'patch';
 const message = argv.filter((a) => !kinds.includes(a)).join(' ').trim();
@@ -72,15 +80,30 @@ if (latestTag === 'v' + version) {
   process.exit(1);
 }
 
+/* Незакоммиченные правки — это обычно и есть то, что выпускаем: в этом
+   проекте каждая версия — это правка скрипта плюс её номер одним коммитом.
+   Поэтому спрашиваем, а не запрещаем: молча утащить в релиз чужое нельзя. */
 const dirty = git(['status', '--porcelain']);
-if (dirty) {
+if (dirty && !ASSUME_ALL) {
   console.error(`
-  ${C.red}Рабочее дерево не чистое.${C.reset} Закоммить текущие изменения или отменить их (${C.dim}git stash${C.reset}),
-  иначе они попадут в релиз случайно:
+  ${C.yellow}В рабочем дереве есть незакоммиченные правки:${C.reset}
 
 ${dirty.split('\n').map((l) => '    ' + l).join('\n')}
+
+  ${C.dim}Они попадут в коммит версии (обычно это и нужно).${C.reset}
+  ${C.dim}Только если это не то — прервитесь (Ctrl-C) и разберитесь с ними сначала.${C.reset}
 `);
-  process.exit(1);
+  if (!process.stdin.isTTY) {
+    console.error(`  ${C.red}Неинтерактивный режим — перезапустите с --all, если правки нужно включить.${C.reset}\n`);
+    process.exit(1);
+  }
+  const rl = (await import('node:readline')).createInterface({ input: process.stdin, output: process.stdout });
+  const ans = (await rl.question(`  ${C.bold}Включить их в релиз? [Y/n]${C.reset} `)).trim().toLowerCase();
+  rl.close();
+  if (ans && ans !== 'y' && ans !== 'д' && ans !== 'yes') {
+    console.error('  ' + C.red + 'Отменено.' + C.reset);
+    process.exit(1);
+  }
 }
 
 console.log(`
@@ -122,7 +145,10 @@ try {
 
 const title = `bump ${version}: ${message}`;
 
-git(['add', 'stepik-dark-themes.user.js', 'package.json'], { throwOnError: true });
+/* В релиз идёт скрипт и package.json плюс всё, что уже было изменено
+   (правки README, новые файлы) — иначе номер версии окажется в коммите
+   без той правки, ради которой его подняли. */
+git(['add', '-A'], { throwOnError: true });
 
 try {
   git(['commit', '-m', title], { throwOnError: true });
