@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als/stepik-dark-themes
-// @version      2.9.75
+// @version      2.9.80
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
 // @author       als
 // @match        https://stepik.org/*
@@ -3245,6 +3245,81 @@ ${SK} select.st-select:focus, ${SK} .st-select:focus {
   background-color: var(--sk-panel-2) !important;
   border-color: var(--sk-accent) !important;
   box-shadow: 0 0 0 1px var(--sk-accent) !important;
+}
+
+/* Редакторы комментариев (contenteditable) */
+${SK} div[contenteditable="true"],
+${SK} [contenteditable="true"],
+${SK} .rich-text-editor,
+${SK} .rich-text-editor__content,
+${SK} .rich-text-editor__area,
+${SK} .markdown-editor,
+${SK} .markdown-editor__content,
+${SK} .editor,
+${SK} .editor__content {
+  background-color: color-mix(in srgb, var(--sk-panel) 92%, black 8%) !important;
+  background: color-mix(in srgb, var(--sk-panel) 92%, black 8%) !important;
+  background-image: none !important;
+  color: var(--sk-fg) !important;
+  -webkit-text-fill-color: var(--sk-fg) !important;
+  caret-color: var(--sk-fg) !important;
+  border: 1px solid var(--sk-border) !important;
+}
+
+/* Draft.js (Stepik Discussions) */
+${SK} .DraftEditor-root,
+${SK} .DraftEditor-editorContainer,
+${SK} .DraftEditor-content,
+${SK} .public-DraftEditor-content,
+${SK} .public-DraftStyleDefault-block,
+${SK} .public-DraftEditorPlaceholder-root,
+${SK} .discussion-form__editor,
+${SK} .discussion-form__content,
+${SK} .comment-form__editor,
+${SK} [data-qa="discussion-form-textarea"],
+${SK} [data-qa="comment-form-textarea"],
+${SK} .ProseMirror,
+${SK} .tiptap {
+  background-color: color-mix(in srgb, var(--sk-panel) 92%, black 8%) !important;
+  background: color-mix(in srgb, var(--sk-panel) 92%, black 8%) !important;
+  background-image: none !important;
+  color: var(--sk-fg) !important;
+  -webkit-text-fill-color: var(--sk-fg) !important;
+  caret-color: var(--sk-fg) !important;
+  border-color: var(--sk-border) !important;
+}
+
+${SK} .public-DraftEditor-content,
+${SK} .DraftEditor-content,
+${SK} .DraftEditor-editorContainer,
+${SK} .DraftEditor-root {
+  background-color: color-mix(in srgb, var(--sk-panel) 92%, black 8%) !important;
+  background: color-mix(in srgb, var(--sk-panel) 92%, black 8%) !important;
+  background-image: none !important;
+  color: var(--sk-fg) !important;
+  -webkit-text-fill-color: var(--sk-fg) !important;
+  caret-color: var(--sk-fg) !important;
+}
+
+${SK} .public-DraftEditor-content *,
+${SK} .DraftEditor-content *,
+${SK} .DraftEditor-root *,
+${SK} [contenteditable="true"] *,
+${SK} .ProseMirror *,
+${SK} .rich-text-editor *,
+${SK} .editor * {
+  color: var(--sk-fg) !important;
+  -webkit-text-fill-color: var(--sk-fg) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+${SK} .public-DraftEditorPlaceholder-root,
+${SK} .DraftEditor-placeholder,
+${SK} [contenteditable="true"]:empty::before {
+  color: var(--sk-fg-3) !important;
+  -webkit-text-fill-color: var(--sk-fg-3) !important;
+  opacity: 0.85 !important;
 }
 ${SK} input.st-input::placeholder, ${SK} textarea.st-input::placeholder {
   color: var(--sk-fg-3-text) !important;
