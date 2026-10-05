@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als-creator/stepik_dark_themes
-// @version      2.9.85
+// @version      2.9.86
 // @updateURL    https://raw.githubusercontent.com/als-creator/stepik_dark_themes/main/stepik-dark-themes.user.js
 // @downloadURL  https://raw.githubusercontent.com/als-creator/stepik_dark_themes/main/stepik-dark-themes.user.js
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
@@ -699,6 +699,7 @@
   --sk-border-readable:${skReadable(s.border, skLighter(s.panel, s.panel2), s.fg, 3)};
   --sk-fg:${s.fg}; --sk-fg-2:${s.fg2}; --sk-fg-3:${s.fg3}; --sk-fg-muted:${s.fgMuted};
   --sk-fg-3-text:${skReadable(s.fg3, skLighter(s.panel, s.panel2), s.fg, 4.6)};
+  --sk-fg-muted-text:${skReadable(s.fgMuted, skLighter(s.panel, s.panel2), s.fg, 4.6)};
   --sk-accent:${s.accent}; --sk-accent-dark:${s.accentDark};
   --sk-accent-2:${s.accent2}; --sk-accent-2-dark:${s.accent2Dark}; --sk-accent-2-tint:${rgba(hexOf(s.accent2), 0.14)};
   --sk-accent-2-text:${skReadable(s.accent2, skLighter(s.panel, s.panel2), s.fg, 4.6)};
@@ -972,7 +973,7 @@ ${SK} .catalog__search-form .select-box .select-box__autowidth-measurer {
   border-color: var(--sk-border) !important;
 }
 ${SK} .catalog__search-form .search-form__reset {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 ${SK} .catalog__search-form .search-form__reset:focus,
 ${SK} .catalog__search-form button.st-button_style_none.search-form__reset:hover {
@@ -2451,7 +2452,7 @@ ${SK} .matching-quiz__item::before {
 }
 ${SK} .dnd-quiz__item-handle,
 ${SK} .dnd-quiz__item-btn {
-  color: var(--sk-fg-muted) !important;
+  color: var(--sk-fg-muted-text) !important;
 }
 ${SK} .dnd-quiz__item:not(.animated) .dnd-quiz__item-handle:hover,
 ${SK} .dnd-quiz__item-btn:focus,
@@ -2461,7 +2462,7 @@ ${SK} .dnd-quiz__item-btn:hover {
 ${SK} .matching-quiz__item[data-drag-added] {
   background-color: var(--sk-accent) !important;
   border-color: transparent !important;
-  color: var(--sk-fg) !important;
+  color: var(--sk-on-surface) !important;
 }
 /* левый сайдбар урока: сток даёт панели #222 (нейтрально-серый, «дефолтный»
    на фоне синевато-графитового канваса) и заметно контрастирует с полем
@@ -3359,8 +3360,8 @@ ${SK} .editor * {
 ${SK} .public-DraftEditorPlaceholder-root,
 ${SK} .DraftEditor-placeholder,
 ${SK} [contenteditable="true"]:empty::before {
-  color: var(--sk-fg-3) !important;
-  -webkit-text-fill-color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
+  -webkit-text-fill-color: var(--sk-fg-3-text) !important;
   opacity: 0.85 !important;
 }
 ${SK} input.st-input::placeholder, ${SK} textarea.st-input::placeholder {
@@ -3490,7 +3491,7 @@ ${SK} .profile__text,
 ${SK} .profile__counter,
 ${SK} .profile__counter time,
 ${SK} .profile__counters .svg-icon {
-  color: var(--sk-fg-3) !important;
+  color: var(--sk-fg-3-text) !important;
 }
 ${SK} .last-activity-stats__desc,
 ${SK} .activity-graph .activity-graph__info,
@@ -3695,7 +3696,7 @@ ${SK} .learn-last-activity-pin[data-is-current]:not([data-is-today]) .learn-last
 /* второй вариант «пинов» (неделя в профиле) */
 ${SK} .learn-last-activity__pin[data-current] {
   border-color: var(--sk-accent-2) !important;
-  color: var(--sk-accent-2) !important;
+  color: var(--sk-accent-2-text) !important;
 }
 ${SK} .learn-last-activity__pin[data-quizzes-solved]:not([data-quizzes-solved="0"]) {
   background-color: var(--sk-bg-alt) !important;
