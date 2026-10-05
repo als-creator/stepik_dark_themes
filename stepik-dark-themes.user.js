@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als-creator/stepik_dark_themes
-// @version      2.9.84
+// @version      2.9.85
 // @updateURL    https://raw.githubusercontent.com/als-creator/stepik_dark_themes/main/stepik-dark-themes.user.js
 // @downloadURL  https://raw.githubusercontent.com/als-creator/stepik_dark_themes/main/stepik-dark-themes.user.js
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
@@ -692,6 +692,11 @@
   --sk-bg:${s.bg}; --sk-bg-alt:${s.bgAlt}; --sk-panel:${s.panel}; --sk-panel-2:${s.panel2};
   --sk-surface-2:${s.surface2};
   --sk-border:${s.border}; --sk-border-2:${s.border2};
+  /* WCAG 2.1 §1.4.11: граница элемента управления должна набирать 3:1, иначе
+     контрол не виден — у oblivion сырая рамка давала 1,12:1. Считаем от более
+     светлого из панели и панели-2: это самый трудный фон для светлой рамки,
+     и на нём порог достигается, а значит держится и на обоих тёмных. */
+  --sk-border-readable:${skReadable(s.border, skLighter(s.panel, s.panel2), s.fg, 3)};
   --sk-fg:${s.fg}; --sk-fg-2:${s.fg2}; --sk-fg-3:${s.fg3}; --sk-fg-muted:${s.fgMuted};
   --sk-fg-3-text:${skReadable(s.fg3, skLighter(s.panel, s.panel2), s.fg, 4.6)};
   --sk-accent:${s.accent}; --sk-accent-dark:${s.accentDark};
@@ -699,8 +704,8 @@
   --sk-accent-2-text:${skReadable(s.accent2, skLighter(s.panel, s.panel2), s.fg, 4.6)};
   --sk-blue:${s.blue}; --sk-blue-dark:${s.blueDark};
   --sk-blue-text:${skReadable(s.blue, skLighter(s.panel, s.panel2), s.fg, 4.6)};
-  --sk-danger:${s.danger}; --sk-danger-dark:${s.dangerDark};
-  --sk-warning:${s.warning}; --sk-warning-dark:${s.warningDark}; --sk-success:${s.success};
+  --sk-danger:${s.danger};
+  --sk-warning:${s.warning}; --sk-success:${s.success};
   --sk-success-text:${skReadable(s.success, skLighter(s.panel, s.panel2), s.fg, 4.6)}; --sk-danger-text:${skReadable(s.danger, skLighter(s.panel, s.panel2), s.fg, 4.6)};
   --sk-on-surface:${s.onSurface}; --sk-selection:${s.selection};
   --sk-code-bg:${s.codeBg}; --sk-code-bg-light:${s.codeBgLight}; --sk-code-gutter:${s.codeGutter}; --sk-code-fg:${s.codeFg};
@@ -861,7 +866,7 @@ ${SK}.sk-boot::after {
 @media (prefers-reduced-motion: reduce) {
   ${SK}.sk-boot::before { animation: none; }
 }
-${SK} ::selection { background: rgba(120,160,255,0.35) !important; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+${SK} ::selection { background: var(--sk-selection) !important; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
 ${SK} input, ${SK} textarea, ${SK} select { caret-color: var(--sk-fg) !important; }
 ${SK} input[type="checkbox"], ${SK} input[type="radio"] {
   accent-color: var(--sk-accent) !important;
@@ -1346,7 +1351,7 @@ ${SK} .modal-dialog .modal-dialog-block .modal-dialog-inner {
 ${SK} .modal-dialog .modal-dialog-block .modal-dialog-top__header,
 ${SK} .modal-dialog .modal-dialog__header,
 ${SK} .modal-dialog .modal-dialog__footer {
-  border-color: var(--sk-border) !important;
+  border-color: var(--sk-border-readable) !important;
 }
 ${SK} .modal-dialog .modal-dialog-block .modal-dialog-top__title,
 ${SK} .modal-dialog .modal-dialog__headline-text,
@@ -1430,7 +1435,7 @@ ${SK} .sign-form__body .sign-form__message_success {
 }
 /* линия-разделитель перед «войти через соцсети» (сток hr.split — #ddd) */
 ${SK} .auth-widget hr.split {
-  border-color: var(--sk-border) !important;
+  border-color: var(--sk-border-readable) !important;
 }
 /* разделитель под шапкой табов: сток #d9d9d9 + белые «засечки» по краям */
 ${SK} .light-tabs__header::before {
@@ -1441,7 +1446,7 @@ ${SK} .light-tabs__header::before {
 /* содержимое табов в рамке (окно восстановления пароля и др.): сток
    #d8d8d8, пустое содержимое — #eee */
 ${SK} .light-tabs__content {
-  border-color: var(--sk-border) !important;
+  border-color: var(--sk-border-readable) !important;
 }
 ${SK} .light-tabs__content .light-tabs__content_empty {
   background-color: var(--sk-panel-2) !important;
@@ -1753,7 +1758,7 @@ ${SK} button.course-card__menu-toggle-btn:not(.st-button_style_none)[data-active
    карточками. */
 ${SK} .learn-course-tile {
   padding: 16px !important;
-  border: 1px solid var(--sk-border) !important;
+  border: 1px solid var(--sk-border-readable) !important;
   border-radius: 12px !important;
   margin-bottom: 8px !important;
 }
@@ -2553,7 +2558,7 @@ ${SK} .cke_path_item {
   text-shadow: none !important;
 }
 ${SK} .cke_top, ${SK} .cke_bottom {
-  border-color: var(--sk-border) !important;
+  border-color: var(--sk-border-readable) !important;
 }
 /* Иконки кнопок — спрайты-PNG с чёрным глифом (background-image из инлайн-
    стиля), перекрасить их цветом нельзя, только фильтром. Фильтр вешаем
@@ -2600,7 +2605,7 @@ ${SK} .cke_wysiwyg_div {
   background-color: var(--sk-panel) !important;
 }
 ${SK} .rich-text-editor > [role="application"] {
-  border-color: var(--sk-border) !important;
+  border-color: var(--sk-border-readable) !important;
 }
 
 /* ================= ПОДВАЛ УРОКА / ОБСУЖДЕНИЯ =================
@@ -2836,7 +2841,7 @@ ${SK} .rich-text-viewer table tr:nth-of-type(even) { background-color: var(--sk-
 ${SK} .rich-text-viewer table thead, ${SK} .rich-text-viewer table tfoot { background-color: var(--sk-panel) !important; }
 ${SK} .rich-text-viewer table th, ${SK} .rich-text-viewer table td {
   color: var(--sk-fg) !important;
-  border-color: var(--sk-border) !important;
+  border-color: var(--sk-border-readable) !important;
 }
 ${SK} .rich-text-viewer picture.progressive-picture[data-lqip-loader]::before {
   background-color: var(--sk-panel) !important;
@@ -2909,7 +2914,7 @@ ${SK} table {
    а зебра задаётся на TR — сплошная заливка td/th её перекрывала бы. */
 ${SK} table th, ${SK} table td {
   color: var(--sk-fg) !important;
-  border-color: var(--sk-border) !important;
+  border-color: var(--sk-border-readable) !important;
 }
 /* Шапка и подвал таблицы: critical.css красит их глобальным правилом
    (table tfoot, table thead { background:#f5f5f5 }). Мы перекрывали только
@@ -2970,7 +2975,7 @@ ${SK} .CodeMirror-gutters { background-color: var(--sk-code-gutter) !important; 
 ${SK} .CodeMirror-linenumber { color: var(--sk-code-lineno) !important; }
 ${SK} .CodeMirror-cursor { border-left-color: var(--sk-code-cursor) !important; }
 ${SK} .CodeMirror-selected, ${SK} .CodeMirror-line::selection,
-${SK} .CodeMirror-line > span::selection, ${SK} .cm-selectionBackground { background: rgba(120,160,255,0.35) !important; color: #ffffff !important; }
+${SK} .CodeMirror-line > span::selection, ${SK} .cm-selectionBackground { background: var(--sk-code-selection) !important; color: #ffffff !important; }
 /* Активная строка: канвас теперь светлый графит, поэтому подсветку берём
    не панелью (она светлее канваса и режет глаз), а тонким белым тинтом. */
 ${SK} .CodeMirror-activeline-background { background: rgba(255, 255, 255, 0.05) !important; }
@@ -3795,7 +3800,7 @@ ${SK} button:not(.st-button_style_none).std.is-outlined:hover,
 ${SK} button:not(.st-button_style_none).std.is-outlined:active,
 ${SK} .course-promo-enrollment__wishlist-btn.is-outlined {
   color: var(--sk-fg) !important;
-  border-color: var(--sk-border) !important;
+  border-color: var(--sk-border-readable) !important;
 }
 ${SK} button:not(.st-button_style_none).alert.is-outlined,
 ${SK} button:not(.st-button_style_none).alert.is-outlined:hover,
