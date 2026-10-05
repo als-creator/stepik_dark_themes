@@ -165,6 +165,59 @@ try {
   fail('Синтаксическая ошибка (node --check):\n' + out.trim());
 }
 
+/* --- 3a. У каждого color-mix() есть запасной вариант того же свойства.
+   color-mix() поддержан с марта 2023 (Chrome 111, Safari 16.2, Firefox 113).
+   В более старом браузере декларация отбрасывается на разборе, и если
+   запасной нет, элемент остаётся со светлым фоном сайта — то есть ровно та
+   поломка, которую гейт мимо себя пропустить не должен. */
+{
+  const lines = src.split('\n');
+  const ruleStart = (from) => {
+    for (let i = from; i >= 0; i--) if (/[{]\s*$/.test(lines[i])) return i;
+    return -1;
+  };
+  const ruleEnd = (from) => {
+    for (let i = from; i < lines.length; i++) if (/^\s*}\s*$/.test(lines[i])) return i;
+    return lines.length - 1;
+  };
+  let cm = 0;
+  let bare = 0;
+  for (let i = 0; i < lines.length; i++) {
+    if (!lines[i].includes('color-mix(')) continue;
+    cm++;
+    const prop = (lines[i].trim().match(/^[-a-z]+\s*:/) || [''])[0].replace(/\s*:$/, '');
+    if (!prop) continue;
+    const a = ruleStart(i), b = ruleEnd(i);
+    let ok = false;
+    for (let j = a + 1; j <= b; j++) {
+      if (j === i) continue;
+      const t = lines[j].trim();
+      if (t.startsWith(prop + ':') && !t.includes('color-mix(')) { ok = true; break; }
+    }
+    if (!ok) {
+      bare++;
+      fail('color-mix() без запасного значения: ' + lines[i].trim().slice(0, 70) +
+        ' — в браузерах старше 2023 года декларация отбросится, фон останется светлым');
+    }
+  }
+  if (cm && !bare) note('color-mix: все ' + cm + ' вхождений имеют запасное значение');
+}
+
+/* --- 3b. Проход по DOM не должен крутиться на фиксированном интервале.
+   skFixInlineColors обходит шесть областей контента селекторами
+   [style*="color"] — это проверка атрибута у каждого узла поддерева. На
+   постоянном интервале это десятки полных сканов страницы в минуту впустую. */
+{
+  const iv = src.match(/setInterval\s*\(([\s\S]{0,400}?)\}\s*,|setInterval\s*\(([\s\S]{0,400}?)\)\s*[,;]/g) || [];
+  let bad = 0;
+  for (const call of iv) if (/skFix/.test(call)) bad++;
+  if (bad) {
+    fail('Проход по DOM назначен через setInterval (' + bad + ') — нужен нарастающий интервал, иначе скан страницы идёт впустую');
+  } else if (src.includes('skPollDelay')) {
+    note('проход по DOM: интервал нарастает, а не крутится постоянно');
+  }
+}
+
 /* ------------------------------------------------- 4. версия против тегов */
 
 /* Каждая версия должна быть выше последней помеченной: тег — это то, по чему

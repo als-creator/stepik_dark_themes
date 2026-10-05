@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als-creator/stepik_dark_themes
-// @version      2.9.83
+// @version      2.9.84
 // @updateURL    https://raw.githubusercontent.com/als-creator/stepik_dark_themes/main/stepik-dark-themes.user.js
 // @downloadURL  https://raw.githubusercontent.com/als-creator/stepik_dark_themes/main/stepik-dark-themes.user.js
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
@@ -3306,8 +3306,8 @@ ${SK} .markdown-editor,
 ${SK} .markdown-editor__content,
 ${SK} .editor,
 ${SK} .editor__content {
+  background-color: var(--sk-panel) !important;
   background-color: color-mix(in srgb, var(--sk-panel) 92%, black 8%) !important;
-  background: color-mix(in srgb, var(--sk-panel) 92%, black 8%) !important;
   background-image: none !important;
   color: var(--sk-fg) !important;
   -webkit-text-fill-color: var(--sk-fg) !important;
@@ -3329,25 +3329,13 @@ ${SK} [data-qa="discussion-form-textarea"],
 ${SK} [data-qa="comment-form-textarea"],
 ${SK} .ProseMirror,
 ${SK} .tiptap {
+  background-color: var(--sk-panel) !important;
   background-color: color-mix(in srgb, var(--sk-panel) 92%, black 8%) !important;
-  background: color-mix(in srgb, var(--sk-panel) 92%, black 8%) !important;
   background-image: none !important;
   color: var(--sk-fg) !important;
   -webkit-text-fill-color: var(--sk-fg) !important;
   caret-color: var(--sk-fg) !important;
   border-color: var(--sk-border) !important;
-}
-
-${SK} .public-DraftEditor-content,
-${SK} .DraftEditor-content,
-${SK} .DraftEditor-editorContainer,
-${SK} .DraftEditor-root {
-  background-color: color-mix(in srgb, var(--sk-panel) 92%, black 8%) !important;
-  background: color-mix(in srgb, var(--sk-panel) 92%, black 8%) !important;
-  background-image: none !important;
-  color: var(--sk-fg) !important;
-  -webkit-text-fill-color: var(--sk-fg) !important;
-  caret-color: var(--sk-fg) !important;
 }
 
 ${SK} .public-DraftEditor-content *,
@@ -4603,6 +4591,9 @@ ${SK} .form-radio, ${SK} .modal-dialog .modal-dialog-bg { color: var(--sk-fg) !i
 
   let skFixPending = null;
   let skFixQueued = false;
+  /* Период фонового прохода и его потолок; см. вызов в init. */
+  let skPollDelay = 1500;
+  const SK_POLL_MAX = 12000;
 
   function skFixTree(node) {
     if (node.nodeType === 1) {
@@ -4637,6 +4628,9 @@ ${SK} .form-radio, ${SK} .modal-dialog .modal-dialog-bg { color: var(--sk-fg) !i
     if (!window.MutationObserver) return;
     try {
       const mo = new MutationObserver((records) => {
+        /* Что-то добавилось — возвращаем частоту прохода к начальной, пока
+         * страница снова не утихнет. */
+        skPollDelay = 1500;
         if (!skFixPending) skFixPending = [];
         for (let i = 0; i < records.length; i++) {
           const r = records[i];
@@ -4747,12 +4741,29 @@ ${SK} .form-radio, ${SK} .modal-dialog .modal-dialog-bg { color: var(--sk-fg) !i
      * инлайн-цветом доходит до экрана тёмным по тёмному и через 1,5 с
      * «моргает» светлым (проверено: 1425 мс на живом уроке) */
     try { skWatchContent(); } catch (e) { /* noop */ }
-    /* В юзерскрипте штатный setInterval держим только там, где есть DOM
-     * (в тестовом Node-харнессе querySelectorAll отсутствует — иначе
-     * таймер не даёт процессу завершиться). */
+    /* Периодический проход — страховка для того, что приходит асинхронно
+     * (разбор обложек через canvas, CKEditor), и потому убрать его нельзя.
+     * Но на покоящейся странице выполнять его каждые 1,5 с — чистая трата:
+     * skFixInlineColors обходит шесть областей контента селекторами
+     * [style*="color"], а это проверка атрибута у каждого узла поддерева,
+     * 40 раз в минуту до самого закрытия вкладки. Поэтому шаг растёт сам,
+     * пока в DOM ничего не меняется (1,5 → 3 → 6 → 12 с), а наблюдатель
+     * возвращает его к 1,5 с, как только что-то добавилось. В скрытой
+     * вкладке не работаем вовсе: её никто не видит, а браузер и так
+     * режет таймеры. */
     if (typeof document.querySelectorAll === 'function') {
       try {
-        setInterval(() => { try { skFixEditors(); skFixInlineColors(); skFixCovers(); skFixEmbeds(); } catch (e) { /* noop */ } }, 1500);
+        const tick = () => {
+          const wait = skPollDelay;
+          if (!document.hidden) {
+            try {
+              skFixEditors(); skFixInlineColors(); skFixCovers(); skFixEmbeds();
+            } catch (e) { /* noop */ }
+            skPollDelay = Math.min(wait * 2, SK_POLL_MAX);
+          }
+          setTimeout(tick, wait);
+        };
+        setTimeout(tick, skPollDelay);
       } catch (e) { /* noop */ }
     }
   }
