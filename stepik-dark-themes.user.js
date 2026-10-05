@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als-creator/stepik_dark_themes
-// @version      2.9.87
+// @version      2.9.88
 // @updateURL    https://raw.githubusercontent.com/als-creator/stepik_dark_themes/main/stepik-dark-themes.user.js
 // @downloadURL  https://raw.githubusercontent.com/als-creator/stepik_dark_themes/main/stepik-dark-themes.user.js
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
@@ -1756,10 +1756,18 @@ ${SK} button.course-card__menu-toggle-btn:not(.st-button_style_none)[data-active
    сток даёт padding:20px 0 без скругления и рамки — при нашей тёмной
    панели обложка и иконки прижаты к самым краям и выглядят обрезанными.
    Добавляем отступы со всех сторон, скругление, рамку и зазор между
-   карточками. */
+   карточками.
+
+   Рамка здесь обычная --sk-border, а не --sk-border-readable как у восьми
+   остальных правил: плитка должна выглядеть так же, как сертификаты в
+   профиле (.cert-widget, тоже --sk-border), без резкого контура. Плата за
+   это измерена: заливка --sk-panel отличается от фона страницы на
+   1,07–1,30:1, то есть в catppuccin-mocha и catppuccin-macchiato плитка
+   опознаётся по рамке, а не по подложке. Помогает мягкая тень
+   0 1px 4px из правила карточек выше. */
 ${SK} .learn-course-tile {
   padding: 16px !important;
-  border: 1px solid var(--sk-border-readable) !important;
+  border: 1px solid var(--sk-border) !important;
   border-radius: 12px !important;
   margin-bottom: 8px !important;
 }
@@ -3753,7 +3761,7 @@ ${SK} .horizontal-scroller__scroll-btn:active {
      .catalog__search-form .search-form__reset  3,80 → 6,06
    Отдельно §1.4.11 (нетекстовые элементы, порог 3:1) — до 2.9.85 не
    применялся нигде: рамки давали 1,12–2,81:1 во всех темах. Добавлен
-   --sk-border-readable, переведены девять правил, где рамка — единственный
+   --sk-border-readable, переведены восемь правил, где рамка — единственный
    признак элемента (у oblivion было 1,12:1). Элементы с [disabled] и
    отключённые кнопки оставлены приглушёнными намеренно: WCAG 1.4.3
    неактивные элементы от требования к тексту освобождает. */
