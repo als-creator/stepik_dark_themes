@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als-creator/stepik_dark_themes
-// @version      2.9.86
+// @version      2.9.87
 // @updateURL    https://raw.githubusercontent.com/als-creator/stepik_dark_themes/main/stepik-dark-themes.user.js
 // @downloadURL  https://raw.githubusercontent.com/als-creator/stepik_dark_themes/main/stepik-dark-themes.user.js
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
@@ -3739,7 +3739,24 @@ ${SK} .horizontal-scroller__scroll-btn:active {
      .error-msg, label.error                2,32 → 7,4
      подписи #5e5e5e/#535366/#666/#6f6f6f   1,91-2,85 → 5,6-6,4
      чёрные подписи #222/#000               1,11-1,46 → 9,8
-     кнопки под комментариями (синий на зелёном) 2,00 → 6,6 */
+     кнопки под комментариями (синий на зелёном) 2,00 → 6,6
+
+   Позже, в 2.9.85–2.9.86, тот же приём применён к оставшимся местам. Эти
+   замеры сделаны иначе: перебором всех восьми тем по фактическому фону
+   элемента, а не по панели Tango, — в скобках худшее из тем:
+     .matching-quiz__item[data-drag-added]   1,03 → 12,61  (слот подсветки
+        перетаскивания; текст шёл --sk-fg на акценте, отдан --sk-on-surface)
+     .dnd-quiz__item-handle                  2,14 → 4,62
+     .learn-last-activity__pin[data-current]  3,26 → 5,63
+     подписи профиля (.profile__*)           3,63 → 5,61
+     .public-DraftEditorPlaceholder-root     3,80 → 6,06  (плейсхолдер)
+     .catalog__search-form .search-form__reset  3,80 → 6,06
+   Отдельно §1.4.11 (нетекстовые элементы, порог 3:1) — до 2.9.85 не
+   применялся нигде: рамки давали 1,12–2,81:1 во всех темах. Добавлен
+   --sk-border-readable, переведены девять правил, где рамка — единственный
+   признак элемента (у oblivion было 1,12:1). Элементы с [disabled] и
+   отключённые кнопки оставлены приглушёнными намеренно: WCAG 1.4.3
+   неактивные элементы от требования к тексту освобождает. */
 
 /* «Мои решения» — поле развёрнутого ответа (.free-answer__textarea):
    сток берёт его фон из --theme-color-fg-oncolorbg, а мы переопределили

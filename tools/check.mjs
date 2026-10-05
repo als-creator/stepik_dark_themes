@@ -380,6 +380,72 @@ if (JSDOM) {
   note('функциональная проверка: ' + applied + '/' + report.themes.length + ' применений тем, страниц ' + report.pages.length);
 }
 
+/* ------------------------------------------------- 6. таблица палитр в README
+
+   Таблица «Тема | Фон | Акцент | Акцент-2 | Источник» в README — это
+   документация, и она молча разошлась со скриптом: у Night в таблице был
+   акцент #56A4FF, которого в скрипте нет уже давно, а у Breeze Dark не
+   совпадали оба значения. Никакой проверки на это не было, поэтому расхождение
+   и доживало до пользователя. Теперь сверяем построчно с тем, что скрипт
+   реально выпускает. */
+if (JSDOM) {
+  let readme = '';
+  try { readme = readFileSync(join(ROOT, 'README.md'), 'utf8'); } catch { /* нет файла */ }
+
+  if (!/^\|\s*Тема\s*\|\s*Фон\s*\|\s*Акцент\s*\|\s*Акцент-2\s*\|/m.test(readme)) {
+    fail('В README не найдена шапка таблицы палитр «Тема | Фон | Акцент | Акцент-2 | …» — сверять нечего');
+  }
+
+  const rows = [];
+  for (const line of readme.split('\n')) {
+    const m = line.match(/^\|\s*([A-Za-z][^|]*?)\s*\|\s*`?(#[0-9a-fA-F]{3,8})`?\s*\|\s*`?(#[0-9a-fA-F]{3,8})`?\s*\|\s*`?(#[0-9a-fA-F]{3,8})`?\s*\|/);
+    if (m) rows.push({ name: m[1].trim(), bg: m[2], accent: m[3], accent2: m[4] });
+  }
+
+  const dom = new JSDOM(
+    '<!doctype html><html><head></head><body><div>x</div></body></html>',
+    { runScripts: 'outside-only', pretendToBeVisual: true, url: 'https://stepik.org/' }
+  );
+  const { window } = dom;
+  await new Promise((resolve) => {
+    if (window.document.readyState === 'complete') return resolve();
+    window.addEventListener('load', resolve);
+    setTimeout(resolve, 3000);
+  });
+  try { window.eval(src); } catch { /* уже поймано функциональной проверкой */ }
+  await new Promise((r) => setTimeout(r, 150));
+
+  const doc = window.document;
+  const picker = doc.getElementById('sk-dark-theme-panel');
+  const picks = picker ? [...picker.querySelectorAll('.sk-item')] : [];
+  const themeIds = picks.map((b) => b.getAttribute('data-sk-theme-id')).filter(Boolean);
+  const norm = (s) => String(s).trim().toLowerCase();
+
+  if (!rows.length) {
+    fail('В README не разобрано ни одной строки таблицы палитр — проверка палитр ничего не проверила');
+  } else if (rows.length !== themeIds.length) {
+    fail('В таблице палитр ' + rows.length + ' строк, а тем в переключателе ' + themeIds.length +
+      ' — таблица разошлась со скриптом');
+  } else {
+    let mismatched = 0;
+    for (const row of rows) {
+      const id = norm(row.name).replace(/\s+/g, '-');
+      const item = picks.find((b) => b.getAttribute('data-sk-theme-id') === id);
+      if (!item) { fail('В таблице палитр тема «' + row.name + '», а в переключателе такой нет'); mismatched++; continue; }
+      item.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+      const css = doc.getElementById('sk-dark-theme-style')?.textContent || '';
+      const g = (k) => (css.match(new RegExp('--sk-' + k + '\\s*:\\s*(#[0-9a-fA-F]{3,8})')) || [])[1];
+      const diffs = [];
+      if (norm(g('bg')) !== norm(row.bg)) diffs.push('фон ' + row.bg + ' ≠ ' + (g('bg') || '—'));
+      if (norm(g('accent')) !== norm(row.accent)) diffs.push('акцент ' + row.accent + ' ≠ ' + (g('accent') || '—'));
+      if (norm(g('accent-2')) !== norm(row.accent2)) diffs.push('акцент-2 ' + row.accent2 + ' ≠ ' + (g('accent-2') || '—'));
+      if (diffs.length) { mismatched++; fail('Таблица палитр, тема ' + row.name + ': ' + diffs.join('; ')); }
+    }
+    if (!mismatched) note('таблица палитр в README совпадает со скриптом, строк: ' + rows.length);
+  }
+  window.close();
+}
+
 /* ------------------------------------------------- итог */
 
 const pad = (s, n) => (s + ' '.repeat(n)).slice(0, n);

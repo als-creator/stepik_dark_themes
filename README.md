@@ -150,16 +150,20 @@
 
 ## Темы
 
-| Тема | Фон | Акцент | Источник |
-|---|---|---|---|
-| Night | `#141525` | `#56A4FF` / `#66CC66` | ночные токены сайта (`--theme-color-*`) |
-| Night Deep | `#0C0D17` | `#5DA3FF` / `#6FCF6F` | ночные токены сайта, тёмный вариант |
-| Catppuccin Mocha | `#1e1e2e` | `#cba6f7` / `#a6e3a1` | Catppuccin |
-| Catppuccin Macchiato | `#24273a` | `#c6a0f6` / `#a6da95` | Catppuccin |
-| Catppuccin Frappe | `#303446` | `#ca9ee6` / `#a6d189` | Catppuccin |
-| Breeze Dark | `#232629` | `#3daee9` / `#27ae60` | схема редактора (KSyntaxHighlighting) |
-| Oblivion | `#201f1f` | `#729fcf` / `#8ae234` | схема редактора (GtkSourceView) |
-| Tango | `#2e3436` | `#68C545` / `#729fcf` | палитра Tango (Tango Desktop Project) |
+| Тема | Фон | Акцент | Акцент-2 | Источник |
+|---|---|---|---|---|
+| Night | `#141525` | `#66CC66` | `#7888EE` | ночные токены сайта (`--theme-color-*`) |
+| Night Deep | `#0C0D17` | `#6FCF6F` | `#808EF4` | ночные токены сайта, тёмный вариант |
+| Catppuccin Mocha | `#1e1e2e` | `#a6e3a1` | `#cba6f7` | Catppuccin |
+| Catppuccin Macchiato | `#24273a` | `#a6da95` | `#c6a0f6` | Catppuccin |
+| Catppuccin Frappe | `#303446` | `#a6d189` | `#ca9ee6` | Catppuccin |
+| Breeze Dark | `#232629` | `#2ABD68` | `#9b59b6` | схема редактора (KSyntaxHighlighting) |
+| Oblivion | `#201f1f` | `#8ae234` | `#ad7fa8` | схема редактора (GtkSourceView) |
+| Tango | `#2e3436` | `#68C545` | `#ad7fa8` | палитра Tango (Tango Desktop Project) |
+
+Значения в колонках — это `--sk-bg`, `--sk-accent` и `--sk-accent-2` так,
+как их выдаёт скрипт; гейт сверяет эту таблицу с реально выпущенным CSS при
+каждом запуске, поэтому разойтись со скриптом она не может молча.
 
 Палитры всех тем можно посмотреть в файле `preview.html` (открыть в браузере).  
   
