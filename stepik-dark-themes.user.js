@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stepik Dark Themes - Night, Catppuccin, Breeze, Tango
 // @namespace    https://github.com/als-creator/stepik_dark_themes
-// @version      2.9.88
+// @version      2.9.89
 // @updateURL    https://raw.githubusercontent.com/als-creator/stepik_dark_themes/main/stepik-dark-themes.user.js
 // @downloadURL  https://raw.githubusercontent.com/als-creator/stepik_dark_themes/main/stepik-dark-themes.user.js
 // @description  Тёмные темы для stepik.org. Скрипт принудительно включает штатную ночную тему сайта (body[data-theme="night"]) и перекрашивает её дизайн-токены (--theme-color-*): Night (по умолчанию), Night Deep, Catppuccin Mocha/Macchiato/Frappe, Breeze Dark, Oblivion, Tango. Без «универсальной сетки», поэтому иконки, бейджи, прогресс-бары и плеер не ломаются. Плавающий переключатель тем, выбор запоминается.
@@ -899,6 +899,22 @@ ${SK} .rubricator-dropdown__body, ${SK} .navbar__search-form_mobile {
   --menu-item-active-background: var(--sk-panel-2) !important;
   --menu-item-divider-color: var(--sk-border) !important;
   --menu-item-disabled-color: var(--sk-fg-muted) !important;
+}
+/* Подсветка совпадения в автокомплите (<mark>): сток красит её хардкодом
+   color:#222, рассчитывая на светлую плашку #E9EBFA. Но для верхней строки
+   поиска (.search-with-drop-down) плашку гасит (background:0 0), а цвет не
+   трогает — набранный кусок подсказки остаётся чёрным на тёмной панели.
+   Остаток строки идёт через --menu-item-color и уже светлый, поэтому видна
+   только «дописываемая» половина.
+
+   Меняем только цвет, и только в тех контекстах, где сток убрал плашку:
+   в остальных автокомплитах плашка светлая, и светлый текст свёл бы её
+   к нулю. Цвет берём --sk-fg (ярче --sk-fg-2, которым идёт остаток строки),
+   плюс стоковое font-weight:700 — так набранный кусок отличим и по цвету,
+   и по начертанию. */
+${SK} .search-with-drop-down .with-autocomplete__drop-down .drop-down__body[data-theme=autocomplete] mark,
+${SK} .tags-course-tags__search .with-autocomplete__drop-down .drop-down__body[data-theme=autocomplete] mark {
+  color: var(--sk-fg) !important;
 }
 ${SK} .nav-menu {
   background-color: var(--sk-surface-2) !important;

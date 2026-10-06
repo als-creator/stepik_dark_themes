@@ -240,6 +240,43 @@ try {
   }
 }
 
+/* --- 3d. Подсветка совпадения в автокомплите поиска (<mark>).
+   Сток красит её хардкодом color:#222 и рассчитывает на светлую плашку
+   #E9EBFA, но в .search-with-drop-down (верхняя строка поиска) и
+   .tags-course-tags__search сам же эту плашку гасит — background:0 0,
+   не трогая цвета. На тёмной панели остаётся чёрный текст: 1,01–1,26:1 по
+   восьми темам. Остаток строки идёт через --menu-item-color и светлый,
+   поэтому читается только дописываемая половина — ровно то, что видно
+   глазами и что не ловится никакой другой проверкой гейта.
+
+   Проверяем три вещи: правило вообще существует, оба контекста стока
+   покрыты (селектор скопирован из стока целиком, поэтому промахнуться по
+   вёрстке нельзя) и цвет взят из токена с !important — без него правило
+   проиграет стоковому color:#222 по специфичности. */
+{
+  const contexts = [
+    '.search-with-drop-down .with-autocomplete__drop-down .drop-down__body[data-theme=autocomplete] mark',
+    '.tags-course-tags__search .with-autocomplete__drop-down .drop-down__body[data-theme=autocomplete] mark',
+  ];
+  const absent = contexts.filter((c) => !src.includes('${SK} ' + c));
+  const at = src.indexOf('data-theme=autocomplete] mark {');
+  const body = at === -1 ? '' : src.slice(src.indexOf('{', at) + 1, src.indexOf('}', at));
+  const bad = [];
+  if (absent.length) {
+    bad.push('нет селектора для ' + absent.map((c) => c.split(' ')[0]).join(' и ') +
+      ' — набранный кусок подсказки снова станет чёрным на тёмной панели');
+  }
+  if (at === -1) {
+    bad.push('правило подсветки mark не найдено — совпадение с набранным словом не перекрашено');
+  } else if (!/color:\s*var\(--sk-[a-z0-9-]+\)\s*!important/.test(body)) {
+    bad.push('цвет задан не токеном или без !important (' + body.trim().replace(/\s+/g, ' ') +
+      ') — стоковый color:#222 его перебьёт');
+  }
+  if (bad.length) fail('Автокомплит поиска: ' + bad.join('; '));
+  else note('автокомплит поиска: mark перекрашен на токен, оба контекста стока (' +
+    contexts.map((c) => c.split(' ')[0]).join(', ') + ') покрыты');
+}
+
 /* ------------------------------------------------- 4. версия против тегов */
 
 /* Каждая версия должна быть выше последней помеченной: тег — это то, по чему
